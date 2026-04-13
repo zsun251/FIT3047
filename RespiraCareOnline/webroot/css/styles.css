@@ -1,0 +1,204 @@
+/* BOOTSTRAP */
+.btn-primary {
+    background-color: #4116f9 !important;
+    border-color: #4116f9 !important;
+}
+
+.text-primary {
+    color: #4116f9 !important;
+}
+
+
+/* NAVBAR */
+.navbar-logo-top {
+    font-family: 'Actor', sans-serif;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+.navbar-logo-bottom {
+    font-family: 'Agbalumo', serif;
+    font-size: 1.25rem;
+    line-height: 1;
+    margin-top: -0.1rem;
+}
+
+/*  CONTACT FORM CARD */
+.contact-card {
+    background: var(--c-surface);       /* clean white surface */
+    border: 1px solid var(--c-border);  /* subtle border */
+    border-radius: 1rem;                /* more rounded edges */
+    padding: 2rem 2.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);  /* soft shadow even when not hovering */
+    transition: all 0.25s ease-in-out;
+}
+
+.contact-card:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12); /* slightly stronger on hover */
+    transform: translateY(-2px);             /* subtle lift effect */
+}
+
+.contact-card h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.contact-card p {
+    color: var(--c-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Input fields */
+.contact-card .form-control {
+    display: block;     /* ensures they show */
+    width: 100%;        /* full width */
+    border-radius: 0.6rem;
+    padding: 0.75rem 1rem;
+    box-sizing: border-box; /* important for padding + width */
+}
+
+.contact-card .form-control:focus {
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 3px rgba(45,91,227,0.1);
+}
+
+/* Submit button */
+.contact-card .btn {
+    border-radius: 0.6rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .contact-card {
+        padding: 1.5rem 1.75rem;
+    }
+
+    .contact-card h2 {
+        font-size: 1.6rem;
+    }
+
+    .contact-card p {
+        font-size: 0.9rem;
+    }
+}
+/* Map CakePHP baked classes to Bootstrap equivalents */
+/* TEMPORARY STYLES TO REPLACE CAKEPHP STYLES WHILE USING BOOTSTRAP */
+
+
+.column {
+    flex: 0 0 auto;
+    width: 25%;
+    padding: 0 12px;
+}
+
+.column-80 {
+    flex: 0 0 auto;
+    width: 75%;
+    padding: 0 12px;
+}
+
+.side-nav {
+    background: var(--bs-white);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    margin-bottom: 1rem;
+}
+
+.side-nav .heading {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--bs-border-color);
+    margin: 0;
+}
+
+.side-nav-item {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--bs-body-color);
+    text-decoration: none;
+    border-bottom: 1px solid var(--bs-border-color);
+    font-size: 0.9rem;
+    transition: background-color 0.15s;
+}
+
+.side-nav-item:last-child {
+    border-bottom: none;
+}
+
+.side-nav-item:hover {
+    background-color: var(--bs-light);
+    color: var(--bs-primary);
+}
+
+.content {
+    background: var(--bs-white);
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.content table th,
+.content table td {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--bs-border-color);
+    font-size: 0.9rem;
+}
+
+.content table th {
+    background-color: var(--bs-light);
+    font-weight: 600;
+    width: 200px;
+}
+
+.content table tr:nth-child(even) {
+    background-color: var(--bs-gray-100);
+}
+
+/* Wrap baked rows properly */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -12px;
+}
+
+/* Paginator */
+.paginator ul.pagination {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.paginator .page-item a,
+.paginator .page-item span {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    color: var(--bs-primary);
+    text-decoration: none;
+    font-size: 0.875rem;
+}
+
+.paginator .page-item.active span {
+    background-color: var(--bs-primary);
+    color: white;
+    border-color: var(--bs-primary);
+}
