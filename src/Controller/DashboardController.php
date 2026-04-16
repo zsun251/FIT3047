@@ -68,7 +68,6 @@ class DashboardController extends AppController
             ->orderBy([
                 'ContactMessages.submitted_at' => 'DESC'
             ])
-            ->limit(10)
             ->all();
 
         $this->set(compact('stats', 'recent', 'status'));
