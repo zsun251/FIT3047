@@ -39,7 +39,7 @@
 
     <div class="d-flex">
     <main class="flex-grow-1 p-4">
-        <div class="container">
+        <div class="container-fluid">
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
         </div>
