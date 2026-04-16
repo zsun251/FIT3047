@@ -116,6 +116,10 @@ table.dataTable tbody tr:last-child td {
     border-color: var(--c-arch);
 }
 
+.dt-hidden {
+    visibility: hidden;
+}
+
 /* ========================================================================
    MOBILE RESPONSIVENESS
    ======================================================================== */
