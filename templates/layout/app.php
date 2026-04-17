@@ -43,7 +43,7 @@
 
 <?= $this->element('header') ?>
 
-<div class="d-flex min-vh-100">
+<div class="d-flex flex-grow-1">
 
     <aside id="sidebar" class="flex-shrink-0">
         <?= $this->element('sidebar') ?>

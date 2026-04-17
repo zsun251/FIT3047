@@ -71,7 +71,7 @@
         <div class="sidebar-section-title">My Heath Information</div>
 
         <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Appointments' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Health Input Data', ['controller' => 'VitalData', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'VitalData' ? ' active' : '')]) ?>
+        <?= $this->Html->link('Input Health Data', ['controller' => 'VitalData', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'VitalData' ? ' active' : '')]) ?>
         <?= $this->Html->link('Symptoms', ['controller' => 'Symptoms', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Symptoms' ? ' active' : '')]) ?>
 
         <div class="sidebar-section-title">Communication</div>
@@ -84,7 +84,7 @@
 
         <div class="sidebar-section-title">Settings</div>
 
-        <?= $this->Html->link('Settings', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => 'sidebar-link' . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
+        <?= $this->Html->link('System Settings', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => 'sidebar-link' . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
 
     <?php endif; ?>
 
