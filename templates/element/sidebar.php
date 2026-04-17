@@ -84,7 +84,7 @@
 
         <div class="sidebar-section-title">Settings</div>
 
-        <?= $this->Html->link('System Settings', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => 'sidebar-link' . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
+        <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => 'sidebar-link' . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
 
     <?php endif; ?>
 

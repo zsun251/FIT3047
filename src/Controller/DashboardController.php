@@ -67,5 +67,12 @@ class DashboardController extends AppController
             'access'
         );
 
+        $identity = $this->Authentication->getIdentity();
+
+        $currentUser = $this->fetchTable('Users')->get($identity->getIdentifier(), [
+            'contain' => ['Patients'],
+        ]);
+
+        $this->set(compact('currentUser'));
     }
 }
