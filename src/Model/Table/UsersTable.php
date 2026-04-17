@@ -132,10 +132,19 @@ class UsersTable extends Table
             ->allowEmptyDate('date_of_birth')
             ->add('date_of_birth', 'notFuture', [
                 'rule' => function ($value) {
-                    if ($value === null) {
+                    if (empty($value)) {
                         return true;
                     }
-                    return $value <= new \Cake\I18n\Date();
+
+                    try {
+                        $date = $value instanceof \Cake\I18n\Date
+                            ? $value
+                            : new \Cake\I18n\Date($value);
+
+                        return $date <= new \Cake\I18n\Date();
+                    } catch (\Exception $e) {
+                        return false;
+                    }
                 },
                 'message' => 'Invalid date of birth.',
             ]);
