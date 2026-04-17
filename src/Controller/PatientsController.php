@@ -17,6 +17,9 @@ class PatientsController extends AppController
      */
     public function index()
     {
+        $patient = $this->Patients->newEmptyEntity();
+        $this->Authorization->authorize($patient);
+
         $query = $this->Patients->find()
             ->contain(['Users']);
         $patients = $this->paginate($query);
@@ -33,7 +36,10 @@ class PatientsController extends AppController
      */
     public function view($id = null)
     {
-        $patient = $this->Patients->get($id, contain: ['Users', 'Clinicians', 'Appointments', 'VitalData', 'VitalsReminders']);
+        // TODO Removed VitalsReminders as the Table does not yet exist
+        //$patient = $this->Patients->get($id, contain: ['Users', 'Clinicians', 'Appointments', 'VitalData', 'VitalsReminders']);
+        $patient = $this->Patients->get($id, contain: ['Users', 'Clinicians', 'Appointments', 'VitalData']);
+        $this->Authorization->authorize($patient);
         $this->set(compact('patient'));
     }
 
@@ -45,6 +51,7 @@ class PatientsController extends AppController
     public function add()
     {
         $patient = $this->Patients->newEmptyEntity();
+        $this->Authorization->authorize($patient);
         if ($this->request->is('post')) {
             $patient = $this->Patients->patchEntity($patient, $this->request->getData());
             if ($this->Patients->save($patient)) {
@@ -69,6 +76,7 @@ class PatientsController extends AppController
     public function edit($id = null)
     {
         $patient = $this->Patients->get($id, contain: ['Clinicians']);
+        $this->Authorization->authorize($patient);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $patient = $this->Patients->patchEntity($patient, $this->request->getData());
             if ($this->Patients->save($patient)) {
@@ -94,6 +102,7 @@ class PatientsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $patient = $this->Patients->get($id);
+        $this->Authorization->authorize($patient);
         if ($this->Patients->delete($patient)) {
             $this->Flash->success(__('The patient has been deleted.'));
         } else {

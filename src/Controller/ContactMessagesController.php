@@ -31,6 +31,9 @@ class ContactMessagesController extends AppController
      */
     public function index()
     {
+        $contactMessage = $this->ContactMessages->newEmptyEntity();
+        $this->Authorization->authorize($contactMessage);
+
         $query = $this->ContactMessages->find();
         $contactMessages = $this->paginate($query);
 
@@ -47,6 +50,7 @@ class ContactMessagesController extends AppController
     public function view($id = null)
     {
         $contactMessage = $this->ContactMessages->get($id, contain: []);
+        $this->Authorization->authorize($contactMessage);
         $this->set(compact('contactMessage'));
     }
 
@@ -58,6 +62,8 @@ class ContactMessagesController extends AppController
 
     public function add()
     {
+        $this->Authorization->skipAuthorization();
+
         $contactMessage = $this->ContactMessages->newEmptyEntity();
 
         if ($this->request->is('post')) {
@@ -101,6 +107,7 @@ class ContactMessagesController extends AppController
     public function edit($id = null)
     {
         $contactMessage = $this->ContactMessages->get($id, contain: []);
+        $this->Authorization->authorize($contactMessage);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $contactMessage = $this->ContactMessages->patchEntity($contactMessage, $this->request->getData());
             if ($this->ContactMessages->save($contactMessage)) {
@@ -124,6 +131,7 @@ class ContactMessagesController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $contactMessage = $this->ContactMessages->get($id);
+        $this->Authorization->authorize($contactMessage);
         if ($this->ContactMessages->delete($contactMessage)) {
             $this->Flash->success(__('The contact message has been deleted.'));
         } else {

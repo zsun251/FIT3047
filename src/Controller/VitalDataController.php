@@ -17,6 +17,8 @@ class VitalDataController extends AppController
      */
     public function index()
     {
+        $vitalDataEntity = $this->VitalData->newEmptyEntity();
+        $this->Authorization->authorize($vitalDataEntity);
         $query = $this->VitalData->find()
             ->contain(['Patients']);
         $vitalData = $this->paginate($query);
@@ -34,6 +36,7 @@ class VitalDataController extends AppController
     public function view($id = null)
     {
         $vitalDataEntity = $this->VitalData->get($id, contain: ['Patients', 'Symptoms']);
+        $this->Authorization->authorize($vitalDataEntity);
         $this->set(compact('vitalDataEntity'));
     }
 
@@ -45,6 +48,7 @@ class VitalDataController extends AppController
     public function add()
     {
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
+        $this->Authorization->authorize($vitalDataEntity);
         if ($this->request->is('post')) {
             $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
             if ($this->VitalData->save($vitalDataEntity)) {
@@ -69,6 +73,7 @@ class VitalDataController extends AppController
     public function edit($id = null)
     {
         $vitalDataEntity = $this->VitalData->get($id, contain: ['Symptoms']);
+        $this->Authorization->authorize($vitalDataEntity);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
             if ($this->VitalData->save($vitalDataEntity)) {
@@ -94,6 +99,7 @@ class VitalDataController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $vitalDataEntity = $this->VitalData->get($id);
+        $this->Authorization->authorize($vitalDataEntity);
         if ($this->VitalData->delete($vitalDataEntity)) {
             $this->Flash->success(__('The vital data has been deleted.'));
         } else {

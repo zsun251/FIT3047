@@ -17,6 +17,8 @@ class ResourcesController extends AppController
      */
     public function index()
     {
+        $resource = $this->Resources->newEmptyEntity();
+        $this->Authorization->authorize($resource);
         $query = $this->Resources->find()
             ->contain(['Clinicians']);
         $resources = $this->paginate($query);
@@ -34,6 +36,7 @@ class ResourcesController extends AppController
     public function view($id = null)
     {
         $resource = $this->Resources->get($id, contain: ['Clinicians']);
+        $this->Authorization->authorize($resource);
         $this->set(compact('resource'));
     }
 
@@ -45,6 +48,7 @@ class ResourcesController extends AppController
     public function add()
     {
         $resource = $this->Resources->newEmptyEntity();
+        $this->Authorization->authorize($resource);
         if ($this->request->is('post')) {
             $resource = $this->Resources->patchEntity($resource, $this->request->getData());
             if ($this->Resources->save($resource)) {
@@ -68,6 +72,7 @@ class ResourcesController extends AppController
     public function edit($id = null)
     {
         $resource = $this->Resources->get($id, contain: []);
+        $this->Authorization->authorize($resource);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $resource = $this->Resources->patchEntity($resource, $this->request->getData());
             if ($this->Resources->save($resource)) {
@@ -92,6 +97,7 @@ class ResourcesController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $resource = $this->Resources->get($id);
+        $this->Authorization->authorize($resource);
         if ($this->Resources->delete($resource)) {
             $this->Flash->success(__('The resource has been deleted.'));
         } else {

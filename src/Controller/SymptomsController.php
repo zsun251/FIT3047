@@ -17,6 +17,8 @@ class SymptomsController extends AppController
      */
     public function index()
     {
+        $symptom = $this->Symptoms->newEmptyEntity();
+        $this->Authorization->authorize($symptom);
         $query = $this->Symptoms->find();
         $symptoms = $this->paginate($query);
 
@@ -33,6 +35,7 @@ class SymptomsController extends AppController
     public function view($id = null)
     {
         $symptom = $this->Symptoms->get($id, contain: ['VitalData']);
+        $this->Authorization->authorize($symptom);
         $this->set(compact('symptom'));
     }
 
@@ -44,6 +47,7 @@ class SymptomsController extends AppController
     public function add()
     {
         $symptom = $this->Symptoms->newEmptyEntity();
+        $this->Authorization->authorize($symptom);
         if ($this->request->is('post')) {
             $symptom = $this->Symptoms->patchEntity($symptom, $this->request->getData());
             if ($this->Symptoms->save($symptom)) {
@@ -67,6 +71,7 @@ class SymptomsController extends AppController
     public function edit($id = null)
     {
         $symptom = $this->Symptoms->get($id, contain: ['VitalData']);
+        $this->Authorization->authorize($symptom);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $symptom = $this->Symptoms->patchEntity($symptom, $this->request->getData());
             if ($this->Symptoms->save($symptom)) {
@@ -91,6 +96,7 @@ class SymptomsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $symptom = $this->Symptoms->get($id);
+        $this->Authorization->authorize($symptom);
         if ($this->Symptoms->delete($symptom)) {
             $this->Flash->success(__('The symptom has been deleted.'));
         } else {
