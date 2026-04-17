@@ -1,43 +1,61 @@
 <?php
+declare(strict_types=1);
+
 namespace App\Policy;
 
 use Authorization\IdentityInterface;
-use Cake\Datasource\EntityInterface;
-use Cake\Log\Log;
 
 class UserAccess
 {
     /**
-     * Check that the user is of type admin or clinician
+     * Check that the user is staff (admin or clinician)
      */
-    public static function isStaff(IdentityInterface $user): bool
+    public static function isStaff(?IdentityInterface $user): bool
     {
+        if (!$user) {
+            return false;
+        }
+
         return in_array($user->type, ['admin', 'clinician'], true);
     }
 
     /**
-     * Check that the user is of type Patient
+     * Check that the user is a patient
      */
-    public static function isPatient(IdentityInterface $user): bool
+    public static function isPatient(?IdentityInterface $user): bool
     {
+        if (!$user) {
+            return false;
+        }
+
         return $user->type === 'patient';
     }
 
     /**
-     * Check that the user is of type Admin
+     * Check admin only
      */
-    public static function isAdmin(IdentityInterface $user): bool
+    public static function isAdmin(?IdentityInterface $user): bool
     {
+        if (!$user) {
+            return false;
+        }
+
         return $user->type === 'admin';
     }
 
     /**
-     * Check that the user is of type clinician
+     * Check clinician only
      */
-    public static function isClinician(IdentityInterface $user): bool
+    public static function isClinician(?IdentityInterface $user): bool
     {
+        if (!$user) {
+            return false;
+        }
+
         return $user->type === 'clinician';
     }
+
+
 
     /**
      * Determine whether the authenticated user owns a given resource.
@@ -68,11 +86,13 @@ class UserAccess
      * @return bool
      *   True if the authenticated user owns the resource; false otherwise.
      */
-    public static function isOwner(IdentityInterface $user, EntityInterface $resource): bool
+    public static function isOwner(?IdentityInterface $user, $resource): bool
     {
-        $userId = (int)$user->getIdentifier();
+        if (!$user || !$resource) {
+            return false;
+        }
 
-        // Gets the user_id of the owner of the resource. I.e, User is associated to Admin
+        $userId = (int)$user->getIdentifier();
         $ownerId = $resource->get('user_id') ?? $resource->get('id');
 
         return $ownerId !== null && $userId === (int)$ownerId;
