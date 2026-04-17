@@ -1,4 +1,9 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white py-3 shadow-sm w-100">
+<?php
+
+use App\Policy\UserAccess;
+
+?>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 shadow-sm w-100">
     <div class="container-fluid px-4">
         <?= $this->Html->link(
             '<img src="/img/logo.png" alt="RespiraCare Logo" style="height:50px; width:auto;" class="align-middle me-2">' .
@@ -47,24 +52,26 @@
                 </li>
 
                 <?php if ($this->Identity->isLoggedIn()): ?>
-                    <?php $type= $this->Identity->get('type'); ?>
+                    <?php $identity = $this->request->getattribute('identity'); ?>
 
-                    <?php if (in_array($type, ['admin', 'clinician'], true)): ?>
+                    <?php if (UserAccess::isStaff($identity)): ?>
                         <li class="nav-item">
                             <?= $this->Html->link(
                                 'Dashboard',
-                                ['controller' => 'Dashboard', 'action' => 'index'],
+                                ['controller' => 'Dashboard', 'action' => 'staff'],
                                 [
-                                    'class' => 'nav-link' . ($currentController === 'Dashboard' ? ' active' : '')
+                                    'class' => 'nav-link' . ($currentController === 'Dashboard' && $currentAction === 'staff '? ' active' : '')
                                 ]
                             ) ?>
                         </li>
-                    <?php elseif ($type=== 'patient'): ?>
+                    <?php endif; ?>
+
+                    <?php if (UserAccess::isPatient($identity)): ?>
                         <li class="nav-item">
                             <?= $this->Html->link(
-                                'My Profile',
-                                ['controller' => 'Users', 'action' => 'view', $this->Identity->get('id')],
-                                ['class' => 'nav-link' . ($currentController === 'Users' && $currentAction === 'view' ? ' active' : '')]
+                                'Dashboard',
+                                ['controller' => 'Dashboard', 'action' => 'patient'],
+                                ['class' => 'nav-link' . ($currentController === 'Dashboard' && $currentAction === 'patient' ? ' active' : '')]
                             ) ?>
                         </li>
                     <?php endif; ?>

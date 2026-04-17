@@ -74,6 +74,20 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/users/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
         $builder->connect('/users/reset-password', ['controller' => 'Users', 'action' => 'resetPassword']);
 
+        $builder->connect('/dashboard', [
+            'controller' => 'Dashboard',
+            'action' => 'index'
+        ]);
+
+        $builder->connect('/dashboard/staff', [
+            'controller' => 'Dashboard',
+            'action' => 'staff'
+        ]);
+
+        $builder->connect('/dashboard/patient', [
+            'controller' => 'Dashboard',
+            'action' => 'patient'
+        ]);
 
         /*
          * Connect catchall routes for all controllers.

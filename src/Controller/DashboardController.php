@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 namespace App\Controller;
+use App\Policy\Resource\Page;
+use App\Policy\UserAccess;
 
 class DashboardController extends AppController
 {
@@ -21,24 +23,18 @@ class DashboardController extends AppController
 
         if (!$user) {
             $this->redirect('/login');
-            return;
-        }
-
-        $usersTable = $this->fetchTable('Users');
-
-        $fullUser = $usersTable->get($user->getIdentifier(), [
-            'contain' => ['Admins', 'Clinicians', 'Patients']
-        ]);
-
-        // Block patients from dashboard
-        if (!empty($fullUser->patients)) {
-            $this->Flash->error('You are not authorised to access the dashboard.');
-            $this->redirect('/');
         }
     }
 
-    public function index(): void
+
+
+    public function staff(): void
     {
+        $this->Authorization->authorize(
+            new Page('dashboard', 'staff'),
+            'access'
+        );
+
         $contactMessages = $this->fetchTable('ContactMessages');
 
         $status = $this->request->getQuery('status') ?? 'all';
@@ -71,5 +67,14 @@ class DashboardController extends AppController
             ->all();
 
         $this->set(compact('stats', 'recent', 'status'));
+    }
+
+    public function patient(): void
+    {
+        $this->Authorization->authorize(
+            new Page('dashboard', 'patient'),
+            'access'
+        );
+
     }
 }
