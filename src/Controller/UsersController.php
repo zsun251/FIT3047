@@ -12,10 +12,13 @@ use App\Policy\UserAccess;
  */
 class UsersController extends AppController
 {
+
     public function initialize(): void
     {
         parent::initialize();
+        $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
+
     }
 
     public function beforeFilter(\Cake\Event\EventInterface $event): void
@@ -32,6 +35,8 @@ class UsersController extends AppController
 
     public function login()
     {
+        // Use default.php instead of app.php
+        $this->viewBuilder()->setLayout('default');
         $this->Authorization->skipAuthorization();
 
         $this->request->allowMethod(['get', 'post']);
@@ -68,6 +73,8 @@ class UsersController extends AppController
 
     public function logout()
     {
+        // Use default.php instead of app.php
+        $this->viewBuilder()->setLayout('default');
         $this->Authorization->skipAuthorization();
 
         $result = $this->Authentication->getResult();
@@ -82,6 +89,8 @@ class UsersController extends AppController
 
     public function forgotPassword()
     {
+        // Use default.php instead of app.php
+        $this->viewBuilder()->setLayout('default');
         $this->Authorization->skipAuthorization();
         $this->request->allowMethod(['get', 'post']);
 
@@ -98,6 +107,8 @@ class UsersController extends AppController
 
     public function resetPassword()
     {
+        // Use default.php instead of app.php
+        $this->viewBuilder()->setLayout('default');
         $this->Authorization->skipAuthorization();
 
         $this->request->allowMethod(['get', 'post']);

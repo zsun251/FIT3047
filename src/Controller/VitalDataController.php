@@ -10,6 +10,14 @@ namespace App\Controller;
  */
 class VitalDataController extends AppController
 {
+
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->viewBuilder()->setLayout('app');
+        $this->loadComponent('Flash');
+    }
     /**
      * Index method
      *

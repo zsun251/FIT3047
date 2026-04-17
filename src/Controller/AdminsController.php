@@ -10,6 +10,13 @@ namespace App\Controller;
  */
 class AdminsController extends AppController
 {
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->viewBuilder()->setLayout('app');
+        $this->loadComponent('Flash');
+    }
     /**
      * Index method
      *

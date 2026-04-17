@@ -11,20 +11,11 @@ class DashboardController extends AppController
     {
         parent::initialize();
 
-        $this->viewBuilder()->setLayout('admin');
+        $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
     }
 
-    public function beforeFilter(\Cake\Event\EventInterface $event): void
-    {
-        parent::beforeFilter($event);
 
-        $user = $this->request->getAttribute('identity');
-
-        if (!$user) {
-            $this->redirect('/login');
-        }
-    }
 
 
 
