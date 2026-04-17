@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Policy\UserAccess;
+use Cake\Http\Exception\ForbiddenException;
 
 /**
  * Users Controller
@@ -162,16 +163,47 @@ class UsersController extends AppController
 
         $this->Authorization->authorize($user);
 
+        $identity = $this->Authentication->getIdentity();
+        $isPatientSelfEdit = $identity && UserAccess::isPatient($identity) && (int)$identity->getIdentifier() === (int)$id;
+
+        if ($identity && UserAccess::isPatient($identity) && !$isPatientSelfEdit) {
+            throw new ForbiddenException('You can only edit your own account.');
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $user = $this->Users->patchEntity($user, $this->request->getData());
+            if ($isPatientSelfEdit) {
+                $allowedFields = [
+                    'username',
+                    'password',
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'phone',
+                    'address',
+                    'date_of_birth',
+                ];
+                $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => $allowedFields]);
+
+            } else {
+                $user = $this->Users->patchEntity($user, $this->request->getData());
+
+            }
             if ($this->Users->save($user)) {
-                $this->Flash->success(__('The user has been saved.'));
+                $this->Flash->success(__('Your information has been saved.'));
+
+                if ($isPatientSelfEdit) {
+                    return $this->redirect([
+                        'controller' => 'Dashboard',
+                        'action' => 'patient',
+                    ]);
+                }
 
                 return $this->redirect(['action' => 'index']);
             }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
+            $this->Flash->error(__('Your information could not be saved. Please, try again.'));
+
         }
-        $this->set(compact('user'));
+        $this->set(compact('user', 'isPatientSelfEdit'));
     }
 
     public function delete($id = null)
