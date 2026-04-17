@@ -97,7 +97,7 @@ CREATE TABLE patients (
 -- CLINICIAN PATIENT JOIN
 -- =============================================================================
 
-CREATE TABLE clinician_patients (
+CREATE TABLE clinicians_patients (
       id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
       clinician_id    INT UNSIGNED    NOT NULL,
       patient_id      INT UNSIGNED    NOT NULL,
@@ -182,7 +182,7 @@ CREATE TABLE reminders (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-CREATE TABLE appointment_reminders (
+CREATE TABLE appointments_reminders (
      id INT UNSIGNED NOT NULL AUTO_INCREMENT,
      reminder_id     INT UNSIGNED    NOT NULL,
      appointment_id  INT UNSIGNED    NOT NULL,
