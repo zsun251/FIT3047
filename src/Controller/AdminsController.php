@@ -17,6 +17,9 @@ class AdminsController extends AppController
      */
     public function index()
     {
+        $admin= $this->Admins->newEmptyEntity();
+        $this->Authorization->authorize($admin);
+
         $query = $this->Admins->find()
             ->contain(['Users']);
         $admins = $this->paginate($query);
@@ -34,6 +37,8 @@ class AdminsController extends AppController
     public function view($id = null)
     {
         $admin = $this->Admins->get($id, contain: ['Users']);
+        $this->Authorization->authorize($admin);
+
         $this->set(compact('admin'));
     }
 
@@ -45,6 +50,7 @@ class AdminsController extends AppController
     public function add()
     {
         $admin = $this->Admins->newEmptyEntity();
+        $this->Authorization->authorize($admin);
         if ($this->request->is('post')) {
             $admin = $this->Admins->patchEntity($admin, $this->request->getData());
             if ($this->Admins->save($admin)) {
@@ -68,6 +74,7 @@ class AdminsController extends AppController
     public function edit($id = null)
     {
         $admin = $this->Admins->get($id, contain: []);
+        $this->Authorization->authorize($admin);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $admin = $this->Admins->patchEntity($admin, $this->request->getData());
             if ($this->Admins->save($admin)) {
@@ -92,6 +99,7 @@ class AdminsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $admin = $this->Admins->get($id);
+        $this->Authorization->authorize($admin);
         if ($this->Admins->delete($admin)) {
             $this->Flash->success(__('The admin has been deleted.'));
         } else {

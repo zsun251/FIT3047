@@ -17,6 +17,9 @@ class CliniciansController extends AppController
      */
     public function index()
     {
+        $clinician = $this->Clinicians->newEmptyEntity();
+        $this->Authorization->authorize($clinician);
+
         $query = $this->Clinicians->find()
             ->contain(['Users']);
         $clinicians = $this->paginate($query);
@@ -34,6 +37,7 @@ class CliniciansController extends AppController
     public function view($id = null)
     {
         $clinician = $this->Clinicians->get($id, contain: ['Users', 'Patients', 'Appointments', 'Resources']);
+        $this->Authorization->authorize($clinician);
         $this->set(compact('clinician'));
     }
 
@@ -45,6 +49,7 @@ class CliniciansController extends AppController
     public function add()
     {
         $clinician = $this->Clinicians->newEmptyEntity();
+        $this->Authorization->authorize($clinician);
         if ($this->request->is('post')) {
             $clinician = $this->Clinicians->patchEntity($clinician, $this->request->getData());
             if ($this->Clinicians->save($clinician)) {
@@ -69,6 +74,7 @@ class CliniciansController extends AppController
     public function edit($id = null)
     {
         $clinician = $this->Clinicians->get($id, contain: ['Patients']);
+        $this->Authorization->authorize($clinician);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $clinician = $this->Clinicians->patchEntity($clinician, $this->request->getData());
             if ($this->Clinicians->save($clinician)) {
@@ -94,6 +100,7 @@ class CliniciansController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $clinician = $this->Clinicians->get($id);
+        $this->Authorization->authorize($clinician);
         if ($this->Clinicians->delete($clinician)) {
             $this->Flash->success(__('The clinician has been deleted.'));
         } else {

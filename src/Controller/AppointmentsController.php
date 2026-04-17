@@ -17,6 +17,9 @@ class AppointmentsController extends AppController
      */
     public function index()
     {
+        $appointment= $this->Appointments->newEmptyEntity();
+        $this->Authorization->authorize($appointment);
+
         $query = $this->Appointments->find()
             ->contain(['Patients', 'Clinicians']);
         $appointments = $this->paginate($query);
@@ -33,7 +36,10 @@ class AppointmentsController extends AppController
      */
     public function view($id = null)
     {
-        $appointment = $this->Appointments->get($id, contain: ['Patients', 'Clinicians', 'AppointmentReminders']);
+        // TODO Removed AppointmentReminders as it does not yet exist
+        // $appointment = $this->Appointments->get($id, contain: ['Patients', 'Clinicians', 'AppointmentReminders']);
+        $appointment = $this->Appointments->get($id, contain: ['Patients', 'Clinicians']);
+        $this->Authorization->authorize($appointment);
         $this->set(compact('appointment'));
     }
 
@@ -45,6 +51,7 @@ class AppointmentsController extends AppController
     public function add()
     {
         $appointment = $this->Appointments->newEmptyEntity();
+        $this->Authorization->authorize($appointment);
         if ($this->request->is('post')) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
             if ($this->Appointments->save($appointment)) {
@@ -69,6 +76,7 @@ class AppointmentsController extends AppController
     public function edit($id = null)
     {
         $appointment = $this->Appointments->get($id, contain: []);
+        $this->Authorization->authorize($appointment);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
             if ($this->Appointments->save($appointment)) {
@@ -94,6 +102,7 @@ class AppointmentsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $appointment = $this->Appointments->get($id);
+        $this->Authorization->authorize($appointment);
         if ($this->Appointments->delete($appointment)) {
             $this->Flash->success(__('The appointment has been deleted.'));
         } else {
