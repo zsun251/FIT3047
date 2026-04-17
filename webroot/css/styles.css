@@ -8,8 +8,7 @@
     color: #4116f9 !important;
 }
 
-
-/* NAVBAR */
+/* TOPBAR */
 .navbar-logo-top {
     font-family: 'Actor', sans-serif;
     font-size: 1.5rem;
@@ -20,6 +19,21 @@
     font-size: 1.25rem;
     line-height: 1;
     margin-top: -0.1rem;
+}
+
+:root {
+    --topbar-height: 72px;
+}
+
+#topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    height: var(--topbar-height);
+
+    background: #fff;
+    border-bottom: 1px solid #e6eaf0;
+
 }
 
 /*  CONTACT FORM CARD */
