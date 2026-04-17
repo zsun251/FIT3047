@@ -12,6 +12,13 @@ use App\Service\RecaptchaService;
  */
 class ContactMessagesController extends AppController
 {
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->viewBuilder()->setLayout('app');
+        $this->loadComponent('Flash');
+    }
 
     public function beforeFilter(\Cake\Event\EventInterface $event): void
     {
@@ -62,6 +69,8 @@ class ContactMessagesController extends AppController
 
     public function add()
     {
+        // Use default.php instead of app.php
+        $this->viewBuilder()->setLayout('default');
         $this->Authorization->skipAuthorization();
 
         $contactMessage = $this->ContactMessages->newEmptyEntity();
