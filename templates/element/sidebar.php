@@ -1,4 +1,4 @@
-<nav id="sidebar" aria-label="Management navigation">
+<nav id="sidebar" class="sidebar" aria-label="Management navigation">
 
     <?php
     use App\Policy\UserAccess;
