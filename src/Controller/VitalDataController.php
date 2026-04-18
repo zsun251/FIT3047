@@ -25,14 +25,16 @@ class VitalDataController extends AppController
      */
     public function index()
     {
-        $vitalDataEntity = $this->VitalData->newEmptyEntity();
-        $this->Authorization->authorize($vitalDataEntity);
         $query = $this->VitalData->find()
             ->contain(['Patients']);
+        // Apply scope using the action name
+        $query = $this->Authorization->applyScope($query, 'index');
+
         $vitalData = $this->paginate($query);
 
         $this->set(compact('vitalData'));
     }
+
 
     /**
      * View method
