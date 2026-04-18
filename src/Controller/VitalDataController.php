@@ -10,11 +10,9 @@ namespace App\Controller;
  */
 class VitalDataController extends AppController
 {
-
     public function initialize(): void
     {
         parent::initialize();
-
         $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
     }
@@ -25,17 +23,22 @@ class VitalDataController extends AppController
      */
     public function index()
     {
+        // Create an entity to check permissions
+        $vitalDataEntity = $this->VitalData->newEmptyEntity();
+
+        // Check if user can access index at all
+        if (!$this->Authorization->can($vitalDataEntity, 'index')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $query = $this->VitalData->find()
             ->contain(['Patients']);
         // Apply scope using the action name
         $query = $this->Authorization->applyScope($query, 'index');
-
         $vitalData = $this->paginate($query);
-
         $this->set(compact('vitalData'));
     }
-
-
     /**
      * View method
      *
@@ -46,10 +49,15 @@ class VitalDataController extends AppController
     public function view($id = null)
     {
         $vitalDataEntity = $this->VitalData->get($id, contain: ['Patients', 'Symptoms']);
-        $this->Authorization->authorize($vitalDataEntity);
+
+        // Check authorization
+        if (!$this->Authorization->can($vitalDataEntity, 'view')) {
+            $this->Flash->error(__('You do not have permission to view this vital data.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $this->set(compact('vitalDataEntity'));
     }
-
     /**
      * Add method
      *
@@ -58,12 +66,17 @@ class VitalDataController extends AppController
     public function add()
     {
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
-        $this->Authorization->authorize($vitalDataEntity);
+
+        // Check authorization
+        if (!$this->Authorization->can($vitalDataEntity, 'add')) {
+            $this->Flash->error(__('You do not have permission to add vital data.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is('post')) {
             $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
             if ($this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
@@ -72,7 +85,6 @@ class VitalDataController extends AppController
         $symptoms = $this->VitalData->Symptoms->find('list', limit: 200)->all();
         $this->set(compact('vitalDataEntity', 'patients', 'symptoms'));
     }
-
     /**
      * Edit method
      *
@@ -83,12 +95,17 @@ class VitalDataController extends AppController
     public function edit($id = null)
     {
         $vitalDataEntity = $this->VitalData->get($id, contain: ['Symptoms']);
-        $this->Authorization->authorize($vitalDataEntity);
+
+        // Check authorization
+        if (!$this->Authorization->can($vitalDataEntity, 'edit')) {
+            $this->Flash->error(__('You do not have permission to edit this vital data.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
             if ($this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
@@ -97,7 +114,6 @@ class VitalDataController extends AppController
         $symptoms = $this->VitalData->Symptoms->find('list', limit: 200)->all();
         $this->set(compact('vitalDataEntity', 'patients', 'symptoms'));
     }
-
     /**
      * Delete method
      *
@@ -109,13 +125,18 @@ class VitalDataController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $vitalDataEntity = $this->VitalData->get($id);
-        $this->Authorization->authorize($vitalDataEntity);
+
+        // Check authorization
+        if (!$this->Authorization->can($vitalDataEntity, 'delete')) {
+            $this->Flash->error(__('You do not have permission to delete this vital data.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->VitalData->delete($vitalDataEntity)) {
             $this->Flash->success(__('The vital data has been deleted.'));
         } else {
             $this->Flash->error(__('The vital data could not be deleted. Please, try again.'));
         }
-
         return $this->redirect(['action' => 'index']);
     }
 }

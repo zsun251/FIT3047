@@ -13,13 +13,11 @@ use Cake\Http\Exception\ForbiddenException;
  */
 class UsersController extends AppController
 {
-
     public function initialize(): void
     {
         parent::initialize();
         $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
-
     }
 
     public function beforeFilter(\Cake\Event\EventInterface $event): void
@@ -31,7 +29,6 @@ class UsersController extends AppController
             'forgotPassword',
             'resetPassword'
         ]);
-
     }
 
     public function login()
@@ -44,7 +41,6 @@ class UsersController extends AppController
         $result = $this->Authentication->getResult();
 
         if ($result && $result->isValid()) {
-
             $identity = $this->Authentication->getIdentity();
 
             $target = match (true) {
@@ -123,7 +119,12 @@ class UsersController extends AppController
     public function index()
     {
         $user = $this->Users->newEmptyEntity();
-        $this->Authorization->authorize($user);
+
+        // Check authorization
+        if (!$this->Authorization->can($user, 'index')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
         $query = $this->Users->find();
         $users = $this->paginate($query);
@@ -134,14 +135,25 @@ class UsersController extends AppController
     public function view($id = null)
     {
         $user = $this->Users->get($id, contain: ['Admins', 'Clinicians', 'Patients']);
-        $this->Authorization->authorize($user);
+
+        // Check authorization
+        if (!$this->Authorization->can($user, 'view')) {
+            $this->Flash->error(__('You do not have permission to view this user.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $this->set(compact('user'));
     }
 
     public function add()
     {
         $user = $this->Users->newEmptyEntity();
-        $this->Authorization->authorize($user);
+
+        // Check authorization
+        if (!$this->Authorization->can($user, 'add')) {
+            $this->Flash->error(__('You do not have permission to add users.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());
@@ -157,11 +169,13 @@ class UsersController extends AppController
 
     public function edit($id = null)
     {
-
-
         $user = $this->Users->get($id, contain: []);
 
-        $this->Authorization->authorize($user);
+        // Check authorization
+        if (!$this->Authorization->can($user, 'edit')) {
+            $this->Flash->error(__('You do not have permission to edit this user.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
         $identity = $this->Authentication->getIdentity();
         $isPatientSelfEdit = $identity && UserAccess::isPatient($identity) && (int)$identity->getIdentifier() === (int)$id;
@@ -210,7 +224,13 @@ class UsersController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $user = $this->Users->get($id);
-        $this->Authorization->authorize($user);
+
+        // Check authorization
+        if (!$this->Authorization->can($user, 'delete')) {
+            $this->Flash->error(__('You do not have permission to delete this user.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->Users->delete($user)) {
             $this->Flash->success(__('The user has been deleted.'));
         } else {
