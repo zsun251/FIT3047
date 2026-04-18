@@ -17,11 +17,15 @@ $this->end();
 $user = $this->Identity->get();
 ?>
 
-    <div class="dash-header">
-        <h1 class="dash-title">
-            Welcome, <em><?= h($user->first_name . ' ' . $user->last_name)?></em> Patient
-        </h1>
-    </div>
+<?php
+$displayName = trim(($currentUser->first_name ?? '') . ' ' . ($currentUser->last_name ?? ''));
+?>
+
+<div class="dash-header">
+    <h1 class="dash-title">
+        Welcome, <em><?= h($displayName !== '' ? $displayName : $currentUser->username) ?></em> Patient
+    </h1>
+</div>
 
 
 
