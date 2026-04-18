@@ -13,24 +13,30 @@ class AppointmentsController extends AppController
     public function initialize(): void
     {
         parent::initialize();
-
         $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
     }
+
     /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
-
-
     public function index()
     {
-        // Get the base query
+        // Create an Appointment entity (not Appointments)
+        $appointment = $this->Appointments->newEmptyEntity();
+
+        // Check authorization
+        if (!$this->Authorization->can($appointment, 'index')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        // Apply scope
         $query = $this->Appointments->find()
             ->contain(['Patients', 'Clinicians']);
 
-        // Apply scope using the action name
         $query = $this->Authorization->applyScope($query, 'index');
 
         $appointments = $this->paginate($query);
@@ -50,7 +56,13 @@ class AppointmentsController extends AppController
         // TODO Removed AppointmentReminders as it does not yet exist
         // $appointment = $this->Appointments->get($id, contain: ['Patients', 'Clinicians', 'AppointmentReminders']);
         $appointment = $this->Appointments->get($id, contain: ['Patients', 'Clinicians']);
-        $this->Authorization->authorize($appointment);
+
+        // Check authorization
+        if (!$this->Authorization->can($appointment, 'view')) {
+            $this->Flash->error(__('You do not have permission to view this appointment.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $this->set(compact('appointment'));
     }
 
@@ -62,16 +74,22 @@ class AppointmentsController extends AppController
     public function add()
     {
         $appointment = $this->Appointments->newEmptyEntity();
-        $this->Authorization->authorize($appointment);
+
+        // Check authorization
+        if (!$this->Authorization->can($appointment, 'add')) {
+            $this->Flash->error(__('You do not have permission to add appointments.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is('post')) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
+
         $patients = $this->Appointments->Patients->find('list', limit: 200)->all();
         $clinicians = $this->Appointments->Clinicians->find('list', limit: 200)->all();
         $this->set(compact('appointment', 'patients', 'clinicians'));
@@ -87,16 +105,22 @@ class AppointmentsController extends AppController
     public function edit($id = null)
     {
         $appointment = $this->Appointments->get($id, contain: []);
-        $this->Authorization->authorize($appointment);
+
+        // Check authorization
+        if (!$this->Authorization->can($appointment, 'edit')) {
+            $this->Flash->error(__('You do not have permission to edit this appointment.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $appointment = $this->Appointments->patchEntity($appointment, $this->request->getData());
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
+
         $patients = $this->Appointments->Patients->find('list', limit: 200)->all();
         $clinicians = $this->Appointments->Clinicians->find('list', limit: 200)->all();
         $this->set(compact('appointment', 'patients', 'clinicians'));
@@ -113,7 +137,13 @@ class AppointmentsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $appointment = $this->Appointments->get($id);
-        $this->Authorization->authorize($appointment);
+
+        // Check authorization
+        if (!$this->Authorization->can($appointment, 'delete')) {
+            $this->Flash->error(__('You do not have permission to delete this appointment.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->Appointments->delete($appointment)) {
             $this->Flash->success(__('The appointment has been deleted.'));
         } else {

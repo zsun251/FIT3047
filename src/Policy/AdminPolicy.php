@@ -15,8 +15,7 @@ class AdminPolicy
      */
     public function canView(IdentityInterface $user, Admin $resource): bool
     {
-        return UserAccess::isStaff($user)
-            || UserAccess::isOwner($user, $resource);
+        return UserAccess::isStaff($user);
     }
 
     /**
@@ -32,8 +31,7 @@ class AdminPolicy
      */
     public function canEdit(IdentityInterface $user, Admin $resource): bool
     {
-        return UserAccess::isStaff($user)
-            || UserAccess::isOwner($user, $resource);
+        return UserAccess::isStaff($user);
     }
 
     /**

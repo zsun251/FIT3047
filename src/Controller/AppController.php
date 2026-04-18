@@ -89,4 +89,24 @@ class AppController extends Controller
             }
         }
     }
+
+    /**
+     * Get redirect URL based on user type
+     *
+     * @return array
+     */
+    protected function getRedirectUrl(): array
+    {
+        $identity = $this->request->getAttribute('identity');
+
+        if ($identity) {
+            if ($identity->type === 'patient') {
+                return ['controller' => 'Dashboard', 'action' => 'patient'];
+            } elseif ($identity->type === 'clinician' || $identity->type === 'admin') {
+                return ['controller' => 'Dashboard', 'action' => 'staff'];
+            }
+        }
+
+        return ['controller' => 'Users', 'action' => 'login'];
+    }
 }

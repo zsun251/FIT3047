@@ -25,7 +25,13 @@ class SymptomsController extends AppController
     public function index()
     {
         $symptom = $this->Symptoms->newEmptyEntity();
-        $this->Authorization->authorize($symptom);
+
+        // Check authorization
+        if (!$this->Authorization->can($symptom, 'index')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $query = $this->Symptoms->find();
         $symptoms = $this->paginate($query);
 
@@ -42,7 +48,13 @@ class SymptomsController extends AppController
     public function view($id = null)
     {
         $symptom = $this->Symptoms->get($id, contain: ['VitalData']);
-        $this->Authorization->authorize($symptom);
+
+        // Check authorization
+        if (!$this->Authorization->can($symptom, 'view')) {
+            $this->Flash->error(__('You do not have permission to view this symptom.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $this->set(compact('symptom'));
     }
 
@@ -54,7 +66,13 @@ class SymptomsController extends AppController
     public function add()
     {
         $symptom = $this->Symptoms->newEmptyEntity();
-        $this->Authorization->authorize($symptom);
+
+        // Check authorization
+        if (!$this->Authorization->can($symptom, 'add')) {
+            $this->Flash->error(__('You do not have permission to add symptoms.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is('post')) {
             $symptom = $this->Symptoms->patchEntity($symptom, $this->request->getData());
             if ($this->Symptoms->save($symptom)) {
@@ -78,7 +96,13 @@ class SymptomsController extends AppController
     public function edit($id = null)
     {
         $symptom = $this->Symptoms->get($id, contain: ['VitalData']);
-        $this->Authorization->authorize($symptom);
+
+        // Check authorization
+        if (!$this->Authorization->can($symptom, 'edit')) {
+            $this->Flash->error(__('You do not have permission to edit this symptom.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $symptom = $this->Symptoms->patchEntity($symptom, $this->request->getData());
             if ($this->Symptoms->save($symptom)) {
@@ -103,7 +127,13 @@ class SymptomsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $symptom = $this->Symptoms->get($id);
-        $this->Authorization->authorize($symptom);
+
+        // Check authorization
+        if (!$this->Authorization->can($symptom, 'delete')) {
+            $this->Flash->error(__('You do not have permission to delete this symptom.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->Symptoms->delete($symptom)) {
             $this->Flash->success(__('The symptom has been deleted.'));
         } else {

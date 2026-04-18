@@ -19,12 +19,15 @@ class DashboardController extends AppController
 
 
 
-    public function staff(): void
+    public function staff()
     {
-        $this->Authorization->authorize(
-            new Page('dashboard', 'staff'),
-            'access'
-        );
+        $page = new Page('dashboard', 'staff');
+
+        // Check authorization
+        if (!$this->Authorization->can($page, 'access')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
         $contactMessages = $this->fetchTable('ContactMessages');
 
@@ -60,12 +63,15 @@ class DashboardController extends AppController
         $this->set(compact('stats', 'recent', 'status'));
     }
 
-    public function patient(): void
+    public function patient()
     {
-        $this->Authorization->authorize(
-            new Page('dashboard', 'patient'),
-            'access'
-        );
+        $page = new Page('dashboard', 'patient');
+
+        // Check authorization
+        if (!$this->Authorization->can($page, 'access')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
         $identity = $this->Authentication->getIdentity();
 
