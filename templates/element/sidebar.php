@@ -64,4 +64,33 @@
 
     <?php endif; ?>
 
+
+
+    <?php if (UserAccess::isPatient($identity)): ?>
+
+        <div class="sidebar-section-title">My Heath Information</div>
+
+        <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Appointments' ? ' active' : '')]) ?>
+        <?= $this->Html->link('Health Data', ['controller' => 'VitalData', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'VitalData' ? ' active' : '')]) ?>
+
+<!--    Maybe have the symptoms show on the health page as well, and have that be a historical data page,
+        and then on the dashboard a button that will open the form to input the data, as that will be
+        quicker for the patients-->
+<!--        --><?php //= $this->Html->link('Symptoms', ['controller' => 'Symptoms', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Symptoms' ? ' active' : '')]) ?>
+
+        <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Resources' ? ' active' : '')]) ?>
+
+
+        <div class="sidebar-section-title">Communication</div>
+
+        <?= $this->Html->link('Contact Messages', ['controller' => 'ContactMessages', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'ContactMessages' ? ' active' : '')]) ?>
+
+        <div class="sidebar-section-title">Settings</div>
+
+        <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => 'sidebar-link' . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
+
+    <?php endif; ?>
+
+
+
 </nav>
