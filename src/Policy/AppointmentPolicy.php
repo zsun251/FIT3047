@@ -3,78 +3,82 @@ declare(strict_types=1);
 
 namespace App\Policy;
 
-use App\Model\Entity\Admin;
+use App\Model\Entity\Appointment;
 use Authorization\IdentityInterface;
 
 /**
- * AdminPolicy
+ * AppointmentPolicy
  *
- * Handles authorization for individual Admin entities.
- * Used when authorizing actions on specific admin records.
+ * Handles authorization for individual Appointment entities.
+ * Used when authorizing actions on specific appointment records.
  *
  * Methods in this policy determine:
- * - Who can view a specific admin
- * - Who can add new admins
- * - Who can edit existing admins
- * - Who can delete admins
- *
- * Note: No AdminsTablePolicy is needed because there's no query scoping.
- * Only staff can access admin records, and they see all of them.
+ * - Who can view a specific appointment
+ * - Who can add new appointments
+ * - Who can edit existing appointments
+ * - Who can delete appointments
  */
-class AdminPolicy
+class AppointmentPolicy
 {
     /**
-     * View admin
+     * View appointment
      */
-    public function canView(IdentityInterface $user, Admin $resource): bool
+    public function canView(IdentityInterface $user, Appointment $resource): bool
     {
-        return $this->hasAdminAccess($user, $resource);
+        return $this->hasAppointmentAccess($user, $resource);
     }
 
     /**
-     * Add admin (only staff can create)
+     * Add appointment (only staff can create)
      */
-    public function canAdd(IdentityInterface $user, Admin $resource): bool
-    {
-        return UserAccess::isStaff($user);
-    }
-
-    /**
-     * Edit admin (only staff can edit)
-     */
-    public function canEdit(IdentityInterface $user, Admin $resource): bool
+    public function canAdd(IdentityInterface $user, Appointment $resource): bool
     {
         return UserAccess::isStaff($user);
     }
 
     /**
-     * Delete admin (only staff can delete)
+     * Edit appointment (only staff can edit)
      */
-    public function canDelete(IdentityInterface $user, Admin $resource): bool
+    public function canEdit(IdentityInterface $user, Appointment $resource): bool
     {
         return UserAccess::isStaff($user);
     }
 
     /**
-     * List admins
+     * Delete appointment (only staff can delete)
+     */
+    public function canDelete(IdentityInterface $user, Appointment $resource): bool
+    {
+        return UserAccess::isStaff($user);
+    }
+
+    /**
+     * List appointments
      */
     public function canIndex(IdentityInterface $user): bool
     {
-        return UserAccess::isStaff($user);
+        // Allow all authenticated users to see the index
+        // The actual filtering happens in scopeIndex
+        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
     }
 
     /**
-     * Check if user has access to this specific admin record
+     * Check if user has access to this specific appointment
      */
-    private function hasAdminAccess(IdentityInterface $user, Admin $resource): bool
+    private function hasAppointmentAccess(IdentityInterface $user, Appointment $resource): bool
     {
-        // Staff can access all admin records
-        if (UserAccess::isStaff($user)) {
+        // Admins can access all appointments
+        if (UserAccess::isAdmin($user)) {
             return true;
         }
 
-        // Users can access their own admin record
-        if ($this->isAdminOwner($user, $resource)) {
+        // Patients can access their own appointments
+        if ($this->isAppointmentPatient($user, $resource)) {
+            return true;
+        }
+
+        // Clinicians can access appointments they're assigned to
+        if ($this->isAppointmentClinician($user, $resource)) {
             return true;
         }
 
@@ -82,11 +86,20 @@ class AdminPolicy
     }
 
     /**
-     * Check if user is the owner of this admin record
+     * Check if user is the patient for this appointment
      */
-    private function isAdminOwner(IdentityInterface $user, Admin $resource): bool
+    private function isAppointmentPatient(IdentityInterface $user, Appointment $resource): bool
     {
-        $adminId = UserAccess::getAdminId($user);
-        return $adminId !== null && $adminId === $resource->id;
+        $patientId = UserAccess::getPatientId($user);
+        return $patientId !== null && $patientId === $resource->patient_id;
+    }
+
+    /**
+     * Check if user is the clinician for this appointment
+     */
+    private function isAppointmentClinician(IdentityInterface $user, Appointment $resource): bool
+    {
+        $clinicianId = UserAccess::getClinicianId($user);
+        return $clinicianId !== null && $clinicianId === $resource->clinician_id;
     }
 }
