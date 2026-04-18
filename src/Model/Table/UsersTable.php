@@ -47,14 +47,20 @@ class UsersTable extends Table
         $this->setDisplayField('username');
         $this->setPrimaryKey('id');
 
-        $this->hasMany('Admins', [
+        // Use hasOne instead of hasMany
+        $this->hasOne('Admins', [
             'foreignKey' => 'user_id',
+            'propertyName' => 'admin'  // This makes it accessible as $user->admin
         ]);
-        $this->hasMany('Clinicians', [
+
+        $this->hasOne('Clinicians', [
             'foreignKey' => 'user_id',
+            'propertyName' => 'clinician'  // This makes it accessible as $user->clinician
         ]);
-        $this->hasMany('Patients', [
+
+        $this->hasOne('Patients', [
             'foreignKey' => 'user_id',
+            'propertyName' => 'patient'  // This makes it accessible as $user->patient
         ]);
     }
 
