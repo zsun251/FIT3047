@@ -65,13 +65,14 @@
     <?php endif; ?>
 
 
-
+    <!-- PATIENT NAVIGATION -->
     <?php if (UserAccess::isPatient($identity)): ?>
 
+        <!-- PATIENT HEALTH LINKS -->
         <div class="sidebar-section-title">My Heath Information</div>
 
         <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Appointments' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Health Data', ['controller' => 'VitalData', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'VitalData' ? ' active' : '')]) ?>
+        <?= $this->Html->link('Health Data', ['controller' => 'VitalData', 'action' => 'add'], ['class' => 'sidebar-link' . ($currentController === 'VitalData' && $currentAction === 'add' ? ' active' : '')]) ?>
 
 <!--    Maybe have the symptoms show on the health page as well, and have that be a historical data page,
         and then on the dashboard a button that will open the form to input the data, as that will be
@@ -80,11 +81,7 @@
 
         <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'browse'], ['class' => 'sidebar-link' . ($currentController === 'Resources' ? ' active' : '')]) ?>
 
-<!-- I do not believe it is appropriate for patients to view/edit/index the contact messages. We can have link to the contact us page though -->
-<!--        <div class="sidebar-section-title">Communication</div>-->
-<!---->
-<!--        --><?php //= $this->Html->link('Contact Messages', ['controller' => 'ContactMessages', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'ContactMessages' ? ' active' : '')]) ?>
-
+        <!-- PATIENT SETTINGS -->
         <div class="sidebar-section-title">Settings</div>
 
         <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => 'sidebar-link' . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
