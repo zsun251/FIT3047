@@ -63,22 +63,52 @@ class DashboardController extends AppController
         $this->set(compact('stats', 'recent', 'status'));
     }
 
-    public function patient()
+    public function patient(): void
     {
-        $page = new Page('dashboard', 'patient');
+        // Authorize access to the patient dashboard
+        $this->Authorization->authorize(new Page('dashboard', 'patient'), 'access');
 
-        // Check authorization
-        if (!$this->Authorization->can($page, 'access')) {
-            $this->Flash->error(__('You do not have permission to access that page.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
-
+        // Load the currently logged-in user and linked patient record
         $identity = $this->Authentication->getIdentity();
 
-        $currentUser = $this->fetchTable('Users')->get($identity->getIdentifier(), [
-            'contain' => ['Patients'],
-        ]);
+        $currentUser = $this->fetchTable('Users')->get($identity->getIdentifier(), ['contain' => ['Patients'],]);
 
-        $this->set(compact('currentUser'));
+
+        // Resolve the patient ID for patient-specific dashboard data
+        $patient = $currentUser->patients[0] ?? null;
+        $patientId = $patient?->id;
+
+        $latestVital = null;
+        $nextAppointment = null;
+        $latestResource = null;
+
+        if ($patientId) {
+            // Fetch the latest submitted vital data and linked symptoms
+            $latestVital = $this->fetchTable('VitalData')->find()
+                ->contain(['Symptoms'])
+                ->where(['VitalData.patient_id' => $patientId])
+                ->orderBy(['VitalData.recorded_at' => 'DESC'])
+                ->first();
+
+            // Fetch the next upcoming appointment for the patient
+            $nextAppointment = $this->fetchTable('Appointments')->find()
+                ->where(['Appointments.patient_id' => $patientId, 'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime(),])
+                ->orderBy(['Appointments.scheduled_at' => 'ASC'])
+                ->first();
+        }
+
+        // Fetch the latest published resource to preview on the dashboard
+        $latestResource = $this->fetchTable('Resources')->find()
+            ->where(['Resources.status' => 'published'])
+            ->orderBy(['Resources.published_at' => 'DESC'])
+            ->first();
+
+        // Fetch the latest published resource to preview on the dashboard
+        $this->set(compact(
+            'currentUser',
+            'latestVital',
+            'nextAppointment',
+            'latestResource'
+        ));
     }
 }
