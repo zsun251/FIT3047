@@ -10,84 +10,69 @@
     $isLoggedIn = $this->Identity->isLoggedIn();
     $isStaff = $identity && UserAccess::isStaff($identity);
     $isPatient = $identity && UserAccess::isPatient($identity);
-    ?>
 
-    <div class="sidebar-section-title">Overview</div>
+    // Helper for consistent sidebar link classes
+    $linkClass = function (string $controller, ?string $action = null, ?string $customClass = null) use ($currentController, $currentAction): string {
+        $isActive = $currentController === $controller && ($action === null || $currentAction === $action);
 
-    <?php if ($this->Identity->isLoggedIn() && $identity): ?>
+        return 'sidebar-link' . ($isActive ? ' active' : '') . ($customClass ? ' ' . $customClass : '');
+    }; ?>
 
-        <?php if (UserAccess::isStaff($identity)): ?>
+    <?php if ($isLoggedIn && $identity): ?>
 
-            <!-- STAFF DASHBOARD -->
-            <?= $this->Html->link(
-                'Dashboard',
-                ['controller' => 'Dashboard', 'action' => 'staff'],
-                ['class' => 'sidebar-link' . ($currentController === 'Dashboard' && $currentAction === 'staff' ? ' active' : '')]
-            ) ?>
+        <?php if ($isStaff): ?>
 
-        <?php elseif (UserAccess::isPatient($identity)): ?>
+            <!-- Staff Navigation -->
+            <div class="sidebar-section-title">Overview</div>
 
-            <!-- PATIENT DASHBOARD ONLY -->
-            <?= $this->Html->link(
-                'Dashboard',
-                ['controller' => 'Dashboard', 'action' => 'patient'],
-                ['class' => 'sidebar-link' . ($currentController === 'Dashboard' && $currentAction === 'patient' ? ' active' : '')]
-            ) ?>
+            <?= $this->Html->link('Dashboard', ['controller' => 'Dashboard', 'action' => 'staff'], ['class' => $linkClass('Dashboard', 'staff')]) ?>
+
+            <!-- Staff Management -->
+            <div class="sidebar-section-title">Management</div>
+
+            <?= $this->Html->link('Users', ['controller' => 'Users', 'action' => 'index'], ['class' => $linkClass('Users')]) ?>
+            <?= $this->Html->link('Admins', ['controller' => 'Admins', 'action' => 'index'], ['class' => $linkClass('Admins')]) ?>
+            <?= $this->Html->link('Clinicians', ['controller' => 'Clinicians', 'action' => 'index'], ['class' => $linkClass('Clinicians')]) ?>
+            <?= $this->Html->link('Patients', ['controller' => 'Patients', 'action' => 'index'], ['class' => $linkClass('Patients')]) ?>
+
+            <!-- Staff Clinical Data -->
+            <div class="sidebar-section-title">Clinical Data</div>
+
+            <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => $linkClass('Appointments')]) ?>
+            <?= $this->Html->link('Vital Data', ['controller' => 'VitalData', 'action' => 'index'], ['class' => $linkClass('VitalData')]) ?>
+            <?= $this->Html->link('Symptoms', ['controller' => 'Symptoms', 'action' => 'index'], ['class' => $linkClass('Symptoms')]) ?>
+
+            <!-- Staff Communication -->
+            <div class="sidebar-section-title">Communication</div>
+
+            <?= $this->Html->link('Contact Messages', ['controller' => 'ContactMessages', 'action' => 'index'], ['class' => $linkClass('ContactMessages')]) ?>
+
+            <!-- Staff Resources -->
+            <div class="sidebar-section-title">Resources</div>
+
+            <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'index'], ['class' => $linkClass('Resources')]) ?>
+
+        <?php elseif ($isPatient): ?>
+
+            <!-- Patient Navigation -->
+            <div class="sidebar-section-title">Overview</div>
+
+            <?= $this->Html->link('Dashboard', ['controller' => 'Dashboard', 'action' => 'patient'], ['class' => $linkClass('Dashboard', 'patient')]) ?>
+
+            <!-- Patient Health Links -->
+            <div class="sidebar-section-title">Health Information</div>
+
+            <?= $this->Html->link('Health Data', ['controller' => 'VitalData', 'action' => 'add'], ['class' => $linkClass('VitalData', 'add')]) ?>
+            <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => $linkClass('Appointments')]) ?>
+            <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'browse'], ['class' => $linkClass('Resources', 'browse')]) ?>
+
+            <!-- Patient Settings -->
+            <div class="sidebar-section-title">Settings</div>
+
+            <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => $linkClass('Users', 'edit')]) ?>
 
         <?php endif; ?>
 
     <?php endif; ?>
-
-
-    <?php if (UserAccess::isStaff($identity)): ?>
-
-        <div class="sidebar-section-title">Management</div>
-
-        <?= $this->Html->link('Users', ['controller' => 'Users', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Users' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Admins', ['controller' => 'Admins', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Admins' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Clinicians', ['controller' => 'Clinicians', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Clinicians' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Patients', ['controller' => 'Patients', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Patients' ? ' active' : '')]) ?>
-
-        <div class="sidebar-section-title">Clinical Data</div>
-
-        <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Appointments' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Vital Data', ['controller' => 'VitalData', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'VitalData' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Symptoms', ['controller' => 'Symptoms', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Symptoms' ? ' active' : '')]) ?>
-
-        <div class="sidebar-section-title">Communication</div>
-
-        <?= $this->Html->link('Contact Messages', ['controller' => 'ContactMessages', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'ContactMessages' ? ' active' : '')]) ?>
-
-        <div class="sidebar-section-title">Resources</div>
-
-        <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Resources' ? ' active' : '')]) ?>
-
-    <?php endif; ?>
-
-
-    <!-- PATIENT NAVIGATION -->
-    <?php if (UserAccess::isPatient($identity)): ?>
-
-        <!-- PATIENT HEALTH LINKS -->
-        <div class="sidebar-section-title">My Heath Information</div>
-
-        <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Appointments' ? ' active' : '')]) ?>
-        <?= $this->Html->link('Health Data', ['controller' => 'VitalData', 'action' => 'add'], ['class' => 'sidebar-link' . ($currentController === 'VitalData' && $currentAction === 'add' ? ' active' : '')]) ?>
-
-<!--    Maybe have the symptoms show on the health page as well, and have that be a historical data page,
-        and then on the dashboard a button that will open the form to input the data, as that will be
-        quicker for the patients-->
-<!--        --><?php //= $this->Html->link('Symptoms', ['controller' => 'Symptoms', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Symptoms' ? ' active' : '')]) ?>
-
-        <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'browse'], ['class' => 'sidebar-link' . ($currentController === 'Resources' ? ' active' : '')]) ?>
-
-        <!-- PATIENT SETTINGS -->
-        <div class="sidebar-section-title">Settings</div>
-
-        <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()], ['class' => 'sidebar-link' . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
-
-    <?php endif; ?>
-
-
 
 </nav>
