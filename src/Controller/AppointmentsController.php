@@ -22,13 +22,17 @@ class AppointmentsController extends AppController
      *
      * @return \Cake\Http\Response|null|void Renders view
      */
+
+
     public function index()
     {
-        $appointment= $this->Appointments->newEmptyEntity();
-        $this->Authorization->authorize($appointment);
-
+        // Get the base query
         $query = $this->Appointments->find()
             ->contain(['Patients', 'Clinicians']);
+
+        // Apply scope using the action name
+        $query = $this->Authorization->applyScope($query, 'index');
+
         $appointments = $this->paginate($query);
 
         $this->set(compact('appointments'));
