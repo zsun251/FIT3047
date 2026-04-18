@@ -78,12 +78,12 @@
         quicker for the patients-->
 <!--        --><?php //= $this->Html->link('Symptoms', ['controller' => 'Symptoms', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Symptoms' ? ' active' : '')]) ?>
 
-        <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'Resources' ? ' active' : '')]) ?>
+        <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'browse'], ['class' => 'sidebar-link' . ($currentController === 'Resources' ? ' active' : '')]) ?>
 
-
-        <div class="sidebar-section-title">Communication</div>
-
-        <?= $this->Html->link('Contact Messages', ['controller' => 'ContactMessages', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'ContactMessages' ? ' active' : '')]) ?>
+<!-- I do not believe it is appropriate for patients to view/edit/index the contact messages. We can have link to the contact us page though -->
+<!--        <div class="sidebar-section-title">Communication</div>-->
+<!---->
+<!--        --><?php //= $this->Html->link('Contact Messages', ['controller' => 'ContactMessages', 'action' => 'index'], ['class' => 'sidebar-link' . ($currentController === 'ContactMessages' ? ' active' : '')]) ?>
 
         <div class="sidebar-section-title">Settings</div>
 

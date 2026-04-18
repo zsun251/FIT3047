@@ -74,6 +74,8 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/users/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
         $builder->connect('/users/reset-password', ['controller' => 'Users', 'action' => 'resetPassword']);
 
+
+        /* Setup dashboard routes */
         $builder->connect('/dashboard', [
             'controller' => 'Dashboard',
             'action' => 'index'
@@ -87,6 +89,12 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/dashboard/patient', [
             'controller' => 'Dashboard',
             'action' => 'patient'
+        ]);
+
+        /* Setup Resource routes */
+        $builder->connect('/resources/library', [
+            'controller' => 'Resources',
+            'action' => 'browse'
         ]);
 
         /*
