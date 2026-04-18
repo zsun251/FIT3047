@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Policy\UserAccess;
+
 /**
  * Resources Controller
  *
@@ -112,5 +114,44 @@ class ResourcesController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+
+    /**
+    * Browse method - Public-facing resources page for patients
+    *
+    * Displays published resources that patients can view.
+    * Staff can see drafts and published; patients see only published.
+    *
+    * @return \Cake\Http\Response|null|void Renders view
+    */
+    public function browse()
+    {
+        $this->Authorization->skipAuthorization();
+
+        $identity = $this->request->getAttribute('identity');
+
+        // Base query for published resources
+        $query = $this->Resources->find()
+            ->contain(['Clinicians' => ['Users']]) // Include author info
+            ->order(['Resources.published_at' => 'DESC']);
+
+        // If user is staff, they can see drafts too (optional)
+        if ($identity && UserAccess::isStaff($identity)) {
+            // Staff sees all resources
+        } else {
+            // Patients and public only see published
+            $query->where(['Resources.status' => 'published']);
+        }
+
+        // Optional: Filter by type
+        $type = $this->request->getQuery('type');
+        if ($type && in_array($type, ['article', 'video', 'blog', 'link', 'news'])) {
+            $query->where(['Resources.type' => $type]);
+        }
+
+        $resources = $this->paginate($query);
+
+        $this->set(compact('resources'));
     }
 }
