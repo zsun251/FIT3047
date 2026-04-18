@@ -43,17 +43,15 @@
 
 <?= $this->element('header') ?>
 
-<div class="d-flex min-vh-100">
+<div class="app-shell">
 
-    <aside id="sidebar" class="flex-shrink-0">
-        <?= $this->element('sidebar') ?>
-    </aside>
+    <?= $this->element('sidebar') ?>
 
-    <main id="main-content" class="flex-grow-1 p-4 min-w-0">
-        <div class="container-fluid px-3 px-md-4 px-xl-5">
-            <?= $this->Flash->render() ?>
-            <?= $this->fetch('content') ?>
-        </div>
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <main id="main-content">
+        <?= $this->Flash->render() ?>
+        <?= $this->fetch('content') ?>
     </main>
 
 </div>
