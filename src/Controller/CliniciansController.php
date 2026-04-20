@@ -143,30 +143,6 @@ class CliniciansController extends AppController
     }
 
     // bella 4.2.1
-    public function patientHistory($patientId = null)
-    {
-        // 1. get logged-in clinician
-        $clinicianId = $this->request->getAttribute('identity')->get('id');
 
-        // 2. check patient belongs to this clinician (security gate)
-        $patient = $this->Clinicians->Patients->find()
-            ->matching('Clinicians', function ($q) use ($clinicianId) {
-                return $q->where(['Clinicians.id' => $clinicianId]);
-            })
-            ->where(['Patients.id' => $patientId])
-            ->first();
-
-        if (!$patient) {
-            throw new \Cake\Http\Exception\ForbiddenException('Not allowed');
-        }
-
-        // 3. fetch vital history
-        $vitalHistory = $this->Clinicians->Patients->VitalData->find()
-            ->where(['patient_id' => $patientId])
-            ->contain(['Symptoms'])
-            ->orderBy(['recorded_at' => 'DESC']);
-
-        $this->set(compact('patient', 'vitalHistory'));
-    }
     // end of
 }

@@ -97,6 +97,11 @@ return function (RouteBuilder $routes): void {
             'action' => 'browse'
         ]);
 
+        $builder->connect('/vita-data/patient-history', [
+            'controller' => 'VitalData',
+            'action' => 'patientHistory'
+        ]);
+
         /*
          * Connect catchall routes for all controllers.
          *
