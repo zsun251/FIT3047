@@ -39,11 +39,9 @@
     <?= $this->element('header') ?>
 
     <div class="d-flex">
-    <main class="flex-grow-1 p-4">
-        <div class="container-fluid">
+    <main class="flex-grow-1">
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
-        </div>
     </main>
 
     </div>
