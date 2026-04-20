@@ -67,16 +67,32 @@
 }
 
 :root {
-    --topbar-height: 72px;
+    --topbar-height: 5.75rem;
 }
 
 #topbar {
     position: sticky;
     top: 0;
     z-index: 1030;
-    height: var(--topbar-height);
-
+    min-height: var(--topbar-height); /* Change to min-height */
     background: #fff;
     border-bottom: 1px solid #e6eaf0;
+}
 
+/* Ensure consistent padding on mobile */
+@media (max-width: 768px) {
+    #topbar {
+        height: auto; /* Allow height to adjust */
+        min-height: var(--topbar-height);
+    }
+
+    #topbar .container-fluid {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    /* Ensure logo and toggler are vertically centered */
+    #topbar .navbar-brand {
+        margin-bottom: 0;
+    }
 }
