@@ -22,46 +22,33 @@
                 <div class="row mb-3">
                     <!-- First Name -->
                     <div class="col">
-                        <?= $this->Form->label('first_name', 'First Name', ['class' => 'form-label fw-semibold']) ?>
                         <?= $this->Form->control('first_name', [
-                            'label' => 'First name',
+                            'label' => 'First Name',
                             'class' => 'form-control',
                             'required' => true,
                             'placeholder' => 'Jane',
                             'pattern' => "[a-zA-Z' -]+",
                             'title' => 'Only letters, apostrophes, hyphens, and spaces are allowed. Numbers are not allowed.'
                         ]) ?>
-                        <?php if ($contactMessage->getError('first_name')): ?>
-                            <div class="invalid-feedback d-block">
-                                <?= h(implode(', ', $contactMessage->getError('first_name'))) ?>
-                            </div>
-                        <?php endif ?>
                     </div>
 
                     <!-- Last Name -->
                     <div class="col">
-                        <?= $this->Form->label('last_name', 'Last Name', ['class' => 'form-label fw-semibold']) ?>
                         <?= $this->Form->control('last_name', [
-                            'label' => 'Last name',
+                            'label' => 'Last Name',
                             'class' => 'form-control',
                             'required' => true,
                             'placeholder' => 'Doe',
                             'pattern' => "[a-zA-Z' -]+",
                             'title' => 'Only letters, apostrophes, hyphens, and spaces are allowed. Numbers are not allowed.'
                         ]) ?>
-                        <?php if ($contactMessage->getError('last_name')): ?>
-                            <div class="invalid-feedback d-block">
-                                <?= h(implode(', ', $contactMessage->getError('last_name'))) ?>
-                            </div>
-                        <?php endif ?>
                     </div>
                 </div>
 
                 <!-- Contact number -->
                 <div class="mb-3">
-                    <?= $this->Form->label('contact_number', 'Contact Number', ['class' => 'form-label fw-semibold']) ?>
                     <?= $this->Form->control('contact_number', [
-                        'label' => 'Contact number',
+                        'label' => 'Contact Number',
                         'class' => 'form-control',
                         'placeholder' => '04xx xxx xxx',
                         'type' => 'tel',
@@ -70,16 +57,10 @@
                         'maxlength' => 10,
                         'title' => 'Phone number must contain digits only (0–9)'
                     ]) ?>
-                    <?php if ($contactMessage->getError('contact_number')): ?>
-                        <div class="invalid-feedback d-block">
-                            <?= h(implode(', ', $contactMessage->getError('contact_number'))) ?>
-                        </div>
-                    <?php endif ?>
                 </div>
 
                 <!-- Email -->
                 <div class="mb-3">
-                    <?= $this->Form->label('email', 'Email Address', ['class' => 'form-label fw-semibold']) ?>
                     <?= $this->Form->control('email', [
                         'label' => 'Email',
                         'type'  => 'email',
@@ -87,29 +68,18 @@
                         'required' => true,
                         'placeholder' => 'you@example.com'
                     ]) ?>
-                    <?php if ($contactMessage->getError('email')): ?>
-                        <div class="invalid-feedback d-block">
-                            <?= h(implode(', ', $contactMessage->getError('email'))) ?>
-                        </div>
-                    <?php endif ?>
                 </div>
 
                 <!-- Message -->
                 <div class="mb-4">
-                    <?= $this->Form->label('message', 'Message', ['class' => 'form-label fw-semibold']) ?>
                     <?= $this->Form->control('message', [
-                        'label'       => false,
+                        'label'       => 'Message',
                         'type'        => 'textarea',
                         'class'       => 'form-control' . ($contactMessage->hasErrors() && $contactMessage->getError('message') ? ' is-invalid' : ''),
                         'rows'        => 5,
                         'placeholder' => 'How can we help you?',
                         'required'    => true,
                     ]) ?>
-                    <?php if ($contactMessage->getError('message')): ?>
-                        <div class="invalid-feedback d-block">
-                            <?= h(implode(', ', $contactMessage->getError('message'))) ?>
-                        </div>
-                    <?php endif ?>
                 </div>
 
                 <!-- Hidden default status -->

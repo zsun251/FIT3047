@@ -41,5 +41,14 @@ class AppView extends View
 
         // Load the Authentication Identity helper
         $this->loadHelper('Authentication.Identity');
+
+        // Set Bootstrap Form modifications
+        $this->Form->setTemplates([
+            'label' => '<label{{attrs}} class="form-label fw-bold">{{text}}</label>',
+            'input' => '<input type="{{type}}" name="{{name}}" class="form-control{{errorClass}}" {{attrs}} />',
+            'error' => '<div class="invalid-feedback d-block">{{content}}</div>',
+        ]);
+
+;
     }
 }
