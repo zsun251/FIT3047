@@ -60,7 +60,7 @@ use App\Policy\UserAccess;
                                 'Dashboard',
                                 ['controller' => 'Dashboard', 'action' => 'staff'],
                                 [
-                                    'class' => 'nav-link' . ($currentController === 'Dashboard' && $currentAction === 'staff '? ' active' : '')
+                                    'class' => 'nav-link' . ($currentController === 'Dashboard' && $currentAction === 'staff'? ' active' : '')
                                 ]
                             ) ?>
                         </li>
