@@ -25,6 +25,7 @@
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
         'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css',
         'styles',
+        'topbar'
     ]) ?>
 
     <!-- Per page  -->
@@ -38,11 +39,9 @@
     <?= $this->element('header') ?>
 
     <div class="d-flex">
-    <main class="flex-grow-1 p-4">
-        <div class="container-fluid">
+    <main class="flex-grow-1">
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>
-        </div>
     </main>
 
     </div>

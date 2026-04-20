@@ -79,6 +79,19 @@ class ContactMessagesController extends AppController
         $this->Authorization->skipAuthorization();
 
         $contactMessage = $this->ContactMessages->newEmptyEntity();
+
+        // Prefill contact details for logged-in users
+        $identity = $this->Authentication->getIdentity();
+
+        if ($identity && !$this->request->is('post')) {
+            $currentUser = $this->fetchTable('Users')->get($identity->getIdentifier());
+
+            $contactMessage->first_name = $currentUser->first_name ?? '';
+            $contactMessage->last_name = $currentUser->last_name ?? '';
+            $contactMessage->email = $currentUser->email ?? '';
+            $contactMessage->contact_number = $currentUser->phone ?? '';
+        }
+
         if ($this->request->is('post')) {
             $recaptcha = new RecaptchaService();
             $token = $this->request->getData('g_recaptcha_response');

@@ -34,14 +34,14 @@
                 echo $this->Form->control('first_name', [
                     'required' => true,
                     'maxlength' => 100,
-                    'pattern' => '[A-Za-z-]+',
-                    'title' => 'First name can only contain letters and hyphens.',
+                    'pattern' => '[A-Za-z- ]+',
+                    'title' => 'First name can only contain letters, spaces and hyphens.',
                     'autocomplete' => 'given-name',]);
                 echo $this->Form->control('last_name', [
                     'required' => true,
                     'maxlength' => 100,
-                    'pattern' => '[A-Za-z-]+',
-                    'title' => 'Last name can only contain letters and hyphens.',
+                    'pattern' => '[A-Za-z- ]+',
+                    'title' => 'Last name can only contain letters, spaces and hyphens.',
                     'autocomplete' => 'family-name',]);
                 echo $this->Form->control('email', [
                     'type' => 'email',

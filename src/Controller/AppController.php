@@ -67,9 +67,10 @@ class AppController extends Controller
 
             // Reload user with associations
             $usersTable = $this->fetchTable('Users');
-            $userWithAssociations = $usersTable->get($userId, [
-                'contain' => ['Patients', 'Clinicians', 'Admins']
-            ]);
+            $userWithAssociations = $usersTable->get(
+                $userId,
+                contain: ['Patients', 'Clinicians', 'Admins'],
+            );
 
             // Create Authentication\Identity with the updated user entity
             $newAuthIdentity = new \Authentication\Identity($userWithAssociations);
