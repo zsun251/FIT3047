@@ -20,15 +20,24 @@ use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\Router;
+use DebugKit\Middleware\DebugKitMiddleware;
 use Psr\Http\Message\ServerRequestInterface;
+use Authorization\AuthorizationService;
+use Authorization\AuthorizationServiceInterface;
+use Authorization\AuthorizationServiceProviderInterface;
+use Authorization\Middleware\AuthorizationMiddleware;
+use Authorization\Policy\OrmResolver;
+use Authorization\Policy\MapResolver;
+use Authorization\Policy\ResolverCollection;
 
-class Application extends BaseApplication implements AuthenticationServiceProviderInterface
+class Application extends BaseApplication implements AuthenticationServiceProviderInterface, AuthorizationServiceProviderInterface
 {
     public function bootstrap(): void
     {
         parent::bootstrap();
 
         $this->addPlugin('Authentication');
+        $this->addPlugin('Authorization');
 
         FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(false));
     }
@@ -41,11 +50,13 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'cacheTime' => Configure::read('Asset.cacheTime'),
             ]))
             ->add(new RoutingMiddleware($this))
+            ->add(new DebugKitMiddleware())
             ->add(new BodyParserMiddleware())
             ->add(new CsrfProtectionMiddleware([
                 'httponly' => true,
             ]))
-            ->add(new AuthenticationMiddleware($this));
+            ->add(new AuthenticationMiddleware($this))
+            ->add(new AuthorizationMiddleware($this));
 
         return $middlewareQueue;
     }
@@ -66,6 +77,25 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         $factory = require CONFIG . 'authentication.php';
         return $factory($request); // Call the closure with the request
     }
+
+    public function getAuthorizationService($request): AuthorizationService
+    {
+        $ormResolver = new OrmResolver();
+
+        $mapResolver = new MapResolver();
+        $mapResolver->map(
+            Policy\Resource\Page::class,
+            \App\Policy\PagePolicy::class
+        );
+
+        $resolver = new ResolverCollection([
+            $ormResolver,  // check default orm resolver
+            $mapResolver // fallback to custom page resolver
+        ]);
+
+        return new AuthorizationService($resolver);
+    }
+
     public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
         return $eventManager;

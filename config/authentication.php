@@ -7,7 +7,6 @@ use Authentication\Authenticator\FormAuthenticator;
 use Authentication\Authenticator\SessionAuthenticator;
 use Authentication\Identifier\PasswordIdentifier;
 use Psr\Http\Message\ServerRequestInterface;
-use Cake\Routing\Router;
 
 
 return function (ServerRequestInterface $request): AuthenticationServiceInterface {

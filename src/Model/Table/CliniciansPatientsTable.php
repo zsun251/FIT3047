@@ -28,7 +28,7 @@ use Cake\Validation\Validator;
  * @method iterable<\App\Model\Entity\ClinicianPatient>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\ClinicianPatient>|false deleteMany(iterable $entities, array $options = [])
  * @method iterable<\App\Model\Entity\ClinicianPatient>|\Cake\Datasource\ResultSetInterface<\App\Model\Entity\ClinicianPatient> deleteManyOrFail(iterable $entities, array $options = [])
  */
-class ClinicianPatientsTable extends Table
+class CliniciansPatientsTable extends Table
 {
     /**
      * Initialize method
@@ -40,7 +40,7 @@ class ClinicianPatientsTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('clinician_patients');
+        $this->setTable('clinicians_patients');
         $this->setDisplayField('status');
         $this->setPrimaryKey('id');
 

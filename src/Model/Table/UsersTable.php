@@ -7,6 +7,8 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
+use Cake\Event\EventInterface;
+use ArrayObject;
 
 /**
  * Users Model
@@ -45,14 +47,20 @@ class UsersTable extends Table
         $this->setDisplayField('username');
         $this->setPrimaryKey('id');
 
-        $this->hasMany('Admins', [
+        // Use hasOne instead of hasMany
+        $this->hasOne('Admins', [
             'foreignKey' => 'user_id',
+            'propertyName' => 'admin'  // This makes it accessible as $user->admin
         ]);
-        $this->hasMany('Clinicians', [
+
+        $this->hasOne('Clinicians', [
             'foreignKey' => 'user_id',
+            'propertyName' => 'clinician'  // This makes it accessible as $user->clinician
         ]);
-        $this->hasMany('Patients', [
+
+        $this->hasOne('Patients', [
             'foreignKey' => 'user_id',
+            'propertyName' => 'patient'  // This makes it accessible as $user->patient
         ]);
     }
 
@@ -62,6 +70,20 @@ class UsersTable extends Table
      * @param \Cake\Validation\Validator $validator Validator instance.
      * @return \Cake\Validation\Validator
      */
+
+    public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
+    {
+        foreach (['username', 'first_name', 'last_name', 'email', 'phone', 'address'] as $field) {
+            if (isset($data[$field]) && is_string($data[$field])) {
+                $data[$field] = trim($data[$field]);
+            }
+        }
+
+        if (!empty($data['phone']) && is_string($data['phone'])) {
+            $data['phone'] = preg_replace('/\s+/', '', $data['phone']);
+        }
+    }
+
     public function validationDefault(Validator $validator): Validator
     {
         $validator
@@ -69,36 +91,43 @@ class UsersTable extends Table
             ->maxLength('username', 51)
             ->requirePresence('username', 'create')
             ->notEmptyString('username')
+            ->add('username', 'validFormat', ['rule' => ['custom', '/^[A-Za-z0-9_.-]+$/'], 'message' => 'Username can only contain letters, numbers, dots, underscores, and hyphens.',])
             ->add('username', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
             ->scalar('password')
             ->maxLength('password', 255)
             ->requirePresence('password', 'create')
-            ->notEmptyString('password');
+            ->notEmptyString('password')
+            ->minLength('password', 8, 'Password must be at least 8 characters long.');
 
         $validator
             ->scalar('first_name')
             ->maxLength('first_name', 100)
             ->requirePresence('first_name', 'create')
-            ->notEmptyString('first_name');
+            ->notEmptyString('first_name')
+            ->add('first_name', 'validFormat', ['rule' => ['custom', '/^[A-Za-z- ]+$/'], 'message' => 'First name can only contain letters and hyphens.',]);
 
         $validator
             ->scalar('last_name')
             ->maxLength('last_name', 100)
             ->requirePresence('last_name', 'create')
-            ->notEmptyString('last_name');
+            ->notEmptyString('last_name')
+            ->add('last_name', 'validFormat', ['rule' => ['custom', '/^[A-Za-z- ]+$/'], 'message' => 'Last name can only contain letters and hyphens.',]);
 
         $validator
-            ->email('email')
+            ->email('email', false, 'Please enter a valid email address.')
             ->requirePresence('email', 'create')
             ->notEmptyString('email')
+            ->maxLength('email', 255)
+            ->add('address', 'minLength', ['rule' => ['minLength', 5], 'message' => 'Address must be at least 5 characters long.',])
             ->add('email', 'unique', ['rule' => 'validateUnique', 'provider' => 'table']);
 
         $validator
             ->scalar('phone')
             ->maxLength('phone', 20)
-            ->allowEmptyString('phone');
+            ->notEmptyString('phone', 'Phone number is required.')
+            ->add('phone', 'validFormat', ['rule' => ['custom', '/^[0-9 ]+$/'], 'message' => 'Phone number can only contain numbers and spaces.',]);
 
         $validator
             ->scalar('address')
@@ -106,7 +135,25 @@ class UsersTable extends Table
 
         $validator
             ->date('date_of_birth')
-            ->allowEmptyDate('date_of_birth');
+            ->allowEmptyDate('date_of_birth')
+            ->add('date_of_birth', 'notFuture', [
+                'rule' => function ($value) {
+                    if (empty($value)) {
+                        return true;
+                    }
+
+                    try {
+                        $date = $value instanceof \Cake\I18n\Date
+                            ? $value
+                            : new \Cake\I18n\Date($value);
+
+                        return $date <= new \Cake\I18n\Date();
+                    } catch (\Exception $e) {
+                        return false;
+                    }
+                },
+                'message' => 'Invalid date of birth.',
+            ]);
 
         $validator
             ->scalar('type')

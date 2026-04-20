@@ -1,18 +1,9 @@
 <?php
 /**
- * src/templates/layout/admin.php
+ * src/templates/layout/app.php
  *
- * Wraps all Admin-prefixed pages.
- * - Bootstrap + shared admin CSS always loaded
- * - DataTables CSS/JS only injected when a page defines the 'datatables' block
+ * Wraps all app system pages.
  *
- * To use DataTables on an admin page, define this block in the template:
- *
- *   <?php $this->start('datatables'); ?>
- *       <?= $this->Html->css('datatable') ?>
- *       <?= $this->Html->script('datatable-init') ?>
- *       // Any page-specific DataTables init JS goes here too
- *   <?php $this->end(); ?>
  */
 ?>
 <!DOCTYPE html>
@@ -23,7 +14,7 @@
     <!-- Should create .ico files of different sizes -->
     <link rel="icon" type="image/x-icon" href="/img/logo.png">
 
-    <title><?= $this->fetch('title') ?> - RespiraCare Admin</title>
+    <title><?= $this->fetch('title') ?> - RespiraCare</title>
 
     <?= $this->fetch('meta') ?>
 
@@ -33,12 +24,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Actor&family=Agbalumo&display=swap" rel="stylesheet">
 
-    <!-- Shared CSS: Bootstrap + icons + global site styles + admin styles -->
+    <!-- Shared CSS: Bootstrap + icons + global site styles + app styles -->
     <?= $this->Html->css([
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
         'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css',
         'styles',
-        'admin',      // webroot/css/admin.css — shared admin tokens, cards, badges
+        'app',
+        'topbar',
+        'sidebar'
     ]) ?>
 
     <!-- DataTables CSS -->
@@ -51,11 +44,13 @@
 
 <?= $this->element('header') ?>
 
-<div class="d-flex flex-grow-1">
+<div class="app-shell d-flex-grow-1">
 
-<!--    --><?php //= $this->element('sidebar') ?>
+    <aside id="sidebar" class="flex-shrink-0">
+        <?= $this->element('sidebar') ?>
+    </aside>
 
-    <main class="flex-grow-1 p-4">
+    <main id="main-content" class="flex-grow-1 p-4 min-w-0">
         <div class="container-fluid px-3 px-md-4 px-xl-5">
             <?= $this->Flash->render() ?>
             <?= $this->fetch('content') ?>

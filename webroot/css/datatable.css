@@ -3,7 +3,7 @@
  *
  * DataTables visual overrides to match the admin design system.
  * Loaded ONLY on pages that define the 'datatables_css' block.
- * Depends on admin.css being loaded first (uses its CSS variables).
+ * Depends on app.css being loaded first (uses its CSS variables).
  */
 
 /* ========================================================================
@@ -114,6 +114,10 @@ table.dataTable tbody tr:last-child td {
 .filter-btn.archived.active {
     background: var(--c-arch);
     border-color: var(--c-arch);
+}
+
+.dt-hidden {
+    visibility: hidden;
 }
 
 /* ========================================================================
