@@ -197,7 +197,7 @@ body {
 .desktop-table-wrap { display: block; }
 .mobile-cards-wrap  { display: none; }
 
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
     .desktop-table-wrap { display: none; }
     .mobile-cards-wrap  { display: block; padding: .75rem; }
 
