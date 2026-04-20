@@ -64,12 +64,14 @@ class VitalDataTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->nonNegativeInteger('patient_id')
-            ->notEmptyString('patient_id');
+            ->nonNegativeInteger('patient_id', 'Please select a patient.')
+            ->notEmptyString('patient_id', 'Please select a patient.');
 
         $validator
-            ->decimal('oxygen_saturation')
-            ->allowEmptyString('oxygen_saturation');
+            ->decimal('oxygen_saturation', 2, 'Oxygen saturation must be a number.')
+            ->greaterThanOrEqual('oxygen_saturation', 50, 'Oxygen saturation must be at least 50.')
+            ->lessThanOrEqual('oxygen_saturation', 100, 'Oxygen saturation cannot be more than 100.')
+            ->notEmptyString('oxygen_saturation', 'Please enter oxygen saturation.');
 
         $validator
             ->allowEmptyString('respiratory_rate');
