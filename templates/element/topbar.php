@@ -3,7 +3,7 @@
 use App\Policy\UserAccess;
 
 ?>
-    <nav id="topbar" class="navbar navbar-expand-lg navbar-light bg-white py-3 shadow-sm w-100">
+    <nav id="topbar" class="navbar navbar-expand-md navbar-light bg-white py-3 shadow-sm w-100">
     <div class="container-fluid px-4">
         <?= $this->Html->link(
             '<img src="/img/logo.png" alt="RespiraCare Logo" style="height:50px; width:auto;" class="align-middle me-2">' .
