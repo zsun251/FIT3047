@@ -106,14 +106,14 @@ class UsersTable extends Table
             ->maxLength('first_name', 100)
             ->requirePresence('first_name', 'create')
             ->notEmptyString('first_name')
-            ->add('first_name', 'validFormat', ['rule' => ['custom', '/^[A-Za-z-]+$/'], 'message' => 'First name can only contain letters and hyphens.',]);
+            ->add('first_name', 'validFormat', ['rule' => ['custom', '/^[A-Za-z- ]+$/'], 'message' => 'First name can only contain letters and hyphens.',]);
 
         $validator
             ->scalar('last_name')
             ->maxLength('last_name', 100)
             ->requirePresence('last_name', 'create')
             ->notEmptyString('last_name')
-            ->add('last_name', 'validFormat', ['rule' => ['custom', '/^[A-Za-z-]+$/'], 'message' => 'Last name can only contain letters and hyphens.',]);
+            ->add('last_name', 'validFormat', ['rule' => ['custom', '/^[A-Za-z- ]+$/'], 'message' => 'Last name can only contain letters and hyphens.',]);
 
         $validator
             ->email('email', false, 'Please enter a valid email address.')
