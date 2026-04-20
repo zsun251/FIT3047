@@ -71,8 +71,10 @@ class DashboardController extends AppController
         // Load the currently logged-in user and linked patient record
         $identity = $this->Authentication->getIdentity();
 
-        $currentUser = $this->fetchTable('Users')->get($identity->getIdentifier(), ['contain' => ['Patients'],]);
-
+        $currentUser = $this->fetchTable('Users')->get(
+            $identity->getIdentifier(),
+            contain: ['Patients'],
+        );
 
         // Resolve the patient ID for patient-specific dashboard data
         $patient = $currentUser->patients[0] ?? null;

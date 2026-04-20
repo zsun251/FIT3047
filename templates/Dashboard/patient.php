@@ -20,7 +20,7 @@ $displayName = trim(($currentUser->first_name ?? '') . ' ' . ($currentUser->last
 <!-- Header -->
 <div class="dash-header d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
     <h1 class="dash-title mb-0">
-        Welcome, <em><?= h($displayName !== '' ? $displayName : $currentUser->username) ?></em> Patient
+        Welcome, <em><?= h($displayName !== '' ? $displayName : $currentUser->username) ?></em>
     </h1>
 
     <!-- Quick Actions -->

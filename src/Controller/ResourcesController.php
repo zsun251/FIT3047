@@ -151,7 +151,7 @@ class ResourcesController extends AppController
         // Base query for published resources
         $query = $this->Resources->find()
             ->contain(['Clinicians' => ['Users']]) // Include author info
-            ->order(['Resources.published_at' => 'DESC']);
+            ->orderBy(['Resources.published_at' => 'DESC']);
         // If user is staff, they can see drafts too (optional)
         if ($identity && UserAccess::isStaff($identity)) {
             // Staff sees all resources
