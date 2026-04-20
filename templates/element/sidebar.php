@@ -62,7 +62,7 @@
             <!-- Patient Health Links -->
             <div class="sidebar-section-title">Health Information</div>
 
-            <?= $this->Html->link('Health Data', ['controller' => 'VitalData', 'action' => 'add'], ['class' => $linkClass('VitalData', 'add')]) ?>
+            <?= $this->Html->link('Historical Health Data', ['controller' => 'VitalData', 'action' => 'index'], ['class' => $linkClass('VitalData', 'index')]) ?>
             <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'], ['class' => $linkClass('Appointments')]) ?>
             <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'browse'], ['class' => $linkClass('Resources', 'browse')]) ?>
 
