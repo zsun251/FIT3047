@@ -141,4 +141,8 @@ class CliniciansController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+
+    // bella 4.2.1
+
+    // end of
 }
