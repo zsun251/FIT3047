@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Policy\UserAccess;
+
 /**
  * VitalData Controller
  *
@@ -138,5 +140,29 @@ class VitalDataController extends AppController
             $this->Flash->error(__('The vital data could not be deleted. Please, try again.'));
         }
         return $this->redirect(['action' => 'index']);
+    }
+
+
+    public function patientHistory($patientId = null)
+    {
+        $this->Authorization->skipAuthorization();
+        // 1. get logged-in clinician
+        $clinicianId = $this->request->getAttribute('identity')->get('id');
+
+        // 2. check patient belongs to this clinician (security gate)
+
+        $identity = $this->Authentication->getIdentity();
+        $patient = UserAccess::getPatientId($identity);
+
+
+        if (!$patient) {
+            throw new \Cake\Http\Exception\ForbiddenException('Not allowed');
+        }
+        $query = $this->VitalData->find()
+            ->contain(['Patients']);
+        // Apply scope using the action name
+        $query = $this->Authorization->applyScope($query, 'index');
+        $vitalHistory = $this->paginate($query);
+        $this->set(compact('patient', 'vitalHistory'));
     }
 }
