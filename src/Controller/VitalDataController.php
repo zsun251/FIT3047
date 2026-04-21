@@ -35,7 +35,7 @@ class VitalDataController extends AppController
         }
 
         $query = $this->VitalData->find()
-            ->contain(['Patients']);
+            ->contain(['Patients', 'Symptoms']);
         // Apply scope using the action name
         $query = $this->Authorization->applyScope($query, 'index');
         $vitalData = $this->paginate($query);
@@ -85,7 +85,6 @@ class VitalDataController extends AppController
                 $data['patient_id'] = $patientId;
             }
 
-            $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $data);
             $selectedSymptoms = $data['selected_symptoms'] ?? [];
             $symptomSeverities = $data['symptom_severity'] ?? [];
 
@@ -100,6 +99,29 @@ class VitalDataController extends AppController
                     }
                 }
             }
+
+            $associatedSymptoms = [];
+
+            foreach ($selectedSymptoms as $symptomId => $selected) {
+                if ($selected) {
+                    $severity = $symptomSeverities[$symptomId] ?? null;
+
+                    if ($severity) {
+                        $associatedSymptoms[] = [
+                            'id' => $symptomId,
+                            '_joinData' => ['severity' => $severity]
+                        ];
+                    }
+                }
+            }
+
+            $data['symptoms'] = $associatedSymptoms;
+
+            $vitalDataEntity = $this->VitalData->patchEntity(
+                $vitalDataEntity,
+                $data,
+                ['associated' => ['Symptoms._joinData']]
+            );
 
             if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));

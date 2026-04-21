@@ -15,7 +15,7 @@
                     <th><?= $this->Paginator->sort('patient_id') ?></th>
                     <th><?= $this->Paginator->sort('oxygen_saturation') ?></th>
                     <th><?= $this->Paginator->sort('respiratory_rate') ?></th>
-                    <th><?= $this->Paginator->sort('lung_function') ?></th>
+                    <th><?= $this->Html->link(__('Symptoms'), ['action' => 'index']) ?></th>
                     <th><?= $this->Paginator->sort('blood_pressure') ?></th>
                     <th><?= $this->Paginator->sort('pulse_oximetry') ?></th>
                     <th><?= $this->Paginator->sort('weight') ?></th>
@@ -30,7 +30,20 @@
                     <td><?= $vitalDataEntity->hasValue('patient') ? $this->Html->link($vitalDataEntity->patient->id, ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id]) : '' ?></td>
                     <td><?= $vitalDataEntity->oxygen_saturation === null ? '' : $this->Number->format($vitalDataEntity->oxygen_saturation) ?></td>
                     <td><?= $vitalDataEntity->respiratory_rate === null ? '' : $this->Number->format($vitalDataEntity->respiratory_rate) ?></td>
-                    <td><?= $vitalDataEntity->lung_function === null ? '' : $this->Number->format($vitalDataEntity->lung_function) ?></td>
+                    <td>
+                        <?php if (!empty($vitalDataEntity->symptoms)): ?>
+                            <?php foreach ($vitalDataEntity->symptoms as $symptom): ?>
+                                <div>
+                                    <?= h($symptom->symptom_name) ?>
+                                    <?php if (!empty($symptom->_joinData->severity)): ?>
+                                        (<?= h(ucfirst($symptom->_joinData->severity)) ?>)
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <span class="text-muted">None</span>
+                        <?php endif; ?>
+                    </td>
                     <td><?= h($vitalDataEntity->blood_pressure) ?></td>
                     <td><?= $vitalDataEntity->pulse_oximetry === null ? '' : $this->Number->format($vitalDataEntity->pulse_oximetry) ?></td>
                     <td><?= $vitalDataEntity->weight === null ? '' : $this->Number->format($vitalDataEntity->weight) ?></td>
