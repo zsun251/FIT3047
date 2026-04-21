@@ -145,7 +145,12 @@ class VitalDataController extends AppController
 
     public function patientHistory($patientId = null)
     {
-        $this->Authorization->skipAuthorization();
+        $vitalDataEntity = $this->VitalData->newEmptyEntity();
+        if (!$this->Authorization->can($vitalDataEntity, 'viewHistory')) {
+            $this->Flash->error(__('You do not have permission to access this page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         // 1. get logged-in clinician
         $clinicianId = $this->request->getAttribute('identity')->get('id');
 
@@ -155,13 +160,16 @@ class VitalDataController extends AppController
         $patient = UserAccess::getPatientId($identity);
 
 
+        // TODO this is hacky and will need to be fixed, as it patient is null
+        // It should be setup in a way like view, where the patient data is supplied
+        // (Mark will do it at a later date)
         if (!$patient) {
-            throw new \Cake\Http\Exception\ForbiddenException('Not allowed');
+                $this->Flash->error(__('This page is only accessible to patients.'));
+                return $this->redirect($this->getRedirectUrl());
         }
+
         $query = $this->VitalData->find()
             ->contain(['Patients']);
-        // Apply scope using the action name
-        $query = $this->Authorization->applyScope($query, 'index');
         $vitalHistory = $this->paginate($query);
         $this->set(compact('patient', 'vitalHistory'));
     }
