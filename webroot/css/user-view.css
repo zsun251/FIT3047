@@ -1,0 +1,83 @@
+/* ============================================================================
+   USER VIEW PAGE STYLES
+   User-specific view page customizations
+   ========================================================================== */
+
+/* User type specific border colors */
+.detail-item.user-admin {
+    border-left-color: #dc3545;
+}
+
+.detail-item.user-clinician {
+    border-left-color: #0d6efd;
+}
+
+.detail-item.user-patient {
+    border-left-color: #198754;
+}
+
+/* User header with avatar placeholder */
+.user-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+.user-info h1 {
+    margin-bottom: 0.25rem;
+}
+
+.user-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.user-meta-item {
+    font-size: 0.875rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Related section badges */
+.related-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #e7f1ff;
+    color: #0d6efd;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+@media (max-width: 767.98px) {
+    .user-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .user-meta {
+        justify-content: center;
+    }
+}

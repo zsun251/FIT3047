@@ -2,155 +2,223 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\User $user
+ * @var int|null $adminId
+ * @var int|null $clinicianId
+ * @var int|null $patientId
  */
+$this->assign('title', 'User Details');
+
+// CSS
+echo $this->Html->css('view-shared', ['block' => true]);
+echo $this->Html->css('user-view', ['block' => true]);
+
+// Get user initials for avatar
+$initials = strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1));
+
+// Type badge class
+$typeBadgeClass = 'badge-' . strtolower($user->type);
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit User'), ['action' => 'edit', $user->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete User'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Users'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New User'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+
+<!-- Back Link -->
+<?= $this->Html->link(
+    '<i class="bi bi-arrow-left"></i> Back to Users',
+    ['action' => 'index'],
+    ['class' => 'back-link', 'escape' => false]
+) ?>
+
+<div class="view-container">
+    <!-- Header -->
+    <div class="view-header">
+        <div class="user-header">
+            <div class="user-avatar"><?= $initials ?></div>
+            <div class="user-info">
+                <h1><?= h($user->first_name . ' ' . $user->last_name) ?></h1>
+                <div class="user-meta">
+                    <span class="user-meta-item">
+                        <i class="bi bi-at"></i> <?= h($user->username) ?>
+                    </span>
+                    <span class="<?= $typeBadgeClass ?>"><?= h(ucfirst($user->type)) ?></span>
+                    <span class="user-meta-item">
+                        <i class="bi bi-hash"></i> ID: <?= $this->Number->format($user->id) ?>
+                    </span>
+                </div>
+            </div>
         </div>
-    </aside>
-    <div class="column column-80">
-        <div class="users view content">
-            <h3><?= h($user->username) ?></h3>
-            <table>
-                <tr>
-                    <th><?= __('Username') ?></th>
-                    <td><?= h($user->username) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('First Name') ?></th>
-                    <td><?= h($user->first_name) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Last Name') ?></th>
-                    <td><?= h($user->last_name) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Email') ?></th>
-                    <td><?= h($user->email) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Phone') ?></th>
-                    <td><?= h($user->phone) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Type') ?></th>
-                    <td><?= h($user->type) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($user->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Date Of Birth') ?></th>
-                    <td><?= h($user->date_of_birth) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Created At') ?></th>
-                    <td><?= h($user->created_at) ?></td>
-                </tr>
-            </table>
-            <div class="text">
-                <strong><?= __('Address') ?></strong>
-                <blockquote>
-                    <?= $this->Text->autoParagraph(h($user->address)); ?>
-                </blockquote>
+
+        <div class="view-actions">
+            <?= $this->Html->link(
+                '<i class="bi bi-pencil"></i> Edit',
+                ['action' => 'edit', $user->id],
+                ['class' => 'btn btn-primary', 'escape' => false]
+            ) ?>
+            <?= $this->Form->postLink(
+                '<i class="bi bi-trash"></i> Delete',
+                ['action' => 'delete', $user->id],
+                [
+                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
+                    'class' => 'btn btn-outline-danger',
+                    'escape' => false
+                ]
+            ) ?>
+        </div>
+    </div>
+
+    <!-- Account Information -->
+    <h2 class="section-title mb-3">
+        <i class="bi bi-person-badge"></i> Account Information
+    </h2>
+    <div class="detail-grid">
+        <div class="detail-item <?= 'user-' . strtolower($user->type) ?>">
+            <div class="detail-label">
+                <i class="bi bi-calendar-plus"></i> Created
             </div>
-            <div class="related">
-                <h4><?= __('Related Admins') ?></h4>
-                <?php if (!empty($user->admins)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($user->admins as $admin) : ?>
-                        <tr>
-                            <td><?= h($admin->id) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Admins', 'action' => 'view', $admin->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Admins', 'action' => 'edit', $admin->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'Admins', 'action' => 'delete', $admin->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $admin->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
+            <div class="detail-value">
+                <?= h($user->created_at->format('M d, Y')) ?>
+                <small class="text-muted d-block"><?= h($user->created_at->diffForHumans()) ?></small>
             </div>
-            <div class="related">
-                <h4><?= __('Related Clinicians') ?></h4>
-                <?php if (!empty($user->clinicians)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($user->clinicians as $clinician) : ?>
-                        <tr>
-                            <td><?= h($clinician->id) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Clinicians', 'action' => 'view', $clinician->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Clinicians', 'action' => 'edit', $clinician->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'Clinicians', 'action' => 'delete', $clinician->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $clinician->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
+        </div>
+
+        <div class="detail-item <?= 'user-' . strtolower($user->type) ?>">
+            <div class="detail-label">
+                <i class="bi bi-person-badge"></i> Account Type
             </div>
-            <div class="related">
-                <h4><?= __('Related Patients') ?></h4>
-                <?php if (!empty($user->patients)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($user->patients as $patient) : ?>
-                        <tr>
-                            <td><?= h($patient->id) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Patients', 'action' => 'view', $patient->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Patients', 'action' => 'edit', $patient->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'Patients', 'action' => 'delete', $patient->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $patient->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
+            <div class="detail-value">
+                <span class="<?= $typeBadgeClass ?>"><?= h(ucfirst($user->type)) ?></span>
             </div>
         </div>
     </div>
+
+    <!-- Contact Information -->
+    <h2 class="section-title mb-3 mt-4">
+        <i class="bi bi-envelope"></i> Contact Information
+    </h2>
+    <div class="detail-grid">
+        <div class="detail-item <?= 'user-' . strtolower($user->type) ?>">
+            <div class="detail-label">
+                <i class="bi bi-envelope"></i> Email
+            </div>
+            <div class="detail-value">
+                <a href="mailto:<?= h($user->email) ?>" class="email-link">
+                    <?= h($user->email) ?>
+                </a>
+            </div>
+        </div>
+
+        <div class="detail-item <?= 'user-' . strtolower($user->type) ?>">
+            <div class="detail-label">
+                <i class="bi bi-telephone"></i> Phone
+            </div>
+            <div class="detail-value <?= $user->phone ? '' : 'text-muted' ?>">
+                <?= $user->phone ? h($user->phone) : 'Not provided' ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Information -->
+    <h2 class="section-title mb-3 mt-4">
+        <i class="bi bi-person"></i> Personal Information
+    </h2>
+    <div class="detail-grid">
+        <div class="detail-item <?= 'user-' . strtolower($user->type) ?>">
+            <div class="detail-label">
+                <i class="bi bi-cake"></i> Date of Birth
+            </div>
+            <div class="detail-value <?= $user->date_of_birth ? '' : 'text-muted' ?>">
+                <?= $user->date_of_birth ? h($user->date_of_birth->format('M d, Y')) : 'Not provided' ?>
+            </div>
+        </div>
+
+        <div class="detail-item <?= 'user-' . strtolower($user->type) ?>">
+            <div class="detail-label">
+                <i class="bi bi-geo-alt"></i> Address
+            </div>
+            <div class="detail-value <?= $user->address ? '' : 'text-muted' ?>">
+                <?= $user->address ? h($user->address) : 'Not provided' ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Admin -->
+    <?php if ($user->type === 'admin' && $adminId): ?>
+        <div class="related-section">
+            <h2>
+                <i class="bi bi-shield-check"></i> Admin Profile
+            </h2>
+            <div class="related-items">
+                <div class="related-item">
+                    <div class="related-item-info">
+                        <div>
+                            <div class="related-item-title">System Administrator</div>
+                            <div class="related-item-subtitle">
+                                Full system access and user management permissions
+                            </div>
+                        </div>
+                    </div>
+                    <div class="related-item-actions">
+                        <?= $this->Html->link(
+                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
+                            ['controller' => 'Admins', 'action' => 'view', $adminId],
+                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                        ) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Related Clinician -->
+    <?php if ($user->type === 'clinician' && $clinicianId): ?>
+        <div class="related-section">
+            <h2>
+                <i class="bi bi-clipboard2-pulse"></i> Clinician Profile
+            </h2>
+            <div class="related-items">
+                <div class="related-item">
+                    <div class="related-item-info">
+                        <div>
+                            <div class="related-item-title">Medical Professional</div>
+                            <div class="related-item-subtitle">
+                                Authorized to manage patients, appointments, and medical resources
+                            </div>
+                        </div>
+                    </div>
+                    <div class="related-item-actions">
+                        <?= $this->Html->link(
+                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
+                            ['controller' => 'Clinicians', 'action' => 'view', $clinicianId],
+                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                        ) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Related Patient -->
+    <?php if ($user->type === 'patient' && $patientId): ?>
+        <div class="related-section">
+            <h2>
+                <i class="bi bi-person-heart"></i> Patient Profile
+            </h2>
+            <div class="related-items">
+                <div class="related-item">
+                    <div class="related-item-info">
+                        <div>
+                            <div class="related-item-title">Patient Record</div>
+                            <div class="related-item-subtitle">
+                                Access medical history, vital signs, and appointment records
+                            </div>
+                        </div>
+                    </div>
+                    <div class="related-item-actions">
+                        <?= $this->Html->link(
+                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
+                            ['controller' => 'Patients', 'action' => 'view', $patientId],
+                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                        ) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
