@@ -61,7 +61,15 @@ class VitalDataPolicy
      */
     public function canIndex(IdentityInterface $user): bool
     {
-        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
+        return UserAccess::isStaff($user);
+    }
+
+    /**
+     * Can view vital data history
+     */
+    public function canViewHistory(IdentityInterface $user, VitalData $resource): bool
+    {
+        return $this->hasVitalDataAccess($user, $resource);
     }
 
     /**

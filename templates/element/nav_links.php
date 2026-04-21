@@ -143,8 +143,8 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
                 ['class' => $linkClass . ($currentController === 'Appointments' ? ' active' : '')]) ?>
         </li>
         <li class="<?= $itemClass ?>">
-            <?= $this->Html->link('Health Data', ['controller' => 'VitalData', 'action' => 'index'],
-                ['class' => $linkClass . ($currentController === 'VitalData' ? ' active' : '')]) ?>
+            <?= $this->Html->link('Health Records', ['controller' => 'VitalData', 'action' => 'patient-history'],
+                ['class' => $linkClass . ($currentController === 'VitalData' && $currentAction === 'patientHistory' ? ' active' : '')]) ?>
         </li>
         <li class="<?= $itemClass ?>">
             <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'browse'],
