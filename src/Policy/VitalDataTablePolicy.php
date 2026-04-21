@@ -49,4 +49,35 @@ class VitalDataTablePolicy
         // No access - return empty result
         return $query->where(['1 = 0']);
     }
+
+    /**
+     * Scope the patient history query to show only records the user can access
+     *
+     * Filtering rules:
+     * - Admins: See all patient history records
+     * - Clinicians: See all patient history records
+     * - Patients: See only their own history records
+     *
+     * @param IdentityInterface $user The user making the request
+     * @param Query $query The base query to filter
+     * @return Query The filtered query
+     */
+    public function scopePatientHistory(IdentityInterface $user, Query $query)
+    {
+        // Staff see all patient history records
+        if (UserAccess::isStaff($user)) {
+            return $query;
+        }
+
+        // Patients see only their own history records
+        if (UserAccess::isPatient($user)) {
+            $patientId = UserAccess::getPatientId($user);
+            if ($patientId !== null) {
+                return $query->where(['VitalData.patient_id' => $patientId]);
+            }
+        }
+
+        // No access - return empty result
+        return $query->where(['1 = 0']);
+    }
 }

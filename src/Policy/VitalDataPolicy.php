@@ -17,10 +17,12 @@ use Authorization\IdentityInterface;
  * - Who can add new vital data records
  * - Who can edit existing vital data records
  * - Who can delete vital data records
+ * - Who can access the patient history page
  *
  * Access rules:
  * - Staff can view/manage all vital data
  * - Patients can view and add their own vital data
+ * - Patients can access their own vital data history page
  */
 class VitalDataPolicy
 {
@@ -65,11 +67,15 @@ class VitalDataPolicy
     }
 
     /**
-     * Can view vital data history
+     * Access the patient history page
+     *
+     * This is a page-level permission check, so it should allow
+     * authenticated users who are permitted to open the history page.
+     * The actual records shown on that page are filtered in the table policy.
      */
     public function canViewHistory(IdentityInterface $user, VitalData $resource): bool
     {
-        return $this->hasVitalDataAccess($user, $resource);
+        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
     }
 
     /**
