@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Policy\UserAccess;
+
 /**
  * Appointments Controller
  *
@@ -20,28 +22,48 @@ class AppointmentsController extends AppController
     /**
      * Index method
      *
+     * Patients use a dedicated template.
+     * Staff continue to use the main index template.
+     *
      * @return \Cake\Http\Response|null|void Renders view
      */
     public function index()
     {
-        // Create an Appointment entity (not Appointments)
+        $identity = $this->request->getAttribute('identity');
         $appointment = $this->Appointments->newEmptyEntity();
 
-        // Check authorization
         if (!$this->Authorization->can($appointment, 'index')) {
             $this->Flash->error(__('You do not have permission to access that page.'));
             return $this->redirect($this->getRedirectUrl());
         }
 
-        // Apply scope
         $query = $this->Appointments->find()
-            ->contain(['Patients', 'Clinicians']);
+            ->contain([
+                'Patients.Users',
+                'Clinicians.Users',
+            ]);
 
         $query = $this->Authorization->applyScope($query, 'index');
+
+        if ($identity && UserAccess::isPatient($identity)) {
+            $query = $query->orderBy([
+                'Appointments.scheduled_at' => 'ASC',
+                'Appointments.id' => 'ASC',
+            ]);
+        } else {
+            $query = $query->orderBy([
+                'Appointments.scheduled_at' => 'DESC',
+                'Appointments.id' => 'DESC',
+            ]);
+        }
 
         $appointments = $this->paginate($query);
 
         $this->set(compact('appointments'));
+
+        if ($identity && UserAccess::isPatient($identity)) {
+            return $this->render('upcoming_appointments');
+        }
     }
 
     /**
@@ -53,11 +75,11 @@ class AppointmentsController extends AppController
      */
     public function view($id = null)
     {
-        // TODO Removed AppointmentReminders as it does not yet exist
-        // $appointment = $this->Appointments->get($id, contain: ['Patients', 'Clinicians', 'AppointmentReminders']);
-        $appointment = $this->Appointments->get($id, contain: ['Patients', 'Clinicians']);
+        $appointment = $this->Appointments->get($id, contain: [
+            'Patients.Users',
+            'Clinicians.Users',
+        ]);
 
-        // Check authorization
         if (!$this->Authorization->can($appointment, 'view')) {
             $this->Flash->error(__('You do not have permission to view this appointment.'));
             return $this->redirect($this->getRedirectUrl());
@@ -75,7 +97,6 @@ class AppointmentsController extends AppController
     {
         $appointment = $this->Appointments->newEmptyEntity();
 
-        // Check authorization
         if (!$this->Authorization->can($appointment, 'add')) {
             $this->Flash->error(__('You do not have permission to add appointments.'));
             return $this->redirect($this->getRedirectUrl());
@@ -106,7 +127,6 @@ class AppointmentsController extends AppController
     {
         $appointment = $this->Appointments->get($id, contain: []);
 
-        // Check authorization
         if (!$this->Authorization->can($appointment, 'edit')) {
             $this->Flash->error(__('You do not have permission to edit this appointment.'));
             return $this->redirect($this->getRedirectUrl());
@@ -138,7 +158,6 @@ class AppointmentsController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $appointment = $this->Appointments->get($id);
 
-        // Check authorization
         if (!$this->Authorization->can($appointment, 'delete')) {
             $this->Flash->error(__('You do not have permission to delete this appointment.'));
             return $this->redirect($this->getRedirectUrl());
