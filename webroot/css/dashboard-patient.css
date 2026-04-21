@@ -1,0 +1,150 @@
+/* ==========================================================================
+   PATIENT DASHBOARD
+   Uses shared form shell from form-shared.css
+   ========================================================================== */
+
+.patient-dashboard {
+    padding: 2rem;
+}
+
+.patient-dashboard-header {
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.patient-dashboard-heading h1 {
+    margin: 0;
+}
+
+.patient-dashboard-name {
+    color: #2563eb;
+    font-style: italic;
+    font-weight: 500;
+}
+
+.patient-dashboard-subtitle {
+    margin-top: 0.5rem;
+}
+
+.patient-dashboard-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.patient-dashboard-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 165px;
+    justify-content: center;
+    border-radius: 0.65rem;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+}
+
+.patient-dashboard-section {
+    margin-bottom: 1.5rem;
+}
+
+.patient-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.patient-summary-item,
+.patient-preview-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    padding: 1rem 1.1rem;
+}
+
+.patient-summary-item-full {
+    grid-column: 1 / -1;
+}
+
+.patient-summary-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--c-muted);
+    margin-bottom: 0.45rem;
+}
+
+.patient-summary-value {
+    color: var(--c-ink);
+    font-size: 0.98rem;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.patient-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.patient-preview-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--c-ink);
+    line-height: 1.4;
+}
+
+.patient-preview-meta {
+    margin-top: 0.4rem;
+    color: var(--c-muted);
+    font-size: 0.88rem;
+}
+
+.patient-preview-text {
+    margin-top: 0.85rem;
+    font-size: 0.93rem;
+    color: #495057;
+    line-height: 1.6;
+}
+
+.patient-preview-actions {
+    margin-top: 1rem;
+}
+
+.patient-empty-state {
+    color: var(--c-muted);
+    font-size: 0.95rem;
+    padding: 0.5rem 0;
+}
+
+@media (max-width: 991.98px) {
+    .patient-dashboard-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .patient-dashboard-actions {
+        justify-content: flex-start;
+    }
+
+    .patient-dashboard-grid,
+    .patient-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-summary-item-full {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .patient-dashboard {
+        padding: 1.5rem;
+    }
+
+    .patient-dashboard-actions .btn {
+        width: 100%;
+        min-width: 0;
+    }
+}
