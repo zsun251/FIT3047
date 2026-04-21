@@ -4,20 +4,28 @@
 -- DROP
 -- =============================================================================
 
+-- 1. Drop junction/linking tables and tables with most dependencies first
+DROP TABLE IF EXISTS vital_data_symptoms;
 DROP TABLE IF EXISTS contact_messages;
 DROP TABLE IF EXISTS resources;
-DROP TABLE IF EXISTS vital_data_symptoms;
-DROP TABLE IF EXISTS symptoms;
-DROP TABLE IF EXISTS vital_data;
+DROP TABLE IF EXISTS appointments_reminders;
 DROP TABLE IF EXISTS vitals_reminders;
-DROP TABLE IF EXISTS appointment_reminders;
+
+-- 2. Drop tables that depend on patients/clinicians/appointments
+DROP TABLE IF EXISTS vital_data;
 DROP TABLE IF EXISTS appointments;
-DROP TABLE IF EXISTS admins;
-DROP TABLE IF EXISTS clinician_patients;
-DROP TABLE IF EXISTS patients;
-DROP TABLE IF EXISTS clinicians;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS clinicians_patients;
+
+DROP TABLE IF EXISTS symptoms;
 DROP TABLE IF EXISTS reminders;
+
+-- 5. Drop type-specific tables (admins, clinicians, patients)
+DROP TABLE IF EXISTS admins;
+DROP TABLE IF EXISTS clinicians;
+DROP TABLE IF EXISTS patients;
+
+-- 6. Drop users last
+DROP TABLE IF EXISTS users;
 
 
 
@@ -52,6 +60,7 @@ CREATE TABLE admins (
    user_id     INT UNSIGNED    NOT NULL,
 
    PRIMARY KEY (id),
+   UNIQUE KEY uq_admins_user_id (user_id),
    KEY user_id (user_id),
 
    CONSTRAINT fk_admins_user
@@ -68,6 +77,7 @@ CREATE TABLE clinicians (
    user_id             INT UNSIGNED    NOT NULL,
 
    PRIMARY KEY (id),
+   UNIQUE KEY uq_clinicians_user_id (user_id),
    KEY user_id (user_id),
 
    CONSTRAINT fk_clinicians_user
@@ -83,6 +93,7 @@ CREATE TABLE patients (
      user_id     INT UNSIGNED    NOT NULL,
 
      PRIMARY KEY (id),
+     UNIQUE KEY uq_patients_user_id (user_id),
      KEY user_id (user_id),
 
      CONSTRAINT fk_patients_user
@@ -92,6 +103,159 @@ CREATE TABLE patients (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- =============================================================================
+-- DROP OLD TRIGGERS
+-- =============================================================================
+DROP TRIGGER IF EXISTS tr_users_after_insert;
+DROP TRIGGER IF EXISTS tr_users_after_update;
+DROP TRIGGER IF EXISTS tr_admins_before_delete;
+DROP TRIGGER IF EXISTS tr_clinicians_before_delete;
+DROP TRIGGER IF EXISTS tr_patients_before_delete;
+DROP TRIGGER IF EXISTS tr_admins_before_insert;
+DROP TRIGGER IF EXISTS tr_admins_before_update;
+DROP TRIGGER IF EXISTS tr_clinicians_before_insert;
+DROP TRIGGER IF EXISTS tr_clinicians_before_update;
+DROP TRIGGER IF EXISTS tr_patients_before_insert;
+DROP TRIGGER IF EXISTS tr_patients_before_update;
+
+-- =============================================================================
+-- TRIGGER SET - users, admins, patients and clinicians.
+-- THESE MAY NEED TO BE REVISED AS REQUIREMENTS CHANGE
+-- The associated tables may also need to be revised is requirements remain simple
+-- i.e no extra attributes specific to a patient, admin or clinician. However, this is unlikely. - Mark
+-- =============================================================================
+DELIMITER $$
+
+-- 1. Auto-create type record when user is created
+CREATE TRIGGER tr_users_after_insert
+    AFTER INSERT ON users
+    FOR EACH ROW
+BEGIN
+    CASE NEW.type
+        WHEN 'admin' THEN
+            INSERT INTO admins (user_id) VALUES (NEW.id);
+    WHEN 'clinician' THEN
+            INSERT INTO clinicians (user_id) VALUES (NEW.id);
+    WHEN 'patient' THEN
+            INSERT INTO patients (user_id) VALUES (NEW.id);
+END CASE;
+END$$
+
+-- 2. Handle type changes when user is updated
+CREATE TRIGGER tr_users_after_update
+    AFTER UPDATE ON users
+    FOR EACH ROW
+BEGIN
+    IF OLD.type != NEW.type THEN
+        -- Delete old type record
+        CASE OLD.type
+            WHEN 'admin' THEN
+    DELETE FROM admins WHERE user_id = OLD.id;
+    WHEN 'clinician' THEN
+    DELETE FROM clinicians WHERE user_id = OLD.id;
+    WHEN 'patient' THEN
+    DELETE FROM patients WHERE user_id = OLD.id;
+END CASE;
+
+-- Create new type record
+CASE NEW.type
+            WHEN 'admin' THEN
+                INSERT INTO admins (user_id) VALUES (NEW.id);
+WHEN 'clinician' THEN
+                INSERT INTO clinicians (user_id) VALUES (NEW.id);
+WHEN 'patient' THEN
+                INSERT INTO patients (user_id) VALUES (NEW.id);
+END CASE;
+END IF;
+END$$
+
+-- 3. Validate type match on admin insert
+CREATE TRIGGER tr_admins_before_insert
+    BEFORE INSERT ON admins
+    FOR EACH ROW
+BEGIN
+    DECLARE user_type VARCHAR(20);
+    SELECT type INTO user_type FROM users WHERE id = NEW.user_id;
+
+    IF user_type IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot create admin record: User does not exist';
+    ELSEIF user_type != 'admin' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot create admin record: User type is not admin';
+END IF;
+END$$
+
+-- 4. Validate type match on clinician insert
+CREATE TRIGGER tr_clinicians_before_insert
+    BEFORE INSERT ON clinicians
+    FOR EACH ROW
+BEGIN
+    DECLARE user_type VARCHAR(20);
+    SELECT type INTO user_type FROM users WHERE id = NEW.user_id;
+
+    IF user_type IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot create clinician record: User does not exist';
+    ELSEIF user_type != 'clinician' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot create clinician record: User type is not clinician';
+END IF;
+END$$
+
+-- 5. Validate type match on patient insert
+CREATE TRIGGER tr_patients_before_insert
+    BEFORE INSERT ON patients
+    FOR EACH ROW
+BEGIN
+    DECLARE user_type VARCHAR(20);
+    SELECT type INTO user_type FROM users WHERE id = NEW.user_id;
+
+    IF user_type IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot create patient record: User does not exist';
+    ELSEIF user_type != 'patient' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot create patient record: User type is not patient';
+END IF;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+-- Prevent updating user_id in type tables
+CREATE TRIGGER tr_admins_before_update
+    BEFORE UPDATE ON admins
+    FOR EACH ROW
+BEGIN
+    IF OLD.user_id != NEW.user_id THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot change user_id. Delete this record and create a new one instead.';
+END IF;
+END$$
+
+CREATE TRIGGER tr_clinicians_before_update
+    BEFORE UPDATE ON clinicians
+    FOR EACH ROW
+BEGIN
+    IF OLD.user_id != NEW.user_id THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot change user_id. Delete this record and create a new one instead.';
+END IF;
+END$$
+
+CREATE TRIGGER tr_patients_before_update
+    BEFORE UPDATE ON patients
+    FOR EACH ROW
+BEGIN
+    IF OLD.user_id != NEW.user_id THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot change user_id. Delete this record and create a new one instead.';
+END IF;
+END$$
+
+DELIMITER ;
 
 -- =============================================================================
 -- CLINICIAN PATIENT JOIN
