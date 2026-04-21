@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Policy\UserAccess;
+
 /**
  * VitalData Controller
  *
@@ -72,18 +74,57 @@ class VitalDataController extends AppController
             $this->Flash->error(__('You do not have permission to add vital data.'));
             return $this->redirect($this->getRedirectUrl());
         }
+        $identity = $this->Authentication->getIdentity();
+
+        $patientId = UserAccess::getPatientId($identity);
+        $isStaff = UserAccess::isStaff($identity);
 
         if ($this->request->is('post')) {
-            $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
-            if ($this->VitalData->save($vitalDataEntity)) {
+            $data = $this->request->getData();
+            if (!$isStaff) {
+                $data['patient_id'] = $patientId;
+            }
+
+            $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $data);
+            $selectedSymptoms = $data['selected_symptoms'] ?? [];
+            $symptomSeverities = $data['symptom_severity'] ?? [];
+
+            foreach ($selectedSymptoms as $symptomId => $selected) {
+                if ($selected) {
+                    $severity = $symptomSeverities[$symptomId] ?? '';
+
+                    if ($severity === '') {
+                        $vitalDataEntity->setError("symptom_severity.$symptomId", [
+                            'required' => 'Please select a severity for each selected symptom.'
+                        ]);
+                    }
+                }
+            }
+
+            if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
+            //dd($vitalDataEntity->getErrors());
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
         }
-        $patients = $this->VitalData->Patients->find('list', limit: 200)->all();
-        $symptoms = $this->VitalData->Symptoms->find('list', limit: 200)->all();
-        $this->set(compact('vitalDataEntity', 'patients', 'symptoms'));
+
+        $patients = [];
+        if ($isStaff) {
+            $patients = $this->VitalData->Patients->find('list', [
+                'keyField' => 'id',
+                'valueField' => 'id',
+                'limit' => 200
+            ])->all();
+        }
+
+        $symptoms = $this->VitalData->Symptoms->find('list', [
+            'keyField' => 'id',
+            'valueField' => 'symptom_name',
+            'limit' => 200
+        ])->toArray();
+
+        $this->set(compact('vitalDataEntity', 'patients', 'symptoms', 'patientId', 'isStaff'));
     }
     /**
      * Edit method
