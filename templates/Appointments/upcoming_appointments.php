@@ -38,7 +38,7 @@ $statusClass = function (?string $status): string {
     $value = strtolower(trim((string)$status));
 
     return match ($value) {
-        'scheduled' => 'appointment-status-scheduled',
+        'scheduled', 'upcoming' => 'appointment-status-scheduled',
         'confirmed' => 'appointment-status-confirmed',
         'completed' => 'appointment-status-completed',
         'cancelled', 'canceled' => 'appointment-status-cancelled',
@@ -148,6 +148,13 @@ foreach ($appointmentList as $appointment) {
                                 <div class="patient-appointment-time">
                                     <?= h($formatTime($appointment->scheduled_at ?? null)) ?>
                                 </div>
+
+                                <div class="patient-appointment-meta-row">
+                                    <span class="patient-appointment-meta-pill">
+                                        <i class="bi bi-hourglass-split"></i>
+                                        <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Duration not provided') ?>
+                                    </span>
+                                </div>
                             </div>
 
                             <span class="appointment-status <?= h($statusClass($appointment->status ?? null)) ?>">
@@ -155,7 +162,7 @@ foreach ($appointmentList as $appointment) {
                             </span>
                         </div>
 
-                        <div class="appointments-detail-grid patient-appointment-detail-grid">
+                        <div class="appointments-detail-grid patient-appointment-detail-grid patient-appointment-detail-grid-compact">
                             <div class="appointments-detail-item">
                                 <div class="appointments-detail-label"><?= __('Date & Time') ?></div>
                                 <div class="appointments-detail-value">
@@ -167,20 +174,6 @@ foreach ($appointmentList as $appointment) {
                                 <div class="appointments-detail-label"><?= __('Clinician') ?></div>
                                 <div class="appointments-detail-value">
                                     <?= h($getClinicianLabel($appointment)) ?>
-                                </div>
-                            </div>
-
-                            <div class="appointments-detail-item">
-                                <div class="appointments-detail-label"><?= __('Duration') ?></div>
-                                <div class="appointments-detail-value">
-                                    <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Not provided') ?>
-                                </div>
-                            </div>
-
-                            <div class="appointments-detail-item">
-                                <div class="appointments-detail-label"><?= __('Status') ?></div>
-                                <div class="appointments-detail-value">
-                                    <?= h($statusLabel($appointment->status ?? null)) ?>
                                 </div>
                             </div>
                         </div>
@@ -224,6 +217,13 @@ foreach ($appointmentList as $appointment) {
                                 <div class="patient-appointment-time">
                                     <?= h($formatTime($appointment->scheduled_at ?? null)) ?>
                                 </div>
+
+                                <div class="patient-appointment-meta-row">
+                                    <span class="patient-appointment-meta-pill">
+                                        <i class="bi bi-hourglass-split"></i>
+                                        <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Duration not provided') ?>
+                                    </span>
+                                </div>
                             </div>
 
                             <span class="appointment-status <?= h($statusClass($appointment->status ?? null)) ?>">
@@ -231,7 +231,7 @@ foreach ($appointmentList as $appointment) {
                             </span>
                         </div>
 
-                        <div class="appointments-detail-grid patient-appointment-detail-grid">
+                        <div class="appointments-detail-grid patient-appointment-detail-grid patient-appointment-detail-grid-compact">
                             <div class="appointments-detail-item">
                                 <div class="appointments-detail-label"><?= __('Date & Time') ?></div>
                                 <div class="appointments-detail-value">
@@ -243,20 +243,6 @@ foreach ($appointmentList as $appointment) {
                                 <div class="appointments-detail-label"><?= __('Clinician') ?></div>
                                 <div class="appointments-detail-value">
                                     <?= h($getClinicianLabel($appointment)) ?>
-                                </div>
-                            </div>
-
-                            <div class="appointments-detail-item">
-                                <div class="appointments-detail-label"><?= __('Duration') ?></div>
-                                <div class="appointments-detail-value">
-                                    <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Not provided') ?>
-                                </div>
-                            </div>
-
-                            <div class="appointments-detail-item">
-                                <div class="appointments-detail-label"><?= __('Status') ?></div>
-                                <div class="appointments-detail-value">
-                                    <?= h($statusLabel($appointment->status ?? null)) ?>
                                 </div>
                             </div>
                         </div>
