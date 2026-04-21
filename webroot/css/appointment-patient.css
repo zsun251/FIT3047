@@ -1,0 +1,94 @@
+/* ==========================================================================
+   APPOINTMENTS - PATIENT
+   Patient-specific styling layered on top of appointments.css.
+   ========================================================================== */
+
+.patient-appointments-header {
+    gap: 1.5rem;
+}
+
+.patient-appointments-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.patient-appointment-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.95rem;
+    padding: 1.25rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.patient-appointment-card:hover {
+    border-color: #d7e3ff;
+    box-shadow: 0 8px 24px rgba(13, 110, 253, 0.08);
+    transform: translateY(-1px);
+}
+
+.patient-appointment-card-history {
+    background: #fcfcfd;
+}
+
+.patient-appointment-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.patient-appointment-date {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #212529;
+    line-height: 1.4;
+}
+
+.patient-appointment-time {
+    margin-top: 0.3rem;
+    font-size: 0.92rem;
+    color: var(--c-muted, #6c757d);
+}
+
+.patient-appointment-detail-grid {
+    margin-bottom: 1rem;
+}
+
+.patient-appointment-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.patient-appointment-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.65rem;
+    padding: 0.7rem 1rem;
+    font-weight: 600;
+}
+
+.patient-appointments-history-list .patient-appointment-card {
+    opacity: 0.96;
+}
+
+@media (max-width: 991.98px) {
+    .patient-appointments-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .patient-appointment-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .patient-appointment-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

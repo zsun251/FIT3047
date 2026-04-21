@@ -142,34 +142,41 @@ class VitalDataController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
-
+    /**
+     * Patient history method
+     *
+     * @param string|null $patientId Patient id.
+     * @return \Cake\Http\Response|null|void Renders view
+     */
     public function patientHistory($patientId = null)
     {
+        $identity = $this->request->getAttribute('identity');
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
+
+        // Check authorization
         if (!$this->Authorization->can($vitalDataEntity, 'viewHistory')) {
             $this->Flash->error(__('You do not have permission to access this page.'));
             return $this->redirect($this->getRedirectUrl());
         }
 
-        // 1. get logged-in clinician
-        $clinicianId = $this->request->getAttribute('identity')->get('id');
-
-        // 2. check patient belongs to this clinician (security gate)
-
-        $identity = $this->Authentication->getIdentity();
-        $patient = UserAccess::getPatientId($identity);
-
-
-        // TODO this is hacky and will need to be fixed, as it patient is null
-        // It should be setup in a way like view, where the patient data is supplied
-        // (Mark will do it at a later date)
-        if (!$patient) {
-                $this->Flash->error(__('This page is only accessible to patients.'));
-                return $this->redirect($this->getRedirectUrl());
+        if (UserAccess::isPatient($identity)) {
+            $patientId = UserAccess::getPatientId($identity);
         }
 
+        if (!$patientId) {
+            $this->Flash->error(__('This page is only accessible to patients with a valid patient record.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $patient = $this->VitalData->Patients->get($patientId);
+
         $query = $this->VitalData->find()
-            ->contain(['Patients']);
+            ->contain(['Patients'])
+            ->orderBy(['VitalData.recorded_at' => 'DESC']);
+
+        // Apply scope
+        $query = $this->Authorization->applyScope($query, 'patientHistory');
+
         $vitalHistory = $this->paginate($query);
         $this->set(compact('patient', 'vitalHistory'));
     }
