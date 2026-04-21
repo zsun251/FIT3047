@@ -166,11 +166,51 @@ class VitalDataController extends AppController
         }
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
-            if ($this->VitalData->save($vitalDataEntity)) {
+            $data = $this->request->getData();
+
+            $selectedSymptoms = $data['selected_symptoms'] ?? [];
+            $symptomSeverities = $data['symptom_severity'] ?? [];
+
+            foreach ($selectedSymptoms as $symptomId => $selected) {
+                if ($selected) {
+                    $severity = $symptomSeverities[$symptomId] ?? '';
+
+                    if ($severity === '') {
+                        $vitalDataEntity->setError("symptom_severity.$symptomId", [
+                            'required' => 'Please select a severity for each selected symptom.'
+                        ]);
+                    }
+                }
+            }
+
+            $associatedSymptoms = [];
+
+            foreach ($selectedSymptoms as $symptomId => $selected) {
+                if ($selected) {
+                    $severity = $symptomSeverities[$symptomId] ?? null;
+
+                    if ($severity) {
+                        $associatedSymptoms[] = [
+                            'id' => $symptomId,
+                            '_joinData' => ['severity' => $severity]
+                        ];
+                    }
+                }
+            }
+
+            $data['symptoms'] = $associatedSymptoms;
+
+            $vitalDataEntity = $this->VitalData->patchEntity(
+                $vitalDataEntity,
+                $data,
+                ['associated' => ['Symptoms._joinData']]
+            );
+
+            if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
+
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
         }
         $patients = $this->VitalData->Patients->find('list', limit: 200)->all();
