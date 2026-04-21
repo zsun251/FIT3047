@@ -2,11 +2,16 @@
 
 <?php
 /**
- * @var \App\Model\Entity\VitalData[] $vitalHistory
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\Patient $patient
+ * @var \App\Model\Entity\VitalData[]|\Cake\Collection\CollectionInterface $vitalHistory
  */
+
+$this->assign('title', 'Health Records');
+
 $vitalHistory = $vitalHistory ?? [];
 
-// convert to array (for counting)
+// Convert to array (for counting and chart/table output)
 $vitalHistoryArray = is_array($vitalHistory) ? $vitalHistory : $vitalHistory->toArray();
 
 $dataCount = count($vitalHistoryArray);
@@ -16,7 +21,7 @@ $dataCount = count($vitalHistoryArray);
 
 <p>
     <strong>Patient ID:</strong>
-    <?= h($patient->id ?? $patient ?? 'Unknown') ?>
+    <?= h($patient->id ?? 'Unknown') ?>
 </p>
 
 <?php if ($dataCount === 0): ?>
@@ -36,7 +41,7 @@ $dataCount = count($vitalHistoryArray);
     $pulse = [];
 
     foreach ($vitalHistoryArray as $vital) {
-        $labels[] = $vital->recorded_at;
+        $labels[] = $vital->recorded_at ? $vital->recorded_at->format('d M Y H:i') : '';
 
         $oxygen[] = $vital->oxygen_saturation;
         $weight[] = $vital->weight;
@@ -46,16 +51,16 @@ $dataCount = count($vitalHistoryArray);
         $pulse[] = $vital->pulse_oximetry;
     }
 
-// function to calculate trend
-    function getTrend($array) {
-        if (count($array) < 2) return "Not enough data";
+    // Function to calculate trend
+    function getTrend($array){
+        if (count($array) < 2) {return 'Not enough data';}
 
         $first = $array[0];
         $last = end($array);
 
-        if ($last > $first) return "Increasing ↑";
-        if ($last < $first) return "Decreasing ↓";
-        return "Stable →";
+        if ($last > $first) {return 'Increasing ↑';}
+        if ($last < $first) {return 'Decreasing ↓';}
+        return 'Stable →';
     }
     ?>
 
@@ -135,12 +140,12 @@ $dataCount = count($vitalHistoryArray);
 <br>
 
 <?= $this->Html->link(
-    'Back to Vital Data',
-    ['controller' => 'VitalData', 'action' => 'index']
+    'Back to Dashboard',
+    ['controller' => 'Dashboard', 'action' => 'patient']
 ) ?>
 
 <?= $this->Html->link(
-    'Add Vital Data',
+    'Input Health Data',
     ['controller' => 'VitalData', 'action' => 'add'],
     ['class' => 'button']
 ) ?>

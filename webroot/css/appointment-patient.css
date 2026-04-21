@@ -51,8 +51,37 @@
     color: var(--c-muted, #6c757d);
 }
 
+.patient-appointment-meta-row {
+    margin-top: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.patient-appointment-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.75rem;
+    background: #ffffff;
+    border: 1px solid #dfe5ec;
+    border-radius: 999px;
+    color: #495057;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
 .patient-appointment-detail-grid {
     margin-bottom: 1rem;
+}
+
+.patient-appointment-detail-grid-compact {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+}
+
+.patient-appointment-detail-grid-single {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
 }
 
 .patient-appointment-actions {
@@ -78,6 +107,11 @@
     .patient-appointments-header {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .patient-appointment-detail-grid-compact,
+    .patient-appointment-detail-grid-single {
+        grid-template-columns: 1fr;
     }
 }
 
