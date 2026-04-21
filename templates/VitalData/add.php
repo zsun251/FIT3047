@@ -35,7 +35,7 @@
                 if ($isStaff) {
                     echo $this->Form->control('patient_id', [
                         'options' => $patients,
-                        'empty' => 'Select a patient',
+                        'empty' => 'Select a patient Id',
                         'class' => 'form-select mb-3'
                     ]);
                 }
