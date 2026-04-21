@@ -11,7 +11,6 @@ $this->assign('title', $isPatientSelfEdit ? 'My Profile' : 'Edit User');
 
 // CSS
 echo $this->Html->css('form-shared', ['block' => true]);
-echo $this->Html->css('user-view', ['block' => true]);
 
 // Type badge class
 $typeBadgeClass = 'badge-' . strtolower($user->type);
