@@ -8,6 +8,12 @@ declare(strict_types=1);
 
 $this->assign('title', 'My Appointments');
 
+echo $this->Html->css([
+    'form-shared',
+    'appointments',
+    'appointment-patient',
+], ['block' => true]);
+
 $appointmentList = is_array($appointments) ? $appointments : iterator_to_array($appointments);
 
 $getClinicianLabel = function ($appointment): string {
@@ -28,12 +34,43 @@ $getClinicianLabel = function ($appointment): string {
     return 'Assigned clinician';
 };
 
-$isPastAppointment = function ($appointment): bool {
-    if (empty($appointment->scheduled_at)) {
-        return false;
+$statusClass = function (?string $status): string {
+    $value = strtolower(trim((string)$status));
+
+    return match ($value) {
+        'scheduled' => 'appointment-status-scheduled',
+        'confirmed' => 'appointment-status-confirmed',
+        'completed' => 'appointment-status-completed',
+        'cancelled', 'canceled' => 'appointment-status-cancelled',
+        'pending' => 'appointment-status-pending',
+        default => 'appointment-status-default',
+    };
+};
+
+$statusLabel = function (?string $status): string {
+    $status = trim((string)$status);
+
+    if ($status === '') {
+        return 'Unknown';
     }
 
-    return $appointment->scheduled_at->getTimestamp() < time();
+    return ucwords(str_replace('_', ' ', strtolower($status)));
+};
+
+$formatDate = function ($dateTime): string {
+    if (!$dateTime) {
+        return 'Not scheduled';
+    }
+
+    return $dateTime->format('l, d M Y');
+};
+
+$formatTime = function ($dateTime): string {
+    if (!$dateTime) {
+        return 'Time unavailable';
+    }
+
+    return $dateTime->format('g:i A');
 };
 
 $formatDateTime = function ($dateTime): string {
@@ -42,6 +79,20 @@ $formatDateTime = function ($dateTime): string {
     }
 
     return $dateTime->format('d M Y, g:i A');
+};
+
+$isPastAppointment = function ($appointment): bool {
+    $status = strtolower(trim((string)($appointment->status ?? '')));
+
+    if (in_array($status, ['completed', 'cancelled', 'canceled'], true)) {
+        return true;
+    }
+
+    if (empty($appointment->scheduled_at)) {
+        return false;
+    }
+
+    return $appointment->scheduled_at->getTimestamp() < time();
 };
 
 $upcomingAppointments = [];
@@ -56,86 +107,193 @@ foreach ($appointmentList as $appointment) {
 }
 ?>
 
-<div class="appointments index content">
-    <h3><?= __('My Appointments') ?></h3>
-    <p><?= __('View your upcoming appointments and appointment history.') ?></p>
+<?= $this->Html->link(
+    '<i class="bi bi-arrow-left"></i> Back to Dashboard',
+    ['controller' => 'Dashboard', 'action' => 'patient'],
+    ['class' => 'back-link', 'escape' => false]
+) ?>
 
-    <h4><?= __('Upcoming Appointments') ?></h4>
-
-    <?php if (!empty($upcomingAppointments)): ?>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                <tr>
-                    <th><?= __('Date & Time') ?></th>
-                    <th><?= __('Clinician') ?></th>
-                    <th><?= __('Duration') ?></th>
-                    <th><?= __('Status') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($upcomingAppointments as $appointment): ?>
-                    <tr>
-                        <td><?= h($formatDateTime($appointment->scheduled_at ?? null)) ?></td>
-                        <td><?= h($getClinicianLabel($appointment)) ?></td>
-                        <td>
-                            <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Not provided') ?>
-                        </td>
-                        <td><?= h($appointment->status) ?></td>
-                        <td class="actions">
-                            <?= $this->Html->link(__('View'), ['action' => 'view', $appointment->id]) ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-            </table>
+<div class="form-container patient-appointments-page">
+    <div class="form-header appointments-page-header patient-appointments-header">
+        <div class="appointments-page-heading">
+            <h1><?= __('My Appointments') ?></h1>
+            <p class="appointments-page-subtitle">
+                <?= __('Review your upcoming appointments and your recent appointment history in one place.') ?>
+            </p>
         </div>
-    <?php else: ?>
-        <p><?= __('You do not currently have any upcoming appointments.') ?></p>
-    <?php endif; ?>
+    </div>
+
+    <div class="form-info-alert">
+        <i class="bi bi-info-circle"></i>
+        <p>
+            <?= __('If you need help with an appointment, use the contact button below to send a message to the clinic.') ?>
+        </p>
+    </div>
+
+    <div class="form-section">
+        <h2 class="form-section-title">
+            <i class="bi bi-calendar2-event"></i>
+            <?= __('Upcoming Appointments') ?>
+        </h2>
+
+        <?php if (!empty($upcomingAppointments)): ?>
+            <div class="patient-appointments-list">
+                <?php foreach ($upcomingAppointments as $appointment): ?>
+                    <article class="patient-appointment-card">
+                        <div class="patient-appointment-top">
+                            <div>
+                                <div class="patient-appointment-date">
+                                    <?= h($formatDate($appointment->scheduled_at ?? null)) ?>
+                                </div>
+                                <div class="patient-appointment-time">
+                                    <?= h($formatTime($appointment->scheduled_at ?? null)) ?>
+                                </div>
+                            </div>
+
+                            <span class="appointment-status <?= h($statusClass($appointment->status ?? null)) ?>">
+                                <?= h($statusLabel($appointment->status ?? null)) ?>
+                            </span>
+                        </div>
+
+                        <div class="appointments-detail-grid patient-appointment-detail-grid">
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Date & Time') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= h($formatDateTime($appointment->scheduled_at ?? null)) ?>
+                                </div>
+                            </div>
+
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Clinician') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= h($getClinicianLabel($appointment)) ?>
+                                </div>
+                            </div>
+
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Duration') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Not provided') ?>
+                                </div>
+                            </div>
+
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Status') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= h($statusLabel($appointment->status ?? null)) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="patient-appointment-actions">
+                            <?= $this->Html->link(
+                                '<i class="bi bi-eye"></i><span>View Details</span>',
+                                ['action' => 'view', $appointment->id],
+                                ['class' => 'btn btn-outline-primary', 'escape' => false]
+                            ) ?>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="appointments-empty-state">
+                <div class="appointments-empty-icon">
+                    <i class="bi bi-calendar-x"></i>
+                </div>
+                <h3><?= __('No upcoming appointments') ?></h3>
+                <p><?= __('You do not currently have any upcoming appointments scheduled.') ?></p>
+            </div>
+        <?php endif; ?>
+    </div>
 
     <?php if (!empty($pastAppointments)): ?>
-        <h4 style="margin-top: 2rem;"><?= __('Appointment History') ?></h4>
+        <div class="form-section">
+            <h2 class="form-section-title">
+                <i class="bi bi-clock-history"></i>
+                <?= __('Appointment History') ?>
+            </h2>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
-                <tr>
-                    <th><?= __('Date & Time') ?></th>
-                    <th><?= __('Clinician') ?></th>
-                    <th><?= __('Duration') ?></th>
-                    <th><?= __('Status') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
-                </tr>
-                </thead>
-                <tbody>
+            <div class="patient-appointments-list patient-appointments-history-list">
                 <?php foreach ($pastAppointments as $appointment): ?>
-                    <tr>
-                        <td><?= h($formatDateTime($appointment->scheduled_at ?? null)) ?></td>
-                        <td><?= h($getClinicianLabel($appointment)) ?></td>
-                        <td>
-                            <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Not provided') ?>
-                        </td>
-                        <td><?= h($appointment->status) ?></td>
-                        <td class="actions">
-                            <?= $this->Html->link(__('View'), ['action' => 'view', $appointment->id]) ?>
-                        </td>
-                    </tr>
+                    <article class="patient-appointment-card patient-appointment-card-history">
+                        <div class="patient-appointment-top">
+                            <div>
+                                <div class="patient-appointment-date">
+                                    <?= h($formatDate($appointment->scheduled_at ?? null)) ?>
+                                </div>
+                                <div class="patient-appointment-time">
+                                    <?= h($formatTime($appointment->scheduled_at ?? null)) ?>
+                                </div>
+                            </div>
+
+                            <span class="appointment-status <?= h($statusClass($appointment->status ?? null)) ?>">
+                                <?= h($statusLabel($appointment->status ?? null)) ?>
+                            </span>
+                        </div>
+
+                        <div class="appointments-detail-grid patient-appointment-detail-grid">
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Date & Time') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= h($formatDateTime($appointment->scheduled_at ?? null)) ?>
+                                </div>
+                            </div>
+
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Clinician') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= h($getClinicianLabel($appointment)) ?>
+                                </div>
+                            </div>
+
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Duration') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Not provided') ?>
+                                </div>
+                            </div>
+
+                            <div class="appointments-detail-item">
+                                <div class="appointments-detail-label"><?= __('Status') ?></div>
+                                <div class="appointments-detail-value">
+                                    <?= h($statusLabel($appointment->status ?? null)) ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="patient-appointment-actions">
+                            <?= $this->Html->link(
+                                '<i class="bi bi-eye"></i><span>View Details</span>',
+                                ['action' => 'view', $appointment->id],
+                                ['class' => 'btn btn-outline-primary', 'escape' => false]
+                            ) ?>
+                        </div>
+                    </article>
                 <?php endforeach; ?>
-                </tbody>
-            </table>
+            </div>
         </div>
     <?php endif; ?>
 
-    <?php if (empty($appointmentList)): ?>
-        <div class="appointments-empty-state" style="text-align:center; margin-top: 2rem;">
-            <p><?= __('No appointments found.') ?></p>
-            <?= $this->Html->link(
-                __('Contact Clinic About Appointments'),
-                ['controller' => 'ContactMessages', 'action' => 'add'],
-                ['class' => 'button']
-            ) ?>
+    <div class="appointments-bottom-action">
+        <?= $this->Html->link(
+            '<i class="bi bi-envelope"></i><span>Contact Clinic About Appointments</span>',
+            ['controller' => 'ContactMessages', 'action' => 'add'],
+            ['class' => 'btn btn-primary', 'escape' => false]
+        ) ?>
+    </div>
+
+    <?php if (!empty($appointmentList)): ?>
+        <div class="appointments-pagination paginator">
+            <ul class="pagination">
+                <?= $this->Paginator->prev('< ' . __('previous')) ?>
+                <?= $this->Paginator->numbers() ?>
+                <?= $this->Paginator->next(__('next') . ' >') ?>
+            </ul>
+            <p>
+                <?= $this->Paginator->counter(
+                    __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')
+                ) ?>
+            </p>
         </div>
     <?php endif; ?>
 </div>
