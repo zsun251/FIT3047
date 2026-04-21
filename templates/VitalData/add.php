@@ -11,7 +11,11 @@
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body py-3 px-4">
             <h2 class="fw-bold mb-1">Add New Entry</h2>
-            <p class="text-muted mb-0">Record the patient’s vital signs and symptoms.</p>
+            <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 10px;"></div>
+
+            <p class="text-muted mb-3">
+                Record the patient’s vital signs and symptoms.
+            </p>
         </div>
     </div>
 
@@ -22,6 +26,7 @@
 
             <div class="mb-4">
                 <h4 class="fw-bold mb-1">Vital Signs</h4>
+                <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 12px;"></div>
             </div>
 
             <?php
@@ -96,6 +101,7 @@
             <div class="mt-4 pt-2">
                 <div class="mb-3">
                     <h4 class="fw-bold mb-1">Symptoms</h4>
+                    <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 12px;"></div>
                     <p class="text-muted mb-0">Choose any symptoms experienced and set their severity.</p>
                 </div>
 
