@@ -142,7 +142,12 @@ class UsersController extends AppController
             return $this->redirect($this->getRedirectUrl());
         }
 
-        $this->set(compact('user'));
+        // Get type-specific IDs
+        $adminId = $user->admin ? $user->admin->id : null;
+        $clinicianId = $user->clinician ? $user->clinician->id : null;
+        $patientId = $user->patient ? $user->patient->id : null;
+
+        $this->set(compact('user', 'adminId', 'clinicianId', 'patientId'));
     }
 
     public function add()

@@ -1,0 +1,269 @@
+/* ============================================================================
+   SHARED VIEW PAGE STYLES
+   Used across: User View, Contact Message View, and other detail pages
+   ========================================================================== */
+
+/* View Page Container */
+.view-container {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    padding: 2rem;
+}
+
+/* View Header */
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.view-header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #212529;
+    margin: 0;
+}
+
+.view-header .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    margin-left: 1rem;
+}
+
+/* Action Buttons Group */
+.view-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.view-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Detail Grid */
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Detail Item */
+.detail-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.375rem;
+    border-left: 3px solid #0d6efd;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.detail-value {
+    font-size: 1rem;
+    color: #212529;
+    font-weight: 500;
+}
+
+.detail-value.text-muted {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Full Width Detail (like Address) */
+.detail-full {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 0.375rem;
+    border-left: 3px solid #0d6efd;
+    margin-bottom: 2rem;
+}
+
+.detail-full .detail-label {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+
+.detail-full .detail-value {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* Related Section */
+.related-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #e9ecef;
+}
+
+.related-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 1rem;
+}
+
+.related-empty {
+    padding: 2rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 0.375rem;
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* Related Items List */
+.related-items {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.related-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+}
+
+.related-item:hover {
+    border-color: #0d6efd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.related-item-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.related-item-id {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.related-item-badge {
+    font-size: 0.75rem;
+}
+
+.related-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .view-container {
+        padding: 1.5rem;
+    }
+
+    .view-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .view-actions {
+        width: 100%;
+    }
+
+    .view-actions .btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .related-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .related-item-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+/* Back Button */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.back-link:hover {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.back-link i {
+    font-size: 1rem;
+}
+
+/* Info Icons */
+.detail-item i {
+    color: #0d6efd;
+    margin-right: 0.5rem;
+}
+
+/* Section Title */
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #212529;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-title i {
+    color: #0d6efd;
+}
+
+/* Related Item Enhanced */
+.related-item-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 0.25rem;
+}
+
+.related-item-subtitle {
+    font-size: 0.875rem;
+    color: #6c757d;
+    line-height: 1.4;
+}
+
+/* User meta improvements */
+.user-meta-item small {
+    display: block;
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.125rem;
+}
