@@ -34,23 +34,23 @@ DROP TABLE IF EXISTS users;
 -- =============================================================================
 
 CREATE TABLE users (
-    id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-    username        VARCHAR(51)     NOT NULL,
-    password        VARCHAR(255)    NOT NULL,
-    first_name      VARCHAR(100)    NOT NULL,
-    last_name       VARCHAR(100)    NOT NULL,
-    email           VARCHAR(255)    NOT NULL,
-    phone           VARCHAR(20)     NULL,
-    address         TEXT            NULL,
-    date_of_birth   DATE            NULL,
-    type            VARCHAR(20)     NOT NULL,
-    created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+   username        VARCHAR(51)     NOT NULL,
+   password        VARCHAR(255)    NOT NULL,
+   first_name      VARCHAR(100)    NOT NULL,
+   last_name       VARCHAR(100)    NOT NULL,
+   email           VARCHAR(255)    NOT NULL,
+   phone           VARCHAR(15)     NULL,
+   address         VARCHAR(500)    NULL,
+   date_of_birth   DATE            NULL,
+   type            VARCHAR(20)     NOT NULL,
+   created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (id),
-    UNIQUE KEY uq_users_username (username),
-    UNIQUE KEY uq_users_email (email),
-    CONSTRAINT chk_users_type
-        CHECK (type IN ('admin','clinician','patient'))
+   PRIMARY KEY (id),
+   UNIQUE KEY uq_users_username (username),
+   UNIQUE KEY uq_users_email (email),
+   CONSTRAINT chk_users_type
+       CHECK (type IN ('admin','clinician','patient'))
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -508,7 +508,7 @@ CREATE TABLE contact_messages (
         id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
         first_name     VARCHAR(100) NOT NULL,
         last_name      VARCHAR(100) NULL,
-        contact_number VARCHAR(50) NULL,
+        contact_number VARCHAR(15) NULL,
         email           VARCHAR(255)    NOT NULL,
         message         TEXT            NOT NULL,
         status          VARCHAR(10)     NOT NULL DEFAULT 'unread',
