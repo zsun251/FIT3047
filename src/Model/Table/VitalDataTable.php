@@ -68,34 +68,134 @@ class VitalDataTable extends Table
             ->notEmptyString('patient_id', 'Please select a patient.');
 
         $validator
-            ->decimal('oxygen_saturation', 2, 'Oxygen saturation must be a number.')
-            ->greaterThanOrEqual('oxygen_saturation', 50, 'Oxygen saturation must be at least 50.')
-            ->lessThanOrEqual('oxygen_saturation', 100, 'Oxygen saturation cannot be more than 100.')
-            ->notEmptyString('oxygen_saturation', 'Please enter oxygen saturation.');
+            ->notEmptyString('oxygen_saturation', 'Please enter oxygen saturation.')
+
+            ->add('oxygen_saturation', 'numeric', [
+                'rule' => 'numeric',
+                'message' => 'This field must contain a valid numeric value.',
+                'last' => true,
+            ])
+
+            ->add('oxygen_saturation', 'minValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value >= 0;
+                },
+                'message' => 'Oxygen saturation must be greater than or equal to 0.',
+                'last' => true,
+            ])
+
+            ->add('oxygen_saturation', 'maxValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value <= 100;
+                },
+                'message' => 'Oxygen saturation cannot exceed 100.',
+                'last' => true,
+            ]);
 
         $validator
-            ->allowEmptyString('respiratory_rate');
+            ->notEmptyString('respiratory_rate', 'Please enter respiratory rate.')
+
+            ->add('respiratory_rate', 'numeric', [
+                'rule' => 'numeric',
+                'message' => 'This field must contain a valid numeric value.',
+                'last' => true,
+            ])
+
+            ->add('respiratory_rate', 'minValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value >= 0;
+                },
+                'message' => 'Respiratory rate must be greater than or equal to 0.',
+                'last' => true,
+            ])
+
+            ->add('respiratory_rate', 'maxValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value <= 100;
+                },
+                'message' => 'Respiratory rate cannot exceed 100.',
+                'last' => true,
+            ]);
+
+        //$validator
+            //->decimal('lung_function')
+            //->allowEmptyString('lung_function');
 
         $validator
-            ->decimal('lung_function')
-            ->allowEmptyString('lung_function');
+            ->notEmptyString('blood_pressure', 'Please enter blood pressure.')
+
+            ->add('blood_pressure', 'validFormat', [
+                'rule' => function ($value, $context) {
+
+                    // Check format first
+                    if (!preg_match('/^\d{1,3}\/\d{1,3}$/', $value)) {
+                        return false;
+                    }
+                    [$systolic, $diastolic] = explode('/', $value);
+
+                    $systolic = (int)$systolic;
+                    $diastolic = (int)$diastolic;
+
+                    return ($systolic >= 0 && $systolic <= 300)
+                        && ($diastolic >= 0 && $diastolic <= 300);
+                },
+                'message' => 'Blood pressure must be in the format 120/80.',
+                'last' => true,
+            ]);
 
         $validator
-            ->scalar('blood_pressure')
-            ->maxLength('blood_pressure', 10)
-            ->allowEmptyString('blood_pressure');
+            ->notEmptyString('pulse_oximetry', 'Please enter pulse oximetry.')
+
+            ->add('pulse_oximetry', 'numeric', [
+                'rule' => 'numeric',
+                'message' => 'This field must contain a valid numeric value.',
+                'last' => true,
+            ])
+
+            ->add('pulse_oximetry', 'minValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value >= 0;
+                },
+                'message' => 'Pulse oximetry must be greater than or equal to 0.',
+                'last' => true,
+            ])
+
+            ->add('pulse_oximetry', 'maxValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value <= 100;
+                },
+                'message' => 'Pulse oximetry cannot exceed 100.',
+                'last' => true,
+            ]);
 
         $validator
-            ->decimal('pulse_oximetry')
-            ->allowEmptyString('pulse_oximetry');
+            ->notEmptyString('weight', 'Please enter weight.')
 
-        $validator
-            ->decimal('weight')
-            ->allowEmptyString('weight');
+            ->add('weight', 'numeric', [
+                'rule' => 'numeric',
+                'message' => 'This field must contain a valid numeric value.',
+                'last' => true,
+            ])
+
+            ->add('weight', 'minValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value >= 0;
+                },
+                'message' => 'Weight must be greater than or equal to 0.',
+                'last' => true,
+            ])
+
+            ->add('weight', 'maxValue', [
+                'rule' => function ($value, $context) {
+                    return is_numeric($value) && $value <= 300;
+                },
+                'message' => 'Weight cannot exceed 300.',
+                'last' => true,
+            ]);
 
         $validator
             ->dateTime('recorded_at')
-            ->notEmptyDateTime('recorded_at');
+            ->notEmptyDateTime('recorded_at', 'Please enter the recorded date and time.');
 
         return $validator;
     }
