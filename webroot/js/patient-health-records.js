@@ -31,7 +31,6 @@ function initVitalsChart(chartData) {
         createDataset(chartData.oxygen, 'Oxygen Saturation (%)', 'rgb(239, 68, 68)'),
         createDataset(chartData.resp, 'Respiratory Rate (bpm)', 'rgb(59, 130, 246)'),
         createDataset(chartData.weight, 'Weight (kg)', 'rgb(16, 185, 129)'),
-        createDataset(chartData.lung, 'Lung Function (%)', 'rgb(139, 92, 246)'),
         createDataset(chartData.pulse, 'Pulse Oximetry', 'rgb(245, 158, 11)')
     ].filter(dataset => dataset !== null); // Remove null datasets
 

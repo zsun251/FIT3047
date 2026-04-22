@@ -40,7 +40,6 @@ if ($dataCount > 0) {
     $labels = [];
     $oxygen = [];
     $weight = [];
-    $lung = [];
     $resp = [];
     $pulse = [];
 
@@ -48,7 +47,6 @@ if ($dataCount > 0) {
         $labels[] = $vital->recorded_at ? $vital->recorded_at->format('M j, Y') : '';
         $oxygen[] = $vital->oxygen_saturation;
         $weight[] = $vital->weight;
-        $lung[] = $vital->lung_function;
         $resp[] = $vital->respiratory_rate;
         $pulse[] = $vital->pulse_oximetry;
     }
@@ -114,7 +112,6 @@ if ($dataCount > 0) {
                     ['label' => 'Oxygen Saturation', 'data' => $oxygen, 'icon' => 'heart-pulse', 'unit' => '%'],
                     ['label' => 'Respiratory Rate', 'data' => $resp, 'icon' => 'activity', 'unit' => ' bpm'],
                     ['label' => 'Weight', 'data' => $weight, 'icon' => 'speedometer', 'unit' => ' kg'],
-                    ['label' => 'Lung Function', 'data' => $lung, 'icon' => 'lungs', 'unit' => '%'],
                     ['label' => 'Pulse Oximetry', 'data' => $pulse, 'icon' => 'stopwatch', 'unit' => ''],
                     ['label' => 'Blood Pressure', 'data' => [], 'icon' => 'droplet', 'unit' => '', 'text_only' => true],
                 ];
@@ -164,7 +161,6 @@ if ($dataCount > 0) {
                         oxygen: <?= json_encode($oxygen) ?>,
                         resp: <?= json_encode($resp) ?>,
                         weight: <?= json_encode($weight) ?>,
-                        lung: <?= json_encode($lung) ?>,
                         pulse: <?= json_encode($pulse) ?>
                     };
                 </script>
@@ -188,7 +184,6 @@ if ($dataCount > 0) {
                         <th><i class="bi bi-droplet"></i> Blood Pressure</th>
                         <th><i class="bi bi-heart-pulse"></i> O₂ Saturation</th>
                         <th><i class="bi bi-activity"></i> Respiratory Rate</th>
-                        <th><i class="bi bi-lungs"></i> Lung Function</th>
                         <th><i class="bi bi-stopwatch"></i> Pulse Oximetry</th>
                         <th><i class="bi bi-speedometer"></i> Weight</th>
                     </tr>
@@ -207,7 +202,6 @@ if ($dataCount > 0) {
                             <td><?= $vital->blood_pressure ? h($vital->blood_pressure) : '<span class="text-muted">—</span>' ?></td>
                             <td><?= $vital->oxygen_saturation ? h($vital->oxygen_saturation) . '%' : '<span class="text-muted">—</span>' ?></td>
                             <td><?= $vital->respiratory_rate ? h($vital->respiratory_rate) . ' bpm' : '<span class="text-muted">—</span>' ?></td>
-                            <td><?= $vital->lung_function ? h($vital->lung_function) . '%' : '<span class="text-muted">—</span>' ?></td>
                             <td><?= $vital->pulse_oximetry ? h($vital->pulse_oximetry) : '<span class="text-muted">—</span>' ?></td>
                             <td><?= $vital->weight ? h($vital->weight) . ' kg' : '<span class="text-muted">—</span>' ?></td>
                         </tr>

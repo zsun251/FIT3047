@@ -117,9 +117,6 @@ class VitalDataTable extends Table
                 'last' => true,
             ]);
 
-        //$validator
-            //->decimal('lung_function')
-            //->allowEmptyString('lung_function');
 
         $validator
             ->notEmptyString('blood_pressure', 'Please enter blood pressure.')

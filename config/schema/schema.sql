@@ -417,7 +417,6 @@ CREATE TABLE vital_data (
                             patient_id          INT UNSIGNED    NOT NULL,
                             oxygen_saturation   DECIMAL(5, 2)   NULL,
                             respiratory_rate    SMALLINT        NULL,             -- breaths per minute
-                            lung_function       DECIMAL(5, 2)   NULL,
                             blood_pressure      VARCHAR(10)     NULL,             -- 'systolic/diastolic' e.g. '120/80'
                             pulse_oximetry      DECIMAL(5, 2)   NULL,
                             weight              DECIMAL(6, 2)   NULL,             -- kilograms
@@ -430,8 +429,6 @@ CREATE TABLE vital_data (
                                 CHECK (oxygen_saturation IS NULL OR oxygen_saturation BETWEEN 0 AND 100),
                             CONSTRAINT chk_respiratory_rate
                                 CHECK (respiratory_rate IS NULL OR respiratory_rate > 0),
-                            CONSTRAINT chk_lung_function
-                                CHECK (lung_function IS NULL OR lung_function BETWEEN 0 AND 100),
                             CONSTRAINT chk_pulse_oximetry
                                 CHECK (pulse_oximetry IS NULL OR pulse_oximetry > 0),
                             CONSTRAINT chk_weight
