@@ -167,7 +167,7 @@ if ($patientName === '') {
                     <div class="patient-preview-actions">
                         <?= $this->Html->link(
                             __('View All Resources'),
-                            ['controller' => 'Resources', 'action' => 'index'],
+                            ['controller' => 'Resources', 'action' => 'browse'],
                             ['class' => 'btn btn-outline-primary btn-sm'],
                         ) ?>
                     </div>
