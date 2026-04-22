@@ -6,6 +6,15 @@
  * @var \Cake\Collection\CollectionInterface|string[] $symptoms
  */
 ?>
+
+<div class="back-link">
+    <?= $this->Html->link(
+        '<i class="bi bi-arrow-left"></i><span>Back to Health Records</span>',
+        ['controller' => 'VitalData', 'action' => 'index'],
+        ['escape' => false]
+    ) ?>
+</div>
+
 <div class="container-fluid px-4">
 
     <div class="card shadow-sm border-0 mb-4">

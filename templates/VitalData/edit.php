@@ -6,20 +6,35 @@
  * @var string[]|\Cake\Collection\CollectionInterface $symptoms
  */
 ?>
+
+<div class="back-link">
+    <?= $this->Html->link(
+        '<i class="bi bi-arrow-left"></i><span>Back to Health Records</span>',
+        ['controller' => 'VitalData', 'action' => 'index'],
+        ['escape' => false]
+    ) ?>
+</div>
+
 <div class="row">
     <aside class="column">
-        <div class="side-nav">
+        <div class="side-nav-modern">
 
             <?= $this->Form->postLink(
-                __('Delete'),
+                '<i class="bi bi-trash"></i> Delete Vital Data',
                 ['action' => 'delete', $vitalDataEntity->id],
                 [
                     'confirm' => __('Are you sure you want to delete # {0}?', $vitalDataEntity->id),
+                    'escape' => false,
                     'class' => 'side-nav-item'
                 ]
             ) ?>
 
-            <?= $this->Html->link(__('List Vital Data'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+            <?= $this->Html->link(
+                '<i class="bi bi-list"></i> List Vital Data',
+                ['action' => 'index'],
+                ['escape' => false, 'class' => 'side-nav-item']
+            ) ?>
+
         </div>
     </aside>
 
