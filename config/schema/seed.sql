@@ -288,39 +288,39 @@ INSERT INTO symptoms (symptom_name, description) VALUES
 -- =============================================================================
 
 INSERT INTO vital_data
-(patient_id, oxygen_saturation, respiratory_rate, lung_function, blood_pressure, pulse_oximetry, weight, recorded_at)
+(patient_id, oxygen_saturation, respiratory_rate, blood_pressure, pulse_oximetry, weight, recorded_at)
 VALUES
     -- Patient 1 - Recent readings showing good control
-    (1, 96.5, 16, 85.0, '120/80', 96.5, 70.5, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-    (1, 97.0, 15, 86.0, '118/78', 97.0, 70.3, DATE_SUB(NOW(), INTERVAL 2 DAY)),
-    (1, 95.8, 17, 84.5, '122/82', 95.8, 70.6, DATE_SUB(NOW(), INTERVAL 3 DAY)),
-    (1, 96.2, 16, 85.5, '120/80', 96.2, 70.4, DATE_SUB(NOW(), INTERVAL 7 DAY)),
+    (1, 96.5, 16,  '120/80', 96.5, 70.5, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+    (1, 97.0, 15,  '118/78', 97.0, 70.3, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+    (1, 95.8, 17,  '122/82', 95.8, 70.6, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+    (1, 96.2, 16,  '120/80', 96.2, 70.4, DATE_SUB(NOW(), INTERVAL 7 DAY)),
 
     -- Patient 2 - Showing some fluctuation
-    (2, 94.5, 18, 78.0, '135/85', 94.5, 82.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-    (2, 93.8, 19, 76.5, '138/88', 93.8, 82.2, DATE_SUB(NOW(), INTERVAL 2 DAY)),
-    (2, 95.0, 17, 79.0, '132/84', 95.0, 81.8, DATE_SUB(NOW(), INTERVAL 3 DAY)),
-    (2, 94.2, 18, 77.5, '136/86', 94.2, 82.1, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+    (2, 94.5, 18,  '135/85', 94.5, 82.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+    (2, 93.8, 19,  '138/88', 93.8, 82.2, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+    (2, 95.0, 17,  '132/84', 95.0, 81.8, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+    (2, 94.2, 18,  '136/86', 94.2, 82.1, DATE_SUB(NOW(), INTERVAL 5 DAY)),
 
     -- Patient 3 - Good readings
-    (3, 97.5, 14, 88.0, '115/75', 97.5, 65.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-    (3, 97.8, 14, 89.0, '118/76', 97.8, 64.8, DATE_SUB(NOW(), INTERVAL 3 DAY)),
-    (3, 98.0, 13, 90.0, '116/74', 98.0, 65.2, DATE_SUB(NOW(), INTERVAL 7 DAY)),
+    (3, 97.5, 14,  '115/75', 97.5, 65.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+    (3, 97.8, 14,  '118/76', 97.8, 64.8, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+    (3, 98.0, 13,  '116/74', 98.0, 65.2, DATE_SUB(NOW(), INTERVAL 7 DAY)),
 
     -- Patient 4 - Concerning readings
-    (4, 91.5, 22, 65.0, '145/95', 91.5, 95.5, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-    (4, 90.8, 23, 63.5, '148/96', 90.8, 95.8, DATE_SUB(NOW(), INTERVAL 2 DAY)),
-    (4, 92.0, 21, 66.0, '142/92', 92.0, 95.2, DATE_SUB(NOW(), INTERVAL 4 DAY)),
+    (4, 91.5, 22,  '145/95', 91.5, 95.5, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+    (4, 90.8, 23,  '148/96', 90.8, 95.8, DATE_SUB(NOW(), INTERVAL 2 DAY)),
+    (4, 92.0, 21,  '142/92', 92.0, 95.2, DATE_SUB(NOW(), INTERVAL 4 DAY)),
 
     -- Patient 5 - Stable readings
-    (5, 96.0, 16, 82.0, '125/80', 96.0, 75.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-    (5, 95.5, 17, 81.5, '128/82', 95.5, 75.2, DATE_SUB(NOW(), INTERVAL 3 DAY)),
-    (5, 96.2, 16, 82.5, '124/78', 96.2, 74.8, DATE_SUB(NOW(), INTERVAL 6 DAY)),
+    (5, 96.0, 16,  '125/80', 96.0, 75.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+    (5, 95.5, 17,  '128/82', 95.5, 75.2, DATE_SUB(NOW(), INTERVAL 3 DAY)),
+    (5, 96.2, 16,  '124/78', 96.2, 74.8, DATE_SUB(NOW(), INTERVAL 6 DAY)),
 
     -- Patient 6 - Recent improvement
-    (6, 95.5, 17, 80.0, '130/85', 95.5, 88.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
-    (6, 94.8, 18, 78.5, '132/86', 94.8, 88.3, DATE_SUB(NOW(), INTERVAL 4 DAY)),
-    (6, 95.0, 18, 79.0, '131/85', 95.0, 88.1, DATE_SUB(NOW(), INTERVAL 7 DAY));
+    (6, 95.5, 17,  '130/85', 95.5, 88.0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
+    (6, 94.8, 18,  '132/86', 94.8, 88.3, DATE_SUB(NOW(), INTERVAL 4 DAY)),
+    (6, 95.0, 18,  '131/85', 95.0, 88.1, DATE_SUB(NOW(), INTERVAL 7 DAY));
 
 -- =============================================================================
 -- VITAL DATA SYMPTOMS (JUNCTION TABLE)

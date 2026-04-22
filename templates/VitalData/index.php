@@ -241,9 +241,6 @@ $this->Html->script('vital-data-index', ['block' => 'script']);
                     <?php if ($vitalDataEntity->weight !== null): ?>
                         <div>Weight: <strong><?= $this->Number->format($vitalDataEntity->weight) ?> kg</strong></div>
                     <?php endif; ?>
-                    <?php if ($vitalDataEntity->lung_function !== null): ?>
-                        <div>Lung Function: <strong><?= $this->Number->format($vitalDataEntity->lung_function) ?>%</strong></div>
-                    <?php endif; ?>
                 </div>
             </div>
             <!-- Symptoms -->

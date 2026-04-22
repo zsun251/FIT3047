@@ -65,7 +65,6 @@
                         'placeholder' => 'e.g. 12',
                         'class' => 'form-control mb-3',
                     ]);
-                    //echo $this->Form->control('lung_function');
                     echo $this->Form->control('blood_pressure', [
                         'type' => 'text',
                         'label' => 'Blood Pressure (mmHg)',
