@@ -51,24 +51,32 @@ class AppointmentsTablePolicy
             ]);
         }
 
-        if (UserAccess::isPatient($user)) {
-            $patientId = UserAccess::getPatientId($user);
-
-            if ($patientId !== null) {
-                return $query->where([
-                    'Appointments.patient_id' => $patientId,
-                ]);
-            }
-        }
-
         return $query->where(['1 = 0']);
     }
 
     /**
-     * Get assigned patient ids for a clinician
-     *
-     * @param \Authorization\IdentityInterface $user The user making the request
-     * @return int[] The patient ids assigned to the clinician
+     * Patient appointments scope.
+     * Patients only see their own appointments.
+     */
+    public function scopeUpcomingAppointments(IdentityInterface $user, Query $query)
+    {
+        if (!UserAccess::isPatient($user)) {
+            return $query->where(['1 = 0']);
+        }
+
+        $patientId = UserAccess::getPatientId($user);
+
+        if ($patientId === null) {
+            return $query->where(['1 = 0']);
+        }
+
+        return $query->where([
+            'Appointments.patient_id' => $patientId,
+        ]);
+    }
+
+    /**
+     * @return int[]
      */
     private function getAssignedPatientIdsForClinician(IdentityInterface $user): array
     {
