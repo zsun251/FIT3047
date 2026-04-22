@@ -1,62 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Reset Password</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-lg">
-                <div class="card-header bg-white text-dark text-center border-bottom">
-                    <h1 class="h3 mb-0">Reset Password</h1>
-                </div>
-                <div class="card-body p-4">
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\User $user
+ * @var string $token
+ */
+$this->assign('title', 'Reset Password');
+echo $this->Html->css('login', ['block' => true]);
+?>
 
-                    <?= $this->Flash->render() ?>
+<div class="login-container">
+    <div class="login-card">
+        <!-- Logo/Brand -->
+        <div class="login-brand">
+            <i class="bi bi-heart-pulse-fill"></i>
+            <h1>RespiraCare</h1>
+            <p>Respiratory Health Management</p>
+        </div>
 
-                    <p class="text-muted">
-                        This page is present for system completeness. Password reset is not implemented in this version.
-                    </p>
+        <!-- Form -->
+        <div class="login-form">
+            <h2>Reset Password</h2>
+            <p class="login-subtitle">Enter your new password below.</p>
 
-                    <?= $this->Form->create() ?>
+            <?= $this->Form->create(null, ['class' => 'needs-validation']) ?>
 
-                    <div class="mb-3">
-                        <?= $this->Form->label('password', 'New Password', ['class' => 'form-label']) ?>
-                        <?= $this->Form->control('password', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) ?>
-                    </div>
-
-                    <div class="mb-3">
-                        <?= $this->Form->label('confirm_password', 'Confirm Password', ['class' => 'form-label']) ?>
-                        <?= $this->Form->control('confirm_password', [
-                            'type' => 'password',
-                            'label' => false,
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) ?>
-                    </div>
-
-                    <div class="d-grid mb-3">
-                        <?= $this->Form->button('Reset Password', ['class' => 'btn btn-dark']) ?>
-                    </div>
-
-                    <div class="text-center">
-                        <a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'login']) ?>">Back to Login</a>
-                    </div>
-
-                    <?= $this->Form->end() ?>
-
-                </div>
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock"></i> New Password
+                </label>
+                <?= $this->Form->control('password', [
+                    'label' => false,
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter new password',
+                    'required' => true,
+                    'autofocus' => true
+                ]) ?>
+                <small class="text-muted">Must be at least 8 characters with uppercase, lowercase, and number.</small>
             </div>
+
+            <div class="form-group">
+                <label for="confirm-password" class="form-label">
+                    <i class="bi bi-lock-fill"></i> Confirm Password
+                </label>
+                <?= $this->Form->control('confirm_password', [
+                    'type' => 'password',
+                    'label' => false,
+                    'class' => 'form-control',
+                    'placeholder' => 'Confirm new password',
+                    'required' => true
+                ]) ?>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-login">
+                <i class="bi bi-check-circle"></i> Reset Password
+            </button>
+
+            <?= $this->Form->end() ?>
+
+            <!-- Back to Login -->
+            <div class="login-links">
+                <?= $this->Html->link(
+                    '<i class="bi bi-arrow-left"></i> Back to Login',
+                    ['action' => 'login'],
+                    ['escape' => false, 'class' => 'login-link']
+                ) ?>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="login-info">
+            <p>
+                <i class="bi bi-shield-check"></i>
+                Your data is secure and encrypted
+            </p>
         </div>
     </div>
 </div>
-</body>
-</html>

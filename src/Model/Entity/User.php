@@ -24,6 +24,8 @@ use Authentication\PasswordHasher\DefaultPasswordHasher;
  * @property \App\Model\Entity\Admin $admin
  * @property \App\Model\Entity\Clinician $clinician
  * @property \App\Model\Entity\Patient $patient
+ * @property string|null $reset_token
+ * @property \Cake\I18n\DateTime|null $reset_token_expires
  */
 class User extends Entity
 {
@@ -46,6 +48,8 @@ class User extends Entity
         'admin' => true,
         'clinician' => true,
         'patient' => true,
+        'reset_token' => true,
+        'reset_token_expires' => true,
     ];
 
     /**
@@ -55,6 +59,7 @@ class User extends Entity
      */
     protected array $_hidden = [
         'password',
+        'reset_token'
     ];
 
     /**
