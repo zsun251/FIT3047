@@ -57,6 +57,8 @@ CREATE TABLE users (
                        address         VARCHAR(500)    NULL,
                        date_of_birth   DATE            NULL,
                        type            VARCHAR(20)     NOT NULL,
+                       reset_token VARCHAR(255) NULL,
+                       reset_token_expires DATETIME NULL,
                        created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
                        PRIMARY KEY (id),

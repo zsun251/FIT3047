@@ -47,6 +47,17 @@ class UsersTable extends Table
         $this->setDisplayField('username');
         $this->setPrimaryKey('id');
 
+        // Explicitly define the schema for password reset columns
+        $this->getSchema()->addColumn('reset_token', [
+            'type' => 'string',
+            'length' => 255,
+            'null' => true,
+        ]);
+        $this->getSchema()->addColumn('reset_token_expires', [
+            'type' => 'datetime',
+            'null' => true,
+        ]);
+
         // Use hasOne for one-to-one relationships
         $this->hasOne('Admins', [
             'foreignKey' => 'user_id',
@@ -60,9 +71,7 @@ class UsersTable extends Table
             'foreignKey' => 'user_id',
             'propertyName' => 'patient'
         ]);
-    }
-
-    /**
+    }    /**
      * Before marshal callback - sanitizes input data before validation
      *
      * @param \Cake\Event\EventInterface $event The event
