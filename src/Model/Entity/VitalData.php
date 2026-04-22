@@ -12,7 +12,6 @@ use Cake\ORM\Entity;
  * @property int $patient_id
  * @property string|null $oxygen_saturation
  * @property int|null $respiratory_rate
- * @property string|null $lung_function
  * @property string|null $blood_pressure
  * @property string|null $pulse_oximetry
  * @property string|null $weight
@@ -36,7 +35,6 @@ class VitalData extends Entity
         'patient_id' => true,
         'oxygen_saturation' => true,
         'respiratory_rate' => true,
-        'lung_function' => true,
         'blood_pressure' => true,
         'pulse_oximetry' => true,
         'weight' => true,
