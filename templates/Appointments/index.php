@@ -20,8 +20,6 @@ $this->assign('title', $isAdmin ? 'Appointments' : 'Assigned Appointments');
 $this->start('datatables_css');
 echo $this->Html->css([
     'https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css',
-    'datatable-shared',
-    'appointments-staff',
 ]);
 $this->end();
 
@@ -31,6 +29,11 @@ echo $this->Html->script([
     'https://cdn.datatables.net/2.1.8/js/dataTables.bootstrap5.min.js',
 ]);
 $this->end();
+
+$this->Html->css([
+    'datatable-shared',
+    'appointments-staff',
+], ['block' => 'css']);
 
 $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('appointments-staff', ['block' => 'script']);
@@ -125,69 +128,60 @@ foreach ($appointmentList as $appointment) {
 }
 ?>
 
-<div class="dash-header d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="dash-title mb-1"><?= $isAdmin ? __('Appointments') : __('Assigned Appointments') ?></h1>
-        <p class="text-muted mb-0">
-            <?php if ($isAdmin): ?>
-                <?= __('Manage appointment records across the system.') ?>
-            <?php elseif ($isClinician): ?>
-                <?= __('Review and manage appointments related to your patients.') ?>
-            <?php else: ?>
-                <?= __('Review appointment records.') ?>
-            <?php endif; ?>
-        </p>
+    <div class="dash-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="dash-title mb-0"><?= $isAdmin ? __('Appointments') : __('Assigned Appointments') ?></h1>
+        </div>
+        <div>
+            <?= $this->Html->link(
+                '<i class="bi bi-plus-circle"></i> Create Appointment',
+                ['action' => 'add'],
+                [
+                    'class' => 'btn btn-primary',
+                    'escape' => false,
+                ]
+            ) ?>
+        </div>
     </div>
-    <div>
-        <?= $this->Html->link(
-            '<i class="bi bi-plus-circle"></i> New Appointment',
-            ['action' => 'add'],
-            [
-                'class' => 'btn btn-primary',
-                'escape' => false,
-            ]
-        ) ?>
-    </div>
-</div>
 
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Total Appointments</div>
-            <div class="stat-value"><?= h($stats['total']) ?></div>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Total Appointments</div>
+                <div class="stat-value"><?= h($stats['total']) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Scheduled</div>
+                <div class="stat-value stat-scheduled"><?= h($stats['scheduled']) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Confirmed</div>
+                <div class="stat-value stat-confirmed"><?= h($stats['confirmed']) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value stat-completed"><?= h($stats['completed']) ?></div>
+            </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Scheduled</div>
-            <div class="stat-value stat-scheduled"><?= h($stats['scheduled']) ?></div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Confirmed</div>
-            <div class="stat-value stat-confirmed"><?= h($stats['confirmed']) ?></div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Completed</div>
-            <div class="stat-value stat-completed"><?= h($stats['completed']) ?></div>
-        </div>
-    </div>
-</div>
 
-<div class="mb-3">
-    <button class="filter-btn all active" data-filter="all">All</button>
-    <button class="filter-btn scheduled" data-filter="scheduled">Scheduled</button>
-    <button class="filter-btn confirmed" data-filter="confirmed">Confirmed</button>
-    <button class="filter-btn completed" data-filter="completed">Completed</button>
-    <button class="filter-btn cancelled" data-filter="cancelled">Cancelled</button>
-</div>
+    <div class="mb-3">
+        <button class="filter-btn all active" data-filter="all">All</button>
+        <button class="filter-btn scheduled" data-filter="scheduled">Scheduled</button>
+        <button class="filter-btn confirmed" data-filter="confirmed">Confirmed</button>
+        <button class="filter-btn completed" data-filter="completed">Completed</button>
+        <button class="filter-btn cancelled" data-filter="cancelled">Cancelled</button>
+    </div>
 
-<div class="d-md-none mb-3">
-    <input type="text" id="mobileSearch" class="form-control" placeholder="Search appointments...">
-</div>
+    <div class="d-md-none mb-3">
+        <input type="text" id="mobileSearch" class="form-control" placeholder="Search appointments...">
+    </div>
 
 <?php if (!empty($appointmentList)): ?>
     <div class="table-responsive d-none d-md-block">
@@ -197,7 +191,7 @@ foreach ($appointmentList as $appointment) {
                 <th>ID</th>
                 <th>Patient</th>
                 <th>Clinician</th>
-                <th>Scheduled</th>
+                <th>Scheduled For</th>
                 <th>Duration</th>
                 <th>Status</th>
                 <th class="text-center">Actions</th>
@@ -207,7 +201,7 @@ foreach ($appointmentList as $appointment) {
             <?php foreach ($appointmentList as $appointment): ?>
                 <?php $normalizedStatus = $normalizeStatus($appointment->status ?? null); ?>
                 <tr data-appointment-status="<?= h($normalizedStatus) ?>">
-                    <td class="align-middle nowrap" data-order="<?= h((int)$appointment->id) ?>">
+                    <td class="align-middle" data-order="<?= h((int)$appointment->id) ?>">
                         <span class="badge bg-secondary">#<?= h($appointment->id) ?></span>
                     </td>
                     <td class="align-middle">
