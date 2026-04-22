@@ -7,10 +7,28 @@
  */
 ?>
 
+<?php
+$identity = $this->request->getAttribute('identity');
+
+$isStaff = false;
+if ($identity) {
+    $user = $identity->getOriginalData();
+    $isStaff = !empty($user->is_staff);
+}
+
+$backText = $isStaff ? 'Back' : 'Back';
+
+$backUrl = $this->request->referer(true) ?: (
+$isStaff
+    ? ['controller' => 'VitalData', 'action' => 'index']
+    : '/'
+);
+?>
+
 <div class="back-link">
     <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i><span>Back to Health Records</span>',
-        ['controller' => 'VitalData', 'action' => 'index'],
+        '<i class="bi bi-arrow-left"></i><span>' . $backText . '</span>',
+        $backUrl,
         ['escape' => false]
     ) ?>
 </div>
