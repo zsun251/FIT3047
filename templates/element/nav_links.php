@@ -8,7 +8,9 @@ $identity = $this->request->getAttribute('identity');
 $currentController = $this->request->getParam('controller');
 $currentAction = $this->request->getParam('action');
 $currentPage = $this->request->getParam('pass.0'); // For PagesController 'display' action
-$isLoggedIn = $this->Identity->isLoggedIn();
+
+// Determine authentication and role state from the request identity
+$isLoggedIn = $identity !== null;
 $isStaff = $identity && UserAccess::isStaff($identity);
 $isPatient = $identity && UserAccess::isPatient($identity);
 
@@ -19,8 +21,10 @@ $isPatient = $identity && UserAccess::isPatient($identity);
 // This determines which CSS classes to use and whether to show section titles
 $linkClass = ($context ?? 'topbar') === 'topbar' ? 'nav-link' : 'sidebar-link';
 $itemClass = ($context ?? 'topbar') === 'topbar' ? 'nav-item' : '';
+
 // Show sections in sidebar always, and in topbar only on mobile
-$showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');?>
+$showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
+?>
 
 <?php if ($context === 'topbar'): ?>
     <!-- ====================================================================
@@ -154,7 +158,7 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
         <!-- SETTINGS SECTION: Personal account settings -->
         <?php if ($showSections): ?><div class="sidebar-section-title">Settings</div><?php endif; ?>
         <li class="<?= $itemClass ?>">
-            <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity->getIdentifier()],
+            <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity ? $identity->getIdentifier() : null],
                 ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
         </li>
     <?php endif; ?>
