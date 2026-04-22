@@ -3,8 +3,8 @@
 <?php
 /**
  * @var \App\View\AppView $this
- * @var \App\Model\Entity\Patient $patient
- * @var \App\Model\Entity\VitalData[]|\Cake\Collection\CollectionInterface $vitalHistory
+ * @var \App\Model\Entity\Patient|null $patient
+ * @var \App\Model\Entity\VitalData[]|\Cake\Collection\CollectionInterface|array $vitalHistory
  */
 
 $this->assign('title', 'Health Records');
@@ -17,16 +17,37 @@ $vitalHistoryArray = is_array($vitalHistory) ? $vitalHistory : $vitalHistory->to
 $dataCount = count($vitalHistoryArray);
 ?>
 
-<h1>Patient History</h1>
+<h1>Health Records</h1>
 
-<p>
-    <strong>Patient ID:</strong>
-    <?= h($patient->id ?? 'Unknown') ?>
-</p>
+<?php if ($patient): ?>
+    <p>
+        <strong>Patient ID:</strong>
+        <?= h($patient->id) ?>
+    </p>
+<?php endif; ?>
 
 <?php if ($dataCount === 0): ?>
 
-    <p style="color:red;"><strong>No vital data available for this patient.</strong></p>
+    <p><strong>There are no historical records available.</strong></p>
+
+    <table border="1" cellpadding="8">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Blood Pressure</th>
+            <th>Oxygen Saturation</th>
+            <th>Respiratory Rate</th>
+            <th>Lung Function</th>
+            <th>Pulse Oximetry</th>
+            <th>Weight</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="7">No records found.</td>
+        </tr>
+        </tbody>
+    </table>
 
 <?php else: ?>
 
@@ -51,15 +72,23 @@ $dataCount = count($vitalHistoryArray);
         $pulse[] = $vital->pulse_oximetry;
     }
 
-    // Function to calculate trend
-    function getTrend($array){
-        if (count($array) < 2) {return 'Not enough data';}
+    function getTrend($array)
+    {
+        if (count($array) < 2) {
+            return 'Not enough data';
+        }
 
         $first = $array[0];
         $last = end($array);
 
-        if ($last > $first) {return 'Increasing ↑';}
-        if ($last < $first) {return 'Decreasing ↓';}
+        if ($last > $first) {
+            return 'Increasing ↑';
+        }
+
+        if ($last < $first) {
+            return 'Decreasing ↓';
+        }
+
         return 'Stable →';
     }
     ?>
@@ -68,7 +97,7 @@ $dataCount = count($vitalHistoryArray);
 
     <?php if ($dataCount < 2): ?>
 
-        <p style="color:orange;"><strong>Not enough data to generate chart.</strong></p>
+        <p><strong>Not enough data to generate chart.</strong></p>
 
     <?php else: ?>
 

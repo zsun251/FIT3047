@@ -18,6 +18,7 @@ class VitalDataController extends AppController
         $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
     }
+
     /**
      * Index method
      *
@@ -36,11 +37,14 @@ class VitalDataController extends AppController
 
         $query = $this->VitalData->find()
             ->contain(['Patients']);
+
         // Apply scope using the action name
         $query = $this->Authorization->applyScope($query, 'index');
+
         $vitalData = $this->paginate($query);
         $this->set(compact('vitalData'));
     }
+
     /**
      * View method
      *
@@ -60,6 +64,7 @@ class VitalDataController extends AppController
 
         $this->set(compact('vitalDataEntity'));
     }
+
     /**
      * Add method
      *
@@ -77,16 +82,20 @@ class VitalDataController extends AppController
 
         if ($this->request->is('post')) {
             $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
+
             if ($this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
+
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
         }
+
         $patients = $this->VitalData->Patients->find('list', limit: 200)->all();
         $symptoms = $this->VitalData->Symptoms->find('list', limit: 200)->all();
         $this->set(compact('vitalDataEntity', 'patients', 'symptoms'));
     }
+
     /**
      * Edit method
      *
@@ -106,16 +115,20 @@ class VitalDataController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $vitalDataEntity = $this->VitalData->patchEntity($vitalDataEntity, $this->request->getData());
+
             if ($this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
+
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
         }
+
         $patients = $this->VitalData->Patients->find('list', limit: 200)->all();
         $symptoms = $this->VitalData->Symptoms->find('list', limit: 200)->all();
         $this->set(compact('vitalDataEntity', 'patients', 'symptoms'));
     }
+
     /**
      * Delete method
      *
@@ -139,6 +152,7 @@ class VitalDataController extends AppController
         } else {
             $this->Flash->error(__('The vital data could not be deleted. Please, try again.'));
         }
+
         return $this->redirect(['action' => 'index']);
     }
 
@@ -160,18 +174,34 @@ class VitalDataController extends AppController
         }
 
         if (UserAccess::isPatient($identity)) {
-            $patientId = UserAccess::getPatientId($identity);
+            $user = $this->fetchTable('Users')->get(
+                $identity->getIdentifier(),
+                contain: ['Patients'],
+            );
+
+            $patientId = $user->patient?->id;
         }
 
         if (!$patientId) {
-            $this->Flash->error(__('This page is only accessible to patients with a valid patient record.'));
-            return $this->redirect($this->getRedirectUrl());
+            $patient = null;
+            $vitalHistory = [];
+            $this->set(compact('patient', 'vitalHistory'));
+            return;
         }
 
-        $patient = $this->VitalData->Patients->get($patientId);
+        $patient = $this->VitalData->Patients->find()
+            ->where(['Patients.id' => $patientId])
+            ->first();
+
+        if (!$patient) {
+            $vitalHistory = [];
+            $this->set(compact('patient', 'vitalHistory'));
+            return;
+        }
 
         $query = $this->VitalData->find()
             ->contain(['Patients'])
+            ->where(['VitalData.patient_id' => $patientId])
             ->orderBy(['VitalData.recorded_at' => 'DESC']);
 
         // Apply scope
