@@ -33,6 +33,11 @@ class ErrorController extends AppController
     public function initialize(): void
     {
         // Only add parent::initialize() if you are confident your `AppController` is safe.
+
+        // Skip authorization for error pages
+        if ($this->components()->has('Authorization')) {
+            $this->Authorization->skipAuthorization();
+        }
     }
 
     /**
