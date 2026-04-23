@@ -8,6 +8,11 @@ use Psr\Http\Message\ServerRequestInterface;
 return function (ServerRequestInterface $request): AuthenticationServiceInterface {
     $service = new AuthenticationService();
 
+    $service->setConfig([
+        'unauthenticatedRedirect' => '/users/login',
+        'queryParam' => 'redirect',
+    ]);
+
     // Determine if login is by email or username
     $loginField = 'username';
     if ($request->is('post')) {
