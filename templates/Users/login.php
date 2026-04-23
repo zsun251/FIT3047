@@ -71,7 +71,13 @@ echo $this->Html->css('login', ['block' => true]);
 
             <!-- Registration Link -->
             <div class="login-footer">
-                <p>Don't have an account? Contact your clinic administrator.</p>
+                <p>Don't have an account?
+                    <?= $this->Html->link(
+                        'Register here',
+                        ['controller' => 'Users', 'action' => 'register'],
+                        ['class' => 'login-link']
+                    ) ?>
+                </p>
             </div>
         </div>
 
