@@ -64,6 +64,15 @@
                         </a>
                     </div>
 
+                    <hr class="my-3">
+
+                    <div class="text-center">
+                        New patient?
+                        <a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'register']) ?>">
+                            Create an account
+                        </a>
+                    </div>
+
                     <?= $this->Form->end() ?>
 
                 </div>
