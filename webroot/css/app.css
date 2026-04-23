@@ -1,7 +1,7 @@
 /*
- * webroot/css/admin.css
+ * webroot/css/app.css
  *
- * Shared styles for all admin pages.
+ * Shared styles for all logged in system pages.
  * Covers: design tokens, page header, stat cards, table card shell,
  * status badges, action buttons, and mobile card layout.
  */
@@ -197,7 +197,7 @@ body {
 .desktop-table-wrap { display: block; }
 .mobile-cards-wrap  { display: none; }
 
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
     .desktop-table-wrap { display: none; }
     .mobile-cards-wrap  { display: block; padding: .75rem; }
 
@@ -386,4 +386,11 @@ body {
         color: var(--c-muted);
         margin-top: .5rem;
     }
+
+
+}
+
+#main-content {
+    margin-left: 180px; /* MUST match sidebar width */
+    padding: 1.75rem;
 }

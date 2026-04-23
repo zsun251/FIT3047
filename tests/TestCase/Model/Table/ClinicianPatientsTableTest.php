@@ -3,18 +3,18 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Model\Table;
 
-use App\Model\Table\ClinicianPatientsTable;
+use App\Model\Table\CliniciansPatientsTable;
 use Cake\TestSuite\TestCase;
 
 /**
- * App\Model\Table\ClinicianPatientsTable Test Case
+ * App\Model\Table\CliniciansPatientsTable Test Case
  */
 class ClinicianPatientsTableTest extends TestCase
 {
     /**
      * Test subject
      *
-     * @var \App\Model\Table\ClinicianPatientsTable
+     * @var \App\Model\Table\CliniciansPatientsTable
      */
     protected $ClinicianPatients;
 
@@ -37,7 +37,7 @@ class ClinicianPatientsTableTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $config = $this->getTableLocator()->exists('ClinicianPatients') ? [] : ['className' => ClinicianPatientsTable::class];
+        $config = $this->getTableLocator()->exists('ClinicianPatients') ? [] : ['className' => CliniciansPatientsTable::class];
         $this->ClinicianPatients = $this->getTableLocator()->get('ClinicianPatients', $config);
     }
 
@@ -57,7 +57,7 @@ class ClinicianPatientsTableTest extends TestCase
      * Test validationDefault method
      *
      * @return void
-     * @link \App\Model\Table\ClinicianPatientsTable::validationDefault()
+     * @link \App\Model\Table\CliniciansPatientsTable::validationDefault()
      */
     public function testValidationDefault(): void
     {
@@ -68,7 +68,7 @@ class ClinicianPatientsTableTest extends TestCase
      * Test buildRules method
      *
      * @return void
-     * @link \App\Model\Table\ClinicianPatientsTable::buildRules()
+     * @link \App\Model\Table\CliniciansPatientsTable::buildRules()
      */
     public function testBuildRules(): void
     {
