@@ -167,4 +167,24 @@ class ResourcesController extends AppController
         $resources = $this->paginate($query);
         $this->set(compact('resources'));
     }
+
+    /**
+     * Read method (patient view))
+     *
+     * @param string|null $id Resource id.
+     * @return \Cake\Http\Response|null|void Renders view
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+     */
+    public function read($id = null)
+    {
+        $resource = $this->Resources->get($id, contain: ['Clinicians']);
+
+        // Check authorization
+        if (!$this->Authorization->can($resource, 'read')) {
+            $this->Flash->error(__('You do not have permission to read this resource.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $this->set(compact('resource'));
+    }
 }

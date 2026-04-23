@@ -76,8 +76,7 @@ class DashboardController extends AppController
             contain: ['Patients'],
         );
 
-        // Resolve the patient ID for patient-specific dashboard data
-        $patient = $currentUser->patients[0] ?? null;
+        $patient = $currentUser->patient ?? null;
         $patientId = $patient?->id;
 
         $latestVital = null;
@@ -105,7 +104,6 @@ class DashboardController extends AppController
             ->orderBy(['Resources.published_at' => 'DESC'])
             ->first();
 
-        // Fetch the latest published resource to preview on the dashboard
         $this->set(compact(
             'currentUser',
             'latestVital',
