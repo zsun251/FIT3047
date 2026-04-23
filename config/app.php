@@ -221,22 +221,24 @@ return [
      */
     'EmailTransport' => [
         'default' => [
-            'className' => MailTransport::class,
+            //'className' => MailTransport::class,
+            // Use Debug for development - emails will appear in logs/debug.log
+            'className' => 'Debug',
             /*
-             * The keys host, port, timeout, username, password, client and tls
-             * are used in SMTP transports
-             */
-            'host' => 'localhost',
-            'port' => 25,
-            'timeout' => 30,
-            /*
-             * It is recommended to set these options through your environment or app_local.php
-             */
-            //'username' => null,
-            //'password' => null,
-            'client' => null,
-            'tls' => false,
-            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+//             * The keys host, port, timeout, username, password, client and tls
+//             * are used in SMTP transports
+//             */
+//            'host' => 'localhost',
+//            'port' => 25,
+//            'timeout' => 30,
+//            /*
+//             * It is recommended to set these options through your environment or app_local.php
+//             */
+//            //'username' => null,
+//            //'password' => null,
+//            'client' => null,
+//            'tls' => false,
+//            'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         ],
     ],
 
@@ -252,12 +254,9 @@ return [
     'Email' => [
         'default' => [
             'transport' => 'default',
-            'from' => 'you@localhost',
-            /*
-             * Will by default be set to config value of App.encoding, if that exists otherwise to UTF-8.
-             */
-            //'charset' => 'utf-8',
-            //'headerCharset' => 'utf-8',
+            'from' => ['noreply@respiracare.com' => 'RespiraCare'],
+            'charset' => 'utf-8',
+            'headerCharset' => 'utf-8',
         ],
     ],
 
@@ -446,7 +445,7 @@ return [
     'DebugKit' => [
         'forceEnable' => filter_var(env('DEBUG_KIT_FORCE_ENABLE', false), FILTER_VALIDATE_BOOLEAN),
         'safeTld' => env('DEBUG_KIT_SAFE_TLD', null),
-        'ignoreAuthorization' => env('DEBUG_KIT_IGNORE_AUTHORIZATION', false),
+        'ignoreAuthorization' => env('DEBUG_KIT_IGNORE_AUTHORIZATION', true),
     ],
 
     /**

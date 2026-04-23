@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 namespace App\Controller;
-
 use App\Policy\Resource\Page;
 use App\Policy\UserAccess;
 
@@ -15,6 +14,10 @@ class DashboardController extends AppController
         $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
     }
+
+
+
+
 
     public function staff()
     {
@@ -32,7 +35,7 @@ class DashboardController extends AppController
 
         $allowed = ['all', 'unread', 'read', 'archived'];
 
-        if (!in_array($status, $allowed, true)) {
+        if (!in_array($status, $allowed)) {
             $status = 'all';
         }
 
@@ -47,13 +50,13 @@ class DashboardController extends AppController
 
         if ($status !== 'all') {
             $query->where([
-                'ContactMessages.status' => $status,
+                'ContactMessages.status' => $status
             ]);
         }
 
         $recent = $query
             ->orderBy([
-                'ContactMessages.submitted_at' => 'DESC',
+                'ContactMessages.submitted_at' => 'DESC'
             ])
             ->all();
 
@@ -73,7 +76,6 @@ class DashboardController extends AppController
             contain: ['Patients'],
         );
 
-        // Resolve the patient ID for patient-specific dashboard data
         $patient = $currentUser->patient ?? null;
         $patientId = $patient?->id;
 
@@ -91,10 +93,7 @@ class DashboardController extends AppController
 
             // Fetch the next upcoming appointment for the patient
             $nextAppointment = $this->fetchTable('Appointments')->find()
-                ->where([
-                    'Appointments.patient_id' => $patientId,
-                    'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime(),
-                ])
+                ->where(['Appointments.patient_id' => $patientId, 'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime(),])
                 ->orderBy(['Appointments.scheduled_at' => 'ASC'])
                 ->first();
         }
@@ -109,7 +108,7 @@ class DashboardController extends AppController
             'currentUser',
             'latestVital',
             'nextAppointment',
-            'latestResource',
+            'latestResource'
         ));
     }
 }

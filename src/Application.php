@@ -74,8 +74,8 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
-        $factory = require CONFIG . 'authentication.php';
-        return $factory($request); // Call the closure with the request
+        $service = (require CONFIG . 'authentication.php')($request);
+        return $service;
     }
 
     public function getAuthorizationService($request): AuthorizationService

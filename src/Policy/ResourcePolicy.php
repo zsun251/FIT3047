@@ -48,4 +48,13 @@ class ResourcePolicy
     {
         return UserAccess::isStaff($user);
     }
+
+
+    /**
+     * Read resource
+     */
+    public function canRead(IdentityInterface $user, Resource $resource): bool
+    {
+        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
+    }
 }
