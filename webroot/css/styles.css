@@ -398,7 +398,7 @@
 
 .symptom-card {
     padding: 16px;
-    min-height: 80px;
+    min-height: 10px;
     transition: all 0.2s ease;
 }
 
