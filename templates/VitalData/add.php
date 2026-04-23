@@ -6,6 +6,33 @@
  * @var \Cake\Collection\CollectionInterface|string[] $symptoms
  */
 ?>
+
+<?php
+$identity = $this->request->getAttribute('identity');
+
+$isStaff = false;
+if ($identity) {
+    $user = $identity->getOriginalData();
+    $isStaff = !empty($user->is_staff);
+}
+
+$backText = $isStaff ? 'Back' : 'Back';
+
+$backUrl = $this->request->referer(true) ?: (
+$isStaff
+    ? ['controller' => 'VitalData', 'action' => 'index']
+    : '/'
+);
+?>
+
+<div class="back-link">
+    <?= $this->Html->link(
+        '<i class="bi bi-arrow-left"></i><span>' . $backText . '</span>',
+        $backUrl,
+        ['escape' => false]
+    ) ?>
+</div>
+
 <div class="container-fluid px-4">
 
     <div class="card shadow-sm border-0 mb-4">
