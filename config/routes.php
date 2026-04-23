@@ -75,6 +75,33 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/users/reset-password', ['controller' => 'Users', 'action' => 'resetPassword']);
 
 
+        /* Setup dashboard routes */
+        $builder->connect('/dashboard', [
+            'controller' => 'Dashboard',
+            'action' => 'index'
+        ]);
+
+        $builder->connect('/dashboard/staff', [
+            'controller' => 'Dashboard',
+            'action' => 'staff'
+        ]);
+
+        $builder->connect('/dashboard/patient', [
+            'controller' => 'Dashboard',
+            'action' => 'patient'
+        ]);
+
+        /* Setup Resource routes */
+        $builder->connect('/resources/library', [
+            'controller' => 'Resources',
+            'action' => 'browse'
+        ]);
+
+        $builder->connect('/vita-data/patient-history', [
+            'controller' => 'VitalData',
+            'action' => 'patientHistory'
+        ]);
+
         /*
          * Connect catchall routes for all controllers.
          *

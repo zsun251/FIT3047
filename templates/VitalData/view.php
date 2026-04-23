@@ -4,91 +4,212 @@
  * @var \App\Model\Entity\VitalData $vitalDataEntity
  */
 ?>
+<div class="back-link">
+    <?= $this->Html->link(
+        '<i class="bi bi-arrow-left"></i><span>Back to Health Records</span>',
+        ['controller' => 'VitalData', 'action' => 'index'],
+        ['escape' => false]
+    ) ?>
+</div>
 <div class="row">
     <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Vital Data'), ['action' => 'edit', $vitalDataEntity->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Vital Data'), ['action' => 'delete', $vitalDataEntity->id], ['confirm' => __('Are you sure you want to delete # {0}?', $vitalDataEntity->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Vital Data'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Vital Data'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+        <div class="side-nav-modern">
+
+            <?= $this->Html->link(
+                '<i class="bi bi-pencil-square"></i> Edit Vital Data',
+                ['action' => 'edit', $vitalDataEntity->id],
+                ['class' => 'side-nav-item', 'escape' => false]
+            ) ?>
+
+            <?= $this->Form->postLink(
+                '<i class="bi bi-trash"></i> Delete Vital Data',
+                ['action' => 'delete', $vitalDataEntity->id],
+                [
+                    'confirm' => __('Are you sure you want to delete # {0}?', $vitalDataEntity->id),
+                    'class' => 'side-nav-item',
+                    'escape' => false
+                ]
+            ) ?>
+
+            <?= $this->Html->link(
+                '<i class="bi bi-list"></i> List Vital Data',
+                ['action' => 'index'],
+                ['class' => 'side-nav-item', 'escape' => false]
+            ) ?>
+
+            <?= $this->Html->link(
+                '<i class="bi bi-plus-circle"></i> New Vital Data',
+                ['action' => 'add'],
+                ['class' => 'side-nav-item', 'escape' => false]
+            ) ?>
+
         </div>
     </aside>
     <div class="column column-80">
         <div class="vitalData view content">
-            <h3><?= h($vitalDataEntity->id) ?></h3>
-            <table>
-                <tr>
-                    <th><?= __('Patient') ?></th>
-                    <td><?= $vitalDataEntity->hasValue('patient') ? $this->Html->link($vitalDataEntity->patient->id, ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Blood Pressure') ?></th>
-                    <td><?= h($vitalDataEntity->blood_pressure) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($vitalDataEntity->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Oxygen Saturation') ?></th>
-                    <td><?= $vitalDataEntity->oxygen_saturation === null ? '' : $this->Number->format($vitalDataEntity->oxygen_saturation) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Respiratory Rate') ?></th>
-                    <td><?= $vitalDataEntity->respiratory_rate === null ? '' : $this->Number->format($vitalDataEntity->respiratory_rate) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Lung Function') ?></th>
-                    <td><?= $vitalDataEntity->lung_function === null ? '' : $this->Number->format($vitalDataEntity->lung_function) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Pulse Oximetry') ?></th>
-                    <td><?= $vitalDataEntity->pulse_oximetry === null ? '' : $this->Number->format($vitalDataEntity->pulse_oximetry) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Weight') ?></th>
-                    <td><?= $vitalDataEntity->weight === null ? '' : $this->Number->format($vitalDataEntity->weight) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Recorded At') ?></th>
-                    <td><?= h($vitalDataEntity->recorded_at) ?></td>
-                </tr>
-            </table>
-            <div class="related">
-                <h4><?= __('Related Symptoms') ?></h4>
-                <?php if (!empty($vitalDataEntity->symptoms)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Symptom Name') ?></th>
-                            <th><?= __('Description') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($vitalDataEntity->symptoms as $symptom) : ?>
-                        <tr>
-                            <td><?= h($symptom->id) ?></td>
-                            <td><?= h($symptom->symptom_name) ?></td>
-                            <td><?= h($symptom->description) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Symptoms', 'action' => 'view', $symptom->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Symptoms', 'action' => 'edit', $symptom->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'Symptoms', 'action' => 'delete', $symptom->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $symptom->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
+            <?php
+            $name = "Patient " . ($vitalDataEntity->patient->id ?? '');
+            $words = explode(" ", $name);
+            $initials = strtoupper($words[0][0] . ($words[1][0] ?? ''));
+            ?>
+            <div class="card shadow-sm border-0 mb-4 vital-header-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center gap-3">
+
+                        <?php
+                        $patientName = 'Patient ' . ($vitalDataEntity->patient->id ?? '');
+                        $initials = strtoupper(substr($patientName, 0, 1));
+                        ?>
+
+                        <?php
+                        $patientName = 'Patient ' . ($vitalDataEntity->patient->id ?? '');
+                        $initials = strtoupper(substr($patientName, 0, 1));
+                        ?>
+
+                        <?php
+                        $patientName = 'Patient ' . ($vitalDataEntity->patient->id ?? '');
+                        $initials = strtoupper(substr($patientName, 0, 1));
+                        ?>
+
+                        <?php
+                        $patientName = 'Patient ' . ($vitalDataEntity->patient->id ?? '');
+                        $initials = strtoupper(substr($patientName, 0, 1));
+                        ?>
+
+                        <div class="profile-avatar">
+                            <?= $initials ?>
+                        </div>
+
+                        <div>
+                            <h2 class="fw-bold mb-1">
+                                <?= $patientName ?>
+                            </h2>
+                            <p class="text-muted mb-0">
+                                Patient ID: <?= $vitalDataEntity->patient->id ?? 'N/A' ?>
+                                &nbsp;&nbsp;•&nbsp;&nbsp;
+                                Recorded: <?= h($vitalDataEntity->recorded_at) ?>
+                            </p>
+                        </div>
+
+                    </div>
                 </div>
-                <?php endif; ?>
             </div>
-        </div>
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-3">
+                    <h5 class="fw-semibold mb-2 position-relative">
+                        Vital Signs
+                    </h5>
+                    <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 10px;"></div>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                                <div class="icon-box">
+                                    <i class="bi bi-heart-pulse"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Oxygen Saturation</small>
+                                    <div class="fw-semibold">
+                                        <?= $vitalDataEntity->oxygen_saturation ?>%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                                <div class="icon-box">
+                                    <i class="bi bi-activity"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Respiratory Rate</small>
+                                    <div class="fw-semibold">
+                                        <?= $vitalDataEntity->respiratory_rate ?> bpm
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                                <div class="icon-box">
+                                    <i class="bi bi-droplet"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Pulse Oximetry</small>
+                                    <div class="fw-semibold">
+                                        <?= $vitalDataEntity->pulse_oximetry ?>%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                                <div class="icon-box">
+                                    <i class="bi bi-speedometer2"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Weight</small>
+                                    <div class="fw-semibold">
+                                        <?= $vitalDataEntity->weight ?> kg
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                                <div class="icon-box">
+                                    <i class="bi bi-heart-pulse"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Blood Pressure</small>
+                                    <div class="fw-semibold">
+                                        <?= h($vitalDataEntity->blood_pressure) ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <h5 class="fw-semibold mb-2">Symptoms</h5>
+                    <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 18px;"></div>
+
+                    <?php if (!empty($vitalDataEntity->symptoms)): ?>
+                        <div class="row g-3">
+
+                            <?php foreach ($vitalDataEntity->symptoms as $symptom): ?>
+                                <?php
+                                $severity = strtolower($symptom->_joinData->severity ?? 'unknown');
+
+                                $badgeClass = match($severity) {
+                                    'mild' => 'severity-mild',
+                                    'moderate' => 'severity-moderate',
+                                    'severe' => 'severity-severe',
+                                    default => 'severity-unknown'
+                                };
+                                ?>
+
+                                <div class="col-md-6">
+                                    <div class="symptom-card accent-green d-flex justify-content-between align-items-center">
+                                        <span class="symptom-name">
+                                            <?= h($symptom->symptom_name) ?>
+                                        </span>
+
+                                        <span class="severity-badge <?= $badgeClass ?>">
+                                            <?= ucfirst($severity) ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <span class="text-muted">No symptoms recorded</span>
+                            <?php endif; ?>
+
+                        </div>
+                    </div>
     </div>
 </div>
