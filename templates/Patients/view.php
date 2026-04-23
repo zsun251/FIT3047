@@ -106,7 +106,6 @@
                             <th><?= __('Id') ?></th>
                             <th><?= __('Oxygen Saturation') ?></th>
                             <th><?= __('Respiratory Rate') ?></th>
-                            <th><?= __('Lung Function') ?></th>
                             <th><?= __('Blood Pressure') ?></th>
                             <th><?= __('Pulse Oximetry') ?></th>
                             <th><?= __('Weight') ?></th>
@@ -118,7 +117,6 @@
                             <td><?= h($vitalData->id) ?></td>
                             <td><?= h($vitalData->oxygen_saturation) ?></td>
                             <td><?= h($vitalData->respiratory_rate) ?></td>
-                            <td><?= h($vitalData->lung_function) ?></td>
                             <td><?= h($vitalData->blood_pressure) ?></td>
                             <td><?= h($vitalData->pulse_oximetry) ?></td>
                             <td><?= h($vitalData->weight) ?></td>

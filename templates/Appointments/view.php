@@ -14,11 +14,16 @@ $isStaff = $identity && UserAccess::isStaff($identity);
 
 $this->assign('title', $isPatient ? 'My Appointment' : 'Appointment Details');
 
-echo $this->Html->css([
+$cssFiles = [
     'form-shared',
     'appointments',
-    'appointment-patient',
-], ['block' => true]);
+];
+
+if ($isPatient) {
+    $cssFiles[] = 'appointment-patient';
+}
+
+echo $this->Html->css($cssFiles, ['block' => true]);
 
 $statusClass = function (?string $status): string {
     $value = strtolower(trim((string)$status));
@@ -186,7 +191,7 @@ $getClinicianName = function ($appointment): string {
                     [
                         'confirm' => __('Are you sure you want to delete appointment # {0}?', $appointment->id),
                         'class' => 'btn btn-outline-danger',
-                        'escape' => false,
+                        'escape' => false
                     ]
                 ) ?>
 
