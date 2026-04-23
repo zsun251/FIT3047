@@ -5,18 +5,18 @@ namespace App\Policy;
 
 use App\Model\Entity\Appointment;
 use Authorization\IdentityInterface;
+use Cake\Datasource\FactoryLocator;
 
 /**
  * AppointmentPolicy
  *
- * Handles authorization for individual Appointment entities.
- * Used when authorizing actions on specific appointment records.
+ * Handles authorization for individual appointment records.
  *
- * Methods in this policy determine:
- * - Who can view a specific appointment
- * - Who can add new appointments
- * - Who can edit existing appointments
- * - Who can delete appointments
+ * Access rules:
+ * - Admins can manage all appointments
+ * - Clinicians can manage appointments for patients assigned to them
+ * - Patients can view their own appointments
+ * - Patients cannot create appointment records
  */
 class AppointmentPolicy
 {
@@ -25,60 +25,15 @@ class AppointmentPolicy
      */
     public function canView(IdentityInterface $user, Appointment $resource): bool
     {
-        return $this->hasAppointmentAccess($user, $resource);
-    }
-
-    /**
-     * Add appointment (only staff can create)
-     */
-    public function canAdd(IdentityInterface $user, Appointment $resource): bool
-    {
-        return UserAccess::isStaff($user);
-    }
-
-    /**
-     * Edit appointment (only staff can edit)
-     */
-    public function canEdit(IdentityInterface $user, Appointment $resource): bool
-    {
-        return UserAccess::isStaff($user);
-    }
-
-    /**
-     * Delete appointment (only staff can delete)
-     */
-    public function canDelete(IdentityInterface $user, Appointment $resource): bool
-    {
-        return UserAccess::isStaff($user);
-    }
-
-    /**
-     * List appointments
-     */
-    public function canIndex(IdentityInterface $user): bool
-    {
-        // Allow all authenticated users to see the index
-        // The actual filtering happens in scopeIndex
-        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
-    }
-
-    /**
-     * Check if user has access to this specific appointment
-     */
-    private function hasAppointmentAccess(IdentityInterface $user, Appointment $resource): bool
-    {
-        // Admins can access all appointments
         if (UserAccess::isAdmin($user)) {
             return true;
         }
 
-        // Patients can access their own appointments
-        if ($this->isAppointmentPatient($user, $resource)) {
+        if ($this->isOwnAppointment($user, $resource)) {
             return true;
         }
 
-        // Clinicians can access appointments they're assigned to
-        if ($this->isAppointmentClinician($user, $resource)) {
+        if ($this->canClinicianManageAppointment($user, $resource)) {
             return true;
         }
 
@@ -86,20 +41,106 @@ class AppointmentPolicy
     }
 
     /**
-     * Check if user is the patient for this appointment
+     * Add appointment
      */
-    private function isAppointmentPatient(IdentityInterface $user, Appointment $resource): bool
+    public function canAdd(IdentityInterface $user, Appointment $resource): bool
     {
-        $patientId = UserAccess::getPatientId($user);
-        return $patientId !== null && $patientId === $resource->patient_id;
+        if (UserAccess::isAdmin($user)) {
+            return true;
+        }
+
+        if (!UserAccess::isClinician($user)) {
+            return false;
+        }
+
+        // Allow access to the add form before appointment data is submitted
+        if (empty($resource->patient_id) && empty($resource->clinician_id)) {
+            return true;
+        }
+
+        return $this->canClinicianManageAppointment($user, $resource);
     }
 
     /**
-     * Check if user is the clinician for this appointment
+     * Edit appointment
      */
-    private function isAppointmentClinician(IdentityInterface $user, Appointment $resource): bool
+    public function canEdit(IdentityInterface $user, Appointment $resource): bool
+    {
+        if (UserAccess::isAdmin($user)) {
+            return true;
+        }
+
+        return $this->canClinicianManageAppointment($user, $resource);
+    }
+
+    /**
+     * Delete appointment
+     */
+    public function canDelete(IdentityInterface $user, Appointment $resource): bool
+    {
+        if (UserAccess::isAdmin($user)) {
+            return true;
+        }
+
+        return $this->canClinicianManageAppointment($user, $resource);
+    }
+
+    /**
+     * List appointments
+     */
+    public function canIndex(IdentityInterface $user): bool
+    {
+        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
+    }
+
+    /**
+     * Check if clinician can manage this appointment
+     */
+    private function canClinicianManageAppointment(IdentityInterface $user, Appointment $resource): bool
+    {
+        if (!UserAccess::isClinician($user)) {
+            return false;
+        }
+
+        $clinicianId = UserAccess::getClinicianId($user);
+        if ($clinicianId === null) {
+            return false;
+        }
+
+        if ((int)$resource->clinician_id !== $clinicianId) {
+            return false;
+        }
+
+        return $this->isAssignedPatientForClinician($user, (int)$resource->patient_id);
+    }
+
+    /**
+     * Check if this appointment belongs to the user as a patient
+     */
+    private function isOwnAppointment(IdentityInterface $user, Appointment $resource): bool
+    {
+        $patientId = UserAccess::getPatientId($user);
+
+        return $patientId !== null && $patientId === (int)$resource->patient_id;
+    }
+
+    /**
+     * Check if the patient is assigned to the clinician
+     */
+    private function isAssignedPatientForClinician(IdentityInterface $user, int $patientId): bool
     {
         $clinicianId = UserAccess::getClinicianId($user);
-        return $clinicianId !== null && $clinicianId === $resource->clinician_id;
+
+        if ($clinicianId === null || $patientId <= 0) {
+            return false;
+        }
+
+        return FactoryLocator::get('Table')
+            ->get('CliniciansPatients')
+            ->exists([
+                'CliniciansPatients.clinician_id' => $clinicianId,
+                'CliniciansPatients.patient_id' => $patientId,
+                'CliniciansPatients.unassigned_at IS' => null,
+            ]);
     }
 }

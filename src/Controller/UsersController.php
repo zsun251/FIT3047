@@ -121,35 +121,145 @@ class UsersController extends AppController
         }
     }
 
+    /**
+     * Forgot Password - Request reset email
+     */
     public function forgotPassword()
     {
-        // Use default.php instead of app.php
         $this->viewBuilder()->setLayout('default');
         $this->Authorization->skipAuthorization();
         $this->request->allowMethod(['get', 'post']);
 
         if ($this->request->is('post')) {
-            $email = trim((string)$this->request->getData('email'));
+            $email = $this->request->getData('email');
 
-            if ($email !== '') {
-                $this->Flash->success('If an account with that email exists, password reset instructions would be sent.');
+            $user = $this->Users->find()
+                ->where(['email' => $email])
+                ->first();
+
+            if ($user) {
+                // Generate secure token
+                $token = bin2hex(random_bytes(32));
+                $user->reset_token = $token;
+                $user->reset_token_expires = new \Cake\I18n\DateTime('+1 hour');
+
+                if ($this->Users->save($user, ['validate' => false])) {
+                    $this->sendResetEmail($user);
+                    $this->Flash->success('Password reset instructions have been sent to your email.');
+                    // For development: show the link directly
+                    // Generate reset URL
+                    $resetUrl = \Cake\Routing\Router::url([
+                        'controller' => 'Users',
+                        'action' => 'resetPassword',
+                        $user->reset_token
+                    ], true);
+
+                    // For development: show the link directly
+                    $this->Flash->success(
+                        'Password reset link (development mode): <a href="' . $resetUrl . '">' . $resetUrl . '</a>',
+                        ['escape' => false]
+                    );
+                } else {
+                    $this->Flash->error('Unable to process your request. Please try again.');
+                }
             } else {
-                $this->Flash->error('Please enter your email address.');
+                // Don't reveal if email exists or not (security best practice)
+                $this->Flash->success('If that email exists, password reset instructions have been sent.');
             }
+
+            return $this->redirect(['action' => 'login']);
         }
     }
 
-    public function resetPassword()
+    /**
+     * Reset Password - Actually reset with token
+     */
+    public function resetPassword($token = null)
     {
-        // Use default.php instead of app.php
         $this->viewBuilder()->setLayout('default');
         $this->Authorization->skipAuthorization();
-
         $this->request->allowMethod(['get', 'post']);
 
-        if ($this->request->is('post')) {
-            $this->Flash->success('Password reset functionality is not implemented in this version.');
+        // Try to get token from URL parameter if not passed as argument
+        if (!$token) {
+            $token = $this->request->getParam('token');
+        }
+
+        // Also try from pass array
+        if (!$token) {
+            $pass = $this->request->getParam('pass');
+            $token = $pass[0] ?? null;
+        }
+
+        if (!$token) {
+            $this->Flash->error('Invalid password reset link.');
             return $this->redirect(['action' => 'login']);
+        }
+
+        $user = $this->Users->find()
+            ->where(['reset_token' => $token])
+            ->first();
+
+        // Check if user exists and token hasn't expired
+        if (!$user || $user->reset_token_expires < new \Cake\I18n\DateTime()) {
+            $this->Flash->error('Invalid or expired password reset link.');
+            return $this->redirect(['action' => 'forgotPassword']);
+        }
+
+        if ($this->request->is('post')) {
+            $password = $this->request->getData('password');
+            $confirmPassword = $this->request->getData('confirm_password');
+
+            if ($password !== $confirmPassword) {
+                $this->Flash->error('Passwords do not match.');
+            } else {
+                $user->password = $password;
+                $user->reset_token = null;
+                $user->reset_token_expires = null;
+
+                if ($this->Users->save($user)) {
+                    $this->Flash->success('Your password has been reset. You can now log in.');
+                    return $this->redirect(['action' => 'login']);
+                } else {
+                    $this->Flash->error('Unable to reset password. Please try again.');
+                }
+            }
+        }
+
+        $this->set(compact('token', 'user'));
+    }
+
+    /**
+     * Send password reset email
+     */
+    private function sendResetEmail($user)
+    {
+        $mailer = new \Cake\Mailer\Mailer('default');
+
+        $resetUrl = \Cake\Routing\Router::url([
+            'controller' => 'Users',
+            'action' => 'resetPassword',
+            $user->reset_token
+        ], true);
+
+        $mailer
+            ->setTo($user->email)
+            ->setSubject('Reset Your RespiraCare Password')
+            ->setEmailFormat('html')
+            ->viewBuilder()
+            ->setTemplate('password_reset')
+            ->setLayout('default');
+
+        $mailer->setViewVars([
+            'user' => $user,
+            'resetUrl' => $resetUrl
+        ]);
+
+        try {
+            $mailer->deliver();
+        } catch (\Exception $e) {
+            // Log error but don't reveal to user
+            \Cake\Log\Log::error('Failed to send password reset email: ' . $e->getMessage());
         }
     }
 
@@ -179,7 +289,12 @@ class UsersController extends AppController
             return $this->redirect($this->getRedirectUrl());
         }
 
-        $this->set(compact('user'));
+        // Get type-specific IDs
+        $adminId = $user->admin ? $user->admin->id : null;
+        $clinicianId = $user->clinician ? $user->clinician->id : null;
+        $patientId = $user->patient ? $user->patient->id : null;
+
+        $this->set(compact('user', 'adminId', 'clinicianId', 'patientId'));
     }
 
     public function add()

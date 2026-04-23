@@ -23,7 +23,6 @@ class VitalDataFixture extends TestFixture
                 'patient_id' => 1,
                 'oxygen_saturation' => 1.5,
                 'respiratory_rate' => 1,
-                'lung_function' => 1.5,
                 'blood_pressure' => 'Lorem ip',
                 'pulse_oximetry' => 1.5,
                 'weight' => 1.5,

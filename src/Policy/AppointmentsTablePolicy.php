@@ -4,54 +4,98 @@ declare(strict_types=1);
 namespace App\Policy;
 
 use Authorization\IdentityInterface;
-
+use Cake\Datasource\FactoryLocator;
+use Cake\ORM\Query;
 
 /**
  * AppointmentsTablePolicy
  *
- * Handles authorization and query scoping for Appointment collections.
- * Used when applying filters to appointment queries (e.g., in index actions).
+ * Handles authorization and query scoping for appointment collections.
  *
  * Scope methods in this policy:
- * - Filter which appointments users can see in lists
+ * - Filter which appointment records users can see in lists
  * - Apply role-based query restrictions
- * - Ensure users only see appointments they have access to
- *
- * This is separate from AppointmentPolicy which handles individual entities.
+ * - Ensure patients only see their own appointments
  */
 class AppointmentsTablePolicy
 {
-
     /**
-     * Scope for index - filter appointments based on user
+     * Scope the index query to show only appointments the user can access
+     *
+     * Filtering rules:
+     * - Admins: See all appointments
+     * - Clinicians: See appointments for their assigned patients
+     * - Patients: See only their own appointments
+     *
+     * @param \Authorization\IdentityInterface $user The user making the request
+     * @param \Cake\ORM\Query $query The base query to filter
+     * @return \Cake\ORM\Query The filtered query
      */
-    public function scopeIndex(IdentityInterface $user, \Cake\ORM\Query $query)
+    public function scopeIndex(IdentityInterface $user, Query $query)
     {
-        // Admins see all
         if (UserAccess::isAdmin($user)) {
             return $query;
         }
 
         if (UserAccess::isClinician($user)) {
-            // Clinicians see their appointments
-//            $clinicianId = UserAccess::getClinicianId($user);
-//            if ($clinicianId !== null) {
-//                return $query->where(['Appointments.clinician_id' => $clinicianId]);
-//            }
-            // Clinicians see all appointments
-            return $query;
+            $clinicianId = UserAccess::getClinicianId($user);
+            $patientIds = $this->getAssignedPatientIdsForClinician($user);
+
+            if ($clinicianId === null || empty($patientIds)) {
+                return $query->where(['1 = 0']);
+            }
+
+            return $query->where([
+                'Appointments.clinician_id' => $clinicianId,
+                'Appointments.patient_id IN' => $patientIds,
+            ]);
         }
 
-        // Patients see their appointments
         if (UserAccess::isPatient($user)) {
             $patientId = UserAccess::getPatientId($user);
+
             if ($patientId !== null) {
-                return $query->where(['Appointments.patient_id' => $patientId]);
+                return $query->where([
+                    'Appointments.patient_id' => $patientId,
+                ]);
             }
         }
 
-        // No access - return empty result
         return $query->where(['1 = 0']);
     }
 
+    /**
+     * Get assigned patient ids for a clinician
+     *
+     * @param \Authorization\IdentityInterface $user The user making the request
+     * @return int[] The patient ids assigned to the clinician
+     */
+    private function getAssignedPatientIdsForClinician(IdentityInterface $user): array
+    {
+        $clinicianId = UserAccess::getClinicianId($user);
+
+        if ($clinicianId === null) {
+            return [];
+        }
+
+        $rows = FactoryLocator::get('Table')
+            ->get('CliniciansPatients')
+            ->find()
+            ->select(['patient_id'])
+            ->where([
+                'CliniciansPatients.clinician_id' => $clinicianId,
+                'CliniciansPatients.unassigned_at IS' => null,
+            ])
+            ->all();
+
+        $patientIds = [];
+        foreach ($rows as $row) {
+            $patientIds[] = (int)$row->patient_id;
+        }
+
+        $patientIds = array_values(array_unique(array_filter($patientIds)));
+        sort($patientIds);
+
+        return $patientIds;
+    }
 }
