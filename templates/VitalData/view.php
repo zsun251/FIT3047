@@ -49,7 +49,7 @@
                 <?= $this->Html->link(
                     '<i class="bi bi-pencil"></i> Edit',
                     ['action' => 'edit', $vitalDataEntity->id],
-                    ['class' => 'btn btn-primary rounded-pill px-4 py-2 fw-semibold', 'escape' => false]
+                    ['class' => 'btn btn-edit px-3 py-2', 'escape' => false]
                 ) ?>
 
                 <?= $this->Form->postLink(
@@ -57,7 +57,7 @@
                     ['action' => 'delete', $vitalDataEntity->id],
                     [
                         'confirm' => 'Are you sure you want to delete this record?',
-                        'class' => 'btn btn-outline-danger rounded-pill px-4 py-2 fw-semibold',
+                        'class' => 'btn btn-delete px-3 py-2',
                         'escape' => false
                     ]
                 ) ?>
