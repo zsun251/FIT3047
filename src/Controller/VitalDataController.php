@@ -25,10 +25,8 @@ class VitalDataController extends AppController
      */
     public function index()
     {
-        // Create an entity to check permissions
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
 
-        // Check if user can access index at all
         if (!$this->Authorization->can($vitalDataEntity, 'index')) {
             $this->Flash->error(__('You do not have permission to access that page.'));
             return $this->redirect($this->getRedirectUrl());
@@ -36,7 +34,7 @@ class VitalDataController extends AppController
 
         $query = $this->VitalData->find()
             ->contain(['Patients', 'Symptoms']);
-        // Apply scope using the action name
+
         $query = $this->Authorization->applyScope($query, 'index');
         $vitalData = $this->paginate($query);
         $this->set(compact('vitalData'));
@@ -69,7 +67,6 @@ class VitalDataController extends AppController
     {
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
 
-        // Check authorization
         if (!$this->Authorization->can($vitalDataEntity, 'add')) {
             $this->Flash->error(__('You do not have permission to add vital data.'));
             return $this->redirect($this->getRedirectUrl());

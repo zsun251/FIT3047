@@ -165,12 +165,6 @@
 }
 
 
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -12px;
-}
-
 /* Paginator */
 .paginator ul.pagination {
     display: flex;
@@ -362,39 +356,19 @@
     font-size: 16px;
 }
 
-.vital-card,
-.vital-header-card {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-}
 
-.accent-green::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 6px;
-    height: 100%;
-    background: #16a34a;
-}
 
 .vital-card,
 .symptom-card {
-    position: relative;
+    background: #f8fafc;
+    border: 1px solid #dbe3ea;
+    border-left: 5px solid #198754;
     border-radius: 12px;
-    overflow: hidden;
+    padding: 18px 20px;
+    min-height: 110px;
+    width: 100%;
 }
 
-.accent-green::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 5px;
-    height: 100%;
-    background: #22c55e;
-}
 
 .symptom-card {
     padding: 16px;
@@ -418,4 +392,43 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+
+.vitalData.view.content {
+    padding: 0 24px 32px;
+}
+
+.vitalData .section-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-top: 24px;
+}
+
+.vitalData .detail-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+    max-width: 900px;
+}
+
+.vitalData .symptom-card {
+    width: 100%;
+    min-height: 120px;
+    background: #f8fafc;
+    border: 1px solid #dbe3ea;
+    border-left: 5px solid #198754;
+    border-radius: 12px;
+    padding: 22px 24px;
+}
+
+.vital-header-card .card-body {
+    padding-left: 12px;
+}
+
+.section-underline {
+    width: 50px;
+    height: 4px;
+    background-color: #0d6efd;
+    border-radius: 3px;
+    margin-bottom: 20px;
 }
