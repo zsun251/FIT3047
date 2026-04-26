@@ -168,13 +168,6 @@ $isStaff
                 </div>
                 <?php endforeach; ?>
             </div>
-
-            <?php
-            echo $this->Form->control('recorded_at', [
-                'class' => 'form-control mb-3',
-                'label' => 'Recorded At'
-            ]);
-                ?>
             <div class="d-flex justify-content-end mt-4 pt-2 border-top">
                 <?= $this->Form->button(__('Submit Entry'), [
                     'class' => 'btn btn-primary rounded-pill px-4 py-2 fw-semibold'
