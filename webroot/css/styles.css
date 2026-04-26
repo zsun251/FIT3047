@@ -405,10 +405,9 @@
 }
 
 .vitalData .detail-grid {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 20px !important;
-    max-width: 900px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 24px;
 }
 
 .vitalData .symptom-card {
