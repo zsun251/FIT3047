@@ -14,26 +14,15 @@ $isStaff = $identity && UserAccess::isStaff($identity);
 
 $this->assign('title', $isPatient ? 'My Appointment' : 'Appointment Details');
 
-$cssFiles = [
-    'form-shared',
-    'appointments',
-];
-
-if ($isPatient) {
-    $cssFiles[] = 'appointment-patient';
-}
-
-echo $this->Html->css($cssFiles, ['block' => true]);
+echo $this->Html->css(['form-shared', 'appointments',], ['block' => true]);
 
 $statusClass = function (?string $status): string {
     $value = strtolower(trim((string)$status));
 
     return match ($value) {
-        'scheduled', 'upcoming' => 'appointment-status-scheduled',
-        'confirmed' => 'appointment-status-confirmed',
+        'upcoming', 'scheduled', 'confirmed' => 'appointment-status-upcoming',
         'completed' => 'appointment-status-completed',
         'cancelled', 'canceled' => 'appointment-status-cancelled',
-        'pending' => 'appointment-status-pending',
         default => 'appointment-status-default',
     };
 };
@@ -124,7 +113,7 @@ $getClinicianName = function ($appointment): string {
             <?= __('Appointment Summary') ?>
         </h2>
 
-        <div class="appointments-detail-grid<?= $isPatient ? ' patient-appointment-detail-grid-single' : '' ?>">
+        <div class="appointments-detail-grid<?= $isPatient ? ' appointments-detail-grid--three' : '' ?>">
             <?php if (!$isPatient): ?>
                 <div class="appointments-detail-item">
                     <div class="appointments-detail-label"><?= __('Appointment ID') ?></div>
@@ -191,7 +180,7 @@ $getClinicianName = function ($appointment): string {
                     [
                         'confirm' => __('Are you sure you want to delete appointment # {0}?', $appointment->id),
                         'class' => 'btn btn-outline-danger',
-                        'escape' => false
+                        'escape' => false,
                     ]
                 ) ?>
 
