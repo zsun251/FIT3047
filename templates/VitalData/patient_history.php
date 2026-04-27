@@ -18,6 +18,8 @@ echo $this->Html->script('patient-health-records', ['block' => true]);
 $vitalHistory = $vitalHistory ?? [];
 $vitalHistoryArray = is_array($vitalHistory) ? $vitalHistory : $vitalHistory->toArray();
 $dataCount = count($vitalHistoryArray);
+// Reverse the array to show oldest to newest
+$vitalHistoryArray = array_reverse($vitalHistoryArray);
 
 // Function to calculate trend
 function getTrend($array) {

@@ -73,6 +73,7 @@ return function (RouteBuilder $routes): void {
 
         $builder->connect('/users/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
         $builder->connect('/users/reset-password', ['controller' => 'Users', 'action' => 'resetPassword']);
+        $builder->connect('/users/register', ['controller' => 'Users', 'action' => 'register']);
 
 
         /* Setup dashboard routes */

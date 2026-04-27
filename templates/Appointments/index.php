@@ -10,7 +10,6 @@ use App\Policy\UserAccess;
 
 $identity = $this->request->getAttribute('identity');
 $isAdmin = $identity && UserAccess::isAdmin($identity);
-$isClinician = $identity && UserAccess::isClinician($identity);
 
 $this->assign('title', $isAdmin ? 'Appointments' : 'Assigned Appointments');
 
@@ -20,8 +19,6 @@ $this->assign('title', $isAdmin ? 'Appointments' : 'Assigned Appointments');
 $this->start('datatables_css');
 echo $this->Html->css([
     'https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.min.css',
-    'datatable-shared',
-    'appointments-staff',
 ]);
 $this->end();
 
@@ -32,6 +29,11 @@ echo $this->Html->script([
 ]);
 $this->end();
 
+$this->Html->css([
+    'datatable-shared',
+    'appointments',
+], ['block' => 'css']);
+
 $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('appointments-staff', ['block' => 'script']);
 
@@ -41,6 +43,7 @@ $normalizeStatus = function (?string $status): string {
     $value = strtolower(trim((string)$status));
 
     return match ($value) {
+        'scheduled', 'confirmed' => 'upcoming',
         'canceled' => 'cancelled',
         '' => 'unknown',
         default => $value,
@@ -85,7 +88,7 @@ $getClinicianLabel = function ($appointment): string {
 
 $getDateLabel = function ($dateTime): string {
     if (!$dateTime) {
-        return 'Not scheduled';
+        return 'No appointment date';
     }
 
     return $dateTime->format('d M Y');
@@ -100,94 +103,86 @@ $getTimeLabel = function ($dateTime): string {
 };
 
 $getStatusLabel = function (?string $status): string {
-    $status = trim((string)$status);
+    $value = strtolower(trim((string)$status));
 
-    if ($status === '') {
-        return 'Unknown';
-    }
-
-    return strtoupper(str_replace('_', ' ', $status));
+    return match ($value) {
+        'upcoming', 'scheduled', 'confirmed' => 'UPCOMING',
+        'completed' => 'COMPLETED',
+        'cancelled', 'canceled' => 'CANCELLED',
+        '' => 'UNKNOWN',
+        default => strtoupper(str_replace('_', ' ', $value)),
+    };
 };
 
 $stats = [
     'total' => count($appointmentList),
-    'scheduled' => 0,
-    'confirmed' => 0,
+    'upcoming' => 0,
     'completed' => 0,
     'cancelled' => 0,
 ];
 
 foreach ($appointmentList as $appointment) {
     $normalizedStatus = $normalizeStatus($appointment->status ?? null);
+
     if (array_key_exists($normalizedStatus, $stats)) {
         $stats[$normalizedStatus]++;
     }
 }
 ?>
 
-<div class="dash-header d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="dash-title mb-1"><?= $isAdmin ? __('Appointments') : __('Assigned Appointments') ?></h1>
-        <p class="text-muted mb-0">
-            <?php if ($isAdmin): ?>
-                <?= __('Manage appointment records across the system.') ?>
-            <?php elseif ($isClinician): ?>
-                <?= __('Review and manage appointments related to your patients.') ?>
-            <?php else: ?>
-                <?= __('Review appointment records.') ?>
-            <?php endif; ?>
-        </p>
+    <div class="dash-header d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="dash-title mb-0"><?= $isAdmin ? __('Appointments') : __('Assigned Appointments') ?></h1>
+        </div>
+        <div>
+            <?= $this->Html->link(
+                '<i class="bi bi-plus-circle"></i> Create Appointment',
+                ['action' => 'add'],
+                [
+                    'class' => 'btn btn-primary',
+                    'escape' => false,
+                ]
+            ) ?>
+        </div>
     </div>
-    <div>
-        <?= $this->Html->link(
-            '<i class="bi bi-plus-circle"></i> New Appointment',
-            ['action' => 'add'],
-            [
-                'class' => 'btn btn-primary',
-                'escape' => false,
-            ]
-        ) ?>
-    </div>
-</div>
 
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Total Appointments</div>
-            <div class="stat-value"><?= h($stats['total']) ?></div>
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Total Appointments</div>
+                <div class="stat-value"><?= h($stats['total']) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Upcoming</div>
+                <div class="stat-value stat-upcoming"><?= h($stats['upcoming']) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value stat-completed"><?= h($stats['completed']) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Cancelled</div>
+                <div class="stat-value stat-cancelled"><?= h($stats['cancelled']) ?></div>
+            </div>
         </div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Scheduled</div>
-            <div class="stat-value stat-scheduled"><?= h($stats['scheduled']) ?></div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Confirmed</div>
-            <div class="stat-value stat-confirmed"><?= h($stats['confirmed']) ?></div>
-        </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Completed</div>
-            <div class="stat-value stat-completed"><?= h($stats['completed']) ?></div>
-        </div>
-    </div>
-</div>
 
-<div class="mb-3">
-    <button class="filter-btn all active" data-filter="all">All</button>
-    <button class="filter-btn scheduled" data-filter="scheduled">Scheduled</button>
-    <button class="filter-btn confirmed" data-filter="confirmed">Confirmed</button>
-    <button class="filter-btn completed" data-filter="completed">Completed</button>
-    <button class="filter-btn cancelled" data-filter="cancelled">Cancelled</button>
-</div>
+    <div class="mb-3">
+        <button class="filter-btn all active" data-filter="all">All</button>
+        <button class="filter-btn upcoming" data-filter="upcoming">Upcoming</button>
+        <button class="filter-btn completed" data-filter="completed">Completed</button>
+        <button class="filter-btn cancelled" data-filter="cancelled">Cancelled</button>
+    </div>
 
-<div class="d-md-none mb-3">
-    <input type="text" id="mobileSearch" class="form-control" placeholder="Search appointments...">
-</div>
+    <div class="d-md-none mb-3">
+        <input type="text" id="mobileSearch" class="form-control" placeholder="Search appointments...">
+    </div>
 
 <?php if (!empty($appointmentList)): ?>
     <div class="table-responsive d-none d-md-block">
@@ -197,7 +192,7 @@ foreach ($appointmentList as $appointment) {
                 <th>ID</th>
                 <th>Patient</th>
                 <th>Clinician</th>
-                <th>Scheduled</th>
+                <th>Appointment Time</th>
                 <th>Duration</th>
                 <th>Status</th>
                 <th class="text-center">Actions</th>
@@ -207,7 +202,7 @@ foreach ($appointmentList as $appointment) {
             <?php foreach ($appointmentList as $appointment): ?>
                 <?php $normalizedStatus = $normalizeStatus($appointment->status ?? null); ?>
                 <tr data-appointment-status="<?= h($normalizedStatus) ?>">
-                    <td class="align-middle nowrap" data-order="<?= h((int)$appointment->id) ?>">
+                    <td class="align-middle" data-order="<?= h((int)$appointment->id) ?>">
                         <span class="badge bg-secondary">#<?= h($appointment->id) ?></span>
                     </td>
                     <td class="align-middle">
@@ -226,7 +221,7 @@ foreach ($appointmentList as $appointment) {
                         <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : '—' ?>
                     </td>
                     <td class="align-middle">
-                        <span class="badge-status <?= h($normalizedStatus) ?>">
+                        <span class="appointment-status appointment-status-<?= h($normalizedStatus === 'unknown' ? 'default' : $normalizedStatus) ?>">
                             <?= h($getStatusLabel($appointment->status ?? null)) ?>
                         </span>
                     </td>
@@ -283,14 +278,18 @@ foreach ($appointmentList as $appointment) {
                         <div class="card-name"><?= h($getPatientLabel($appointment)) ?></div>
                         <div class="card-phone"><?= h($getClinicianLabel($appointment)) ?></div>
                     </div>
-                    <span class="badge-status <?= h($normalizedStatus) ?>">
+                    <span class="appointment-status appointment-status-<?= h($normalizedStatus === 'unknown' ? 'default' : $normalizedStatus) ?>">
                         <?= h($getStatusLabel($appointment->status ?? null)) ?>
                     </span>
                 </div>
 
                 <div class="card-field">
-                    <strong>Scheduled:</strong>
-                    <div><?= h($getDateLabel($appointment->scheduled_at ?? null)) ?> at <?= h($getTimeLabel($appointment->scheduled_at ?? null)) ?></div>
+                    <strong>Appointment Time:</strong>
+                    <div>
+                        <?= h($getDateLabel($appointment->scheduled_at ?? null)) ?>
+                        at
+                        <?= h($getTimeLabel($appointment->scheduled_at ?? null)) ?>
+                    </div>
                 </div>
 
                 <div class="card-field">
