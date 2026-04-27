@@ -167,6 +167,15 @@ $this->Html->script('vital-data-index', ['block' => 'script']);
                 <td class="align-middle text-center nowrap">
                     <div class="btn-group" role="group">
                         <?= $this->Html->link(
+                            '<i class="bi bi-clock-history"></i>',
+                            ['action' => 'patientHistory', $vitalDataEntity->patient_id],
+                            [
+                                'class' => 'btn btn-sm btn-outline-info',
+                                'escape' => false,
+                                'title' => 'View Patient History'
+                            ]
+                        ) ?>
+                        <?= $this->Html->link(
                             '<i class="bi bi-eye"></i>',
                             ['action' => 'view', $vitalDataEntity->id],
                             [
@@ -259,6 +268,11 @@ $this->Html->script('vital-data-index', ['block' => 'script']);
                 Recorded: <?= h($vitalDataEntity->recorded_at->format('M d, Y')) ?> at <?= h($vitalDataEntity->recorded_at->format('g:i A')) ?>
             </div>
             <div class="mt-3 d-flex gap-2">
+                <?= $this->Html->link(
+                    '<i class="bi bi-clock-history"></i> History',
+                    ['action' => 'patientHistory', $vitalDataEntity->patient_id],
+                    ['class' => 'btn btn-sm btn-outline-info flex-fill', 'escape' => false]
+                ) ?>
                 <?= $this->Html->link(
                     '<i class="bi bi-eye"></i> View',
                     ['action' => 'view', $vitalDataEntity->id],
