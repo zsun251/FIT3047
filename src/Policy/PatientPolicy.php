@@ -73,6 +73,14 @@ class PatientPolicy
     }
 
     /**
+     * Assign patients to clinicians (only admins).
+     */
+    public function canAssign(IdentityInterface $user, Patient $resource): bool
+    {
+        return UserAccess::isStaff($user);
+    }
+
+    /**
      * Check if a clinician can access this patient.
      */
     private function canClinicianAccessPatient(IdentityInterface $user, Patient $resource): bool

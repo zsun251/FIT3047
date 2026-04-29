@@ -103,6 +103,10 @@ return function (RouteBuilder $routes): void {
             'action' => 'patientHistory'
         ]);
 
+        $builder->connect('/assign/:clinician_id', ['action' => 'assign'])
+            ->setPass(['clinician_id']);
+        $builder->connect('/assign', ['action' => 'assign']);
+
         /*
          * Connect catchall routes for all controllers.
          *
