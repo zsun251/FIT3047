@@ -110,17 +110,17 @@ $identity = $this->request->getAttribute('identity');
             ['class' => 'btn btn-outline-secondary', 'escape' => false]
         ) ?>
 
-        <?php if (UserAccess::isAdmin($identity)): ?>
-            <?= $this->Form->postLink(
-                '<i class="bi bi-trash"></i> Delete Patient',
-                ['action' => 'delete', $patient->id],
-                [
-                    'confirm' => __('Are you sure you want to delete patient #{0}?', $patient->id),
-                    'class' => 'btn btn-outline-danger ms-auto',
-                    'escape' => false
-                ]
-            ) ?>
-        <?php endif; ?>
+<!--        --><?php //if (UserAccess::isAdmin($identity)): ?>
+<!--            --><?php //= $this->Form->postLink(
+//                '<i class="bi bi-trash"></i> Delete Patient',
+//                ['action' => 'delete', $patient->id],
+//                [
+//                    'confirm' => __('Are you sure you want to delete patient #{0}?', $patient->id),
+//                    'class' => 'btn btn-outline-danger ms-auto',
+//                    'escape' => false
+//                ]
+//            ) ?>
+<!--        --><?php //endif; ?>
     </div>
 
     <?= $this->Form->end() ?>
