@@ -13,6 +13,9 @@
             <div class="contact-card">
                 <h2 class="fw-bold mb-2">Contact Us</h2>
                 <p class="text-muted mb-4">Have a question? Send us a message and we'll get back to you.</p>
+                <p class="text-muted small mb-4">
+                    <span class="text-danger">*</span> Required fields
+                </p>
 
                 <?= $this->Form->create($contactMessage, [
                     'class' => 'needs-validation recaptcha-form',
@@ -23,7 +26,8 @@
                     <!-- First Name -->
                     <div class="col">
                         <?= $this->Form->control('first_name', [
-                            'label' => 'First Name',
+                            'label' => 'First Name <span class="text-danger">*</span>',
+                            'escape' => false,
                             'class' => 'form-control',
                             'required' => true,
                             'placeholder' => 'Jane',
@@ -35,7 +39,8 @@
                     <!-- Last Name -->
                     <div class="col">
                         <?= $this->Form->control('last_name', [
-                            'label' => 'Last Name',
+                            'label' => 'Last Name <span class="text-danger">*</span>',
+                            'escape' => false,
                             'class' => 'form-control',
                             'required' => true,
                             'placeholder' => 'Doe',
@@ -48,7 +53,8 @@
                 <!-- Contact number -->
                 <div class="mb-3">
                     <?= $this->Form->control('contact_number', [
-                        'label' => 'Contact Number',
+                        'label' => 'Contact Number <span class="text-danger">*</span>',
+                        'escape' => false,
                         'class' => 'form-control',
                         'placeholder' => '04xx xxx xxx',
                         'type' => 'tel',
@@ -62,7 +68,8 @@
                 <!-- Email -->
                 <div class="mb-3">
                     <?= $this->Form->control('email', [
-                        'label' => 'Email',
+                        'label' => 'Email <span class="text-danger">*</span>',
+                        'escape' => false,
                         'type'  => 'email',
                         'class' => 'form-control',
                         'required' => true,
@@ -73,7 +80,8 @@
                 <!-- Message -->
                 <div class="mb-4">
                     <?= $this->Form->control('message', [
-                        'label'       => 'Message',
+                        'label' => 'Message <span class="text-danger">*</span>',
+                        'escape' => false,
                         'type'        => 'textarea',
                         'class'       => 'form-control' . ($contactMessage->hasErrors() && $contactMessage->getError('message') ? ' is-invalid' : ''),
                         'rows'        => 5,
