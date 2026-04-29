@@ -51,15 +51,15 @@ $typeBadgeClass = 'badge-' . strtolower($user->type);
                 ['action' => 'edit', $user->id],
                 ['class' => 'btn btn-primary', 'escape' => false]
             ) ?>
-            <?= $this->Form->postLink(
-                '<i class="bi bi-trash"></i> Delete',
-                ['action' => 'delete', $user->id],
-                [
-                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
-                    'class' => 'btn btn-outline-danger',
-                    'escape' => false
-                ]
-            ) ?>
+<!--            --><?php //= $this->Form->postLink(
+//                '<i class="bi bi-trash"></i> Delete',
+//                ['action' => 'delete', $user->id],
+//                [
+//                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
+//                    'class' => 'btn btn-outline-danger',
+//                    'escape' => false
+//                ]
+//            ) ?>
         </div>
     </div>
 

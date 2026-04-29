@@ -169,18 +169,18 @@ $identity = $this->request->getAttribute('identity');
                                 'title' => 'Edit'
                             ]
                         ) ?>
-                        <?php if (UserAccess::isAdmin($identity)): ?>
-                            <?= $this->Form->postLink(
-                                '<i class="bi bi-trash"></i>',
-                                ['action' => 'delete', $patient->id],
-                                [
-                                    'class' => 'btn btn-sm btn-outline-danger',
-                                    'escape' => false,
-                                    'confirm' => __('Are you sure you want to delete patient #{0}?', $patient->id),
-                                    'title' => 'Delete'
-                                ]
-                            ) ?>
-                        <?php endif; ?>
+<!--                        --><?php //if (UserAccess::isAdmin($identity)): ?>
+<!--                            --><?php //= $this->Form->postLink(
+//                                '<i class="bi bi-trash"></i>',
+//                                ['action' => 'delete', $patient->id],
+//                                [
+//                                    'class' => 'btn btn-sm btn-outline-danger',
+//                                    'escape' => false,
+//                                    'confirm' => __('Are you sure you want to delete patient #{0}?', $patient->id),
+//                                    'title' => 'Delete'
+//                                ]
+//                            ) ?>
+<!--                        --><?php //endif; ?>
                     </div>
                 </td>
             </tr>
@@ -242,17 +242,17 @@ $identity = $this->request->getAttribute('identity');
                     ['action' => 'edit', $patient->id],
                     ['class' => 'btn btn-sm btn-outline-secondary flex-fill', 'escape' => false]
                 ) ?>
-                <?php if (UserAccess::isAdmin($identity)): ?>
-                    <?= $this->Form->postLink(
-                        '<i class="bi bi-trash"></i> Delete',
-                        ['action' => 'delete', $patient->id],
-                        [
-                            'class' => 'btn btn-sm btn-outline-danger flex-fill',
-                            'escape' => false,
-                            'confirm' => __('Delete patient #{0}?', $patient->id)
-                        ]
-                    ) ?>
-                <?php endif; ?>
+<!--                --><?php //if (UserAccess::isAdmin($identity)): ?>
+<!--                    --><?php //= $this->Form->postLink(
+//                        '<i class="bi bi-trash"></i> Delete',
+//                        ['action' => 'delete', $patient->id],
+//                        [
+//                            'class' => 'btn btn-sm btn-outline-danger flex-fill',
+//                            'escape' => false,
+//                            'confirm' => __('Delete patient #{0}?', $patient->id)
+//                        ]
+//                    ) ?>
+<!--                --><?php //endif; ?>
             </div>
         </div>
     <?php endforeach; ?>
