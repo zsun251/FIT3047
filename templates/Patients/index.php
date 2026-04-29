@@ -3,6 +3,9 @@
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Patient> $patients
  */
+
+use App\Policy\UserAccess;
+
 $this->assign('title', 'Patients Management');
 
 // CSS
@@ -25,24 +28,29 @@ $this->end();
 // Page-specific JS
 $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('patients-index', ['block' => 'script']);
+
+$identity = $this->request->getAttribute('identity');
 ?>
 
 <!-- Header Section -->
 <div class="dash-header d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="dash-title mb-1">Patients</h1>
-        <p class="text-muted mb-0">Manage patient accounts and records</p>
+        <h1 class="dash-title mb-1">Assigned Patients</h1>
+        <p class="text-muted mb-0">Manage assigned patient accounts and records</p>
     </div>
-    <div>
-        <?= $this->Html->link(
-            '<i class="bi bi-plus-circle"></i> New Patient',
-            ['action' => 'add'],
-            [
-                'class' => 'btn btn-primary',
-                'escape' => false
-            ]
-        ) ?>
-    </div>
+<!--    TODO Patients are created automatically via schema-->
+<!--    <div>-->
+<!--        --><?php //if (UserAccess::isAdmin($identity)): ?>
+<!--            --><?php //= $this->Html->link(
+//                '<i class="bi bi-plus-circle"></i> New Patient',
+//                ['action' => 'add'],
+//                [
+//                    'class' => 'btn btn-primary',
+//                    'escape' => false
+//                ]
+//            ) ?>
+<!--        --><?php //endif; ?>
+<!--    </div>-->
 </div>
 
 <!-- Stats Cards -->
@@ -140,16 +148,18 @@ $this->Html->script('patients-index', ['block' => 'script']);
                                 'title' => 'Edit'
                             ]
                         ) ?>
-                        <?= $this->Form->postLink(
-                            '<i class="bi bi-trash"></i>',
-                            ['action' => 'delete', $patient->id],
-                            [
-                                'class' => 'btn btn-sm btn-outline-danger',
-                                'escape' => false,
-                                'confirm' => __('Are you sure you want to delete patient #{0}?', $patient->id),
-                                'title' => 'Delete'
-                            ]
-                        ) ?>
+                        <?php if (UserAccess::isAdmin($identity)): ?>
+                            <?= $this->Form->postLink(
+                                '<i class="bi bi-trash"></i>',
+                                ['action' => 'delete', $patient->id],
+                                [
+                                    'class' => 'btn btn-sm btn-outline-danger',
+                                    'escape' => false,
+                                    'confirm' => __('Are you sure you want to delete patient #{0}?', $patient->id),
+                                    'title' => 'Delete'
+                                ]
+                            ) ?>
+                        <?php endif; ?>
                     </div>
                 </td>
             </tr>
@@ -211,15 +221,17 @@ $this->Html->script('patients-index', ['block' => 'script']);
                     ['action' => 'edit', $patient->id],
                     ['class' => 'btn btn-sm btn-outline-secondary flex-fill', 'escape' => false]
                 ) ?>
-                <?= $this->Form->postLink(
-                    '<i class="bi bi-trash"></i> Delete',
-                    ['action' => 'delete', $patient->id],
-                    [
-                        'class' => 'btn btn-sm btn-outline-danger flex-fill',
-                        'escape' => false,
-                        'confirm' => __('Delete patient #{0}?', $patient->id)
-                    ]
-                ) ?>
+                <?php if (UserAccess::isAdmin($identity)): ?>
+                    <?= $this->Form->postLink(
+                        '<i class="bi bi-trash"></i> Delete',
+                        ['action' => 'delete', $patient->id],
+                        [
+                            'class' => 'btn btn-sm btn-outline-danger flex-fill',
+                            'escape' => false,
+                            'confirm' => __('Delete patient #{0}?', $patient->id)
+                        ]
+                    ) ?>
+                <?php endif; ?>
             </div>
         </div>
     <?php endforeach; ?>
