@@ -24,10 +24,15 @@ $this->Html->script('dashboard-staff', ['block' => 'script']);
 
 $user = $this->Identity->get();
 ?>
-<div class="dash-header">
-    <h1 class="dash-title">
-        Welcome, <em><?= h($user->first_name . ' ' . $user->last_name) ?></em>
-    </h1>
+
+<!-- Header Section -->
+<div class="dash-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="dash-title mb-1">
+            Welcome, <em><?= h($user->first_name . ' ' . $user->last_name) ?></em>
+        </h1>
+        <p class="text-muted mb-0">Manage contact messages submissions and inquiries</p>
+    </div>
 </div>
 
 <!-- Stats -->
