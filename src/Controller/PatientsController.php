@@ -102,7 +102,7 @@ class PatientsController extends AppController
      */
     public function edit($id = null)
     {
-        $patient = $this->Patients->get($id, contain: ['Clinicians']);
+        $patient = $this->Patients->get($id, contain: ['Clinicians', 'Users']);
 
         // Check authorization
         if (!$this->Authorization->can($patient, 'edit')) {
@@ -120,7 +120,10 @@ class PatientsController extends AppController
             $this->Flash->error(__('The patient could not be saved. Please, try again.'));
         }
         $users = $this->Patients->Users->find('list', limit: 200)->all();
-        $clinicians = $this->Patients->Clinicians->find('list', limit: 200)->all();
+        $clinicians = $this->Patients->Clinicians
+            ->find('list', ['limit' => 200])
+            ->contain(['Users'])
+            ->all();
         $this->set(compact('patient', 'users', 'clinicians'));
     }
 
