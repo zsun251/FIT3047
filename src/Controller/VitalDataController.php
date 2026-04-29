@@ -145,7 +145,10 @@ class VitalDataController extends AppController
 
             if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                if ($isStaff) {
+                    return $this->redirect(['action' => 'index']);
+                }
+                return $this->redirect($this->getRedirectUrl());
             }
             //dd($vitalDataEntity->getErrors());
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
