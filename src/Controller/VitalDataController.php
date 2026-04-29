@@ -68,9 +68,10 @@ class VitalDataController extends AppController
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
 
         if (!$this->Authorization->can($vitalDataEntity, 'add')) {
-            $this->Flash->error(__('You do not have permission to add vital data.'));
+            $this->Flash->error(__('You do not have permission to add a health record.'));
             return $this->redirect($this->getRedirectUrl());
         }
+
         $identity = $this->Authentication->getIdentity();
 
         $patientId = UserAccess::getPatientId($identity);
@@ -78,8 +79,30 @@ class VitalDataController extends AppController
 
         if ($this->request->is('post')) {
             $data = $this->request->getData();
+
+            // Handle patient_id based on user type
             if (!$isStaff) {
+                // Patient user - use their own patient ID
                 $data['patient_id'] = $patientId;
+            } else {
+                // Staff user - validate they selected a patient
+                if (empty($data['patient_id'])) {
+                    $this->Flash->error(__('Please select a patient.'));
+                    $patients = $this->VitalData->Patients->find('list', [
+                        'keyField' => 'id',
+                        'valueField' => 'id',
+                        'limit' => 200
+                    ])->all();
+
+                    $symptoms = $this->VitalData->Symptoms->find('list', [
+                        'keyField' => 'id',
+                        'valueField' => 'symptom_name',
+                        'limit' => 200
+                    ])->toArray();
+
+                    $this->set(compact('vitalDataEntity', 'patients', 'symptoms', 'patientId', 'isStaff'));
+                    return;
+                }
             }
 
             $selectedSymptoms = $data['selected_symptoms'] ?? [];
@@ -130,11 +153,10 @@ class VitalDataController extends AppController
 
         $patients = [];
         if ($isStaff) {
-            $patients = $this->VitalData->Patients->find('list', [
-                'keyField' => 'id',
-                'valueField' => 'id',
-                'limit' => 200
-            ])->all();
+            $patients = $this->VitalData->Patients
+                ->find('list', ['limit' => 200])
+                ->contain(['Users'])
+                ->all();
         }
 
         $symptoms = $this->VitalData->Symptoms->find('list', [
