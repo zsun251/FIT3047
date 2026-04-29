@@ -46,10 +46,9 @@ class Patient extends Entity
     {
         if (isset($this->user)) {
             return sprintf(
-                '%s %s (@%s) - Patient #%d',
+                '%s %s - Patient #%d',
                 $this->user->first_name,
                 $this->user->last_name,
-                $this->user->username,
                 $this->id
             );
         }
