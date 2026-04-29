@@ -190,7 +190,7 @@ $user = $this->Identity->get();
                             'data' => [
                                 'redirect' => $this->Url->build([
                                     'controller'=>'Dashboard',
-                                    'action'=>'index'
+                                    'action'=>'staff'
                                 ])
                             ]
                         ]
@@ -292,7 +292,7 @@ $user = $this->Identity->get();
                         'data' => [
                             'redirect' => $this->Url->build([
                                 'controller'=>'Dashboard',
-                                'action'=>'index'
+                                'action'=>'staff'
                             ])
                         ]
                     ]
