@@ -53,8 +53,18 @@ class PatientsController extends AppController
     {
         // TODO Removed VitalsReminders as the Table does not yet exist
         //$patient = $this->Patients->get($id, contain: ['Users', 'Clinicians', 'Appointments', 'VitalData', 'VitalsReminders']);
-        $patient = $this->Patients->get($id, contain: ['Users', 'Clinicians', 'Appointments', 'VitalData']);
-
+        $patient = $this->Patients->get($id, [
+            'contain' => [
+                'Users',
+                'Clinicians.Users',
+                'Appointments' => [
+                    'sort' => ['Appointments.scheduled_at' => 'DESC']
+                ],
+                'VitalData' => [
+                    'sort' => ['VitalData.recorded_at' => 'DESC']
+                ]
+            ]
+        ]);
         // Check authorization
         if (!$this->Authorization->can($patient, 'view')) {
             $this->Flash->error(__('You do not have permission to view this patient.'));
