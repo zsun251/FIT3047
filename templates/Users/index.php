@@ -108,11 +108,18 @@ $identity = $this->Identity->get();
             <?php foreach ($users as $user): ?>
                 <tr data-user-type="<?= h($user->type) ?>">
                     <td class="align-middle">
-                        <span class="badge bg-secondary">#<?= $this->Number->format($user->id) ?></span>
+                        <?= $this->Html->link(
+                            '<span class="badge bg-secondary">#' . $this->Number->format($user->id) . '</span>',
+                            ['action' => 'view', $user->id],
+                            ['escape' => false, 'class' => 'text-decoration-none']
+                        ) ?>
                     </td>
                     <td class="align-middle">
-                        <div class="fw-bold"><?= h($user->first_name . ' ' . $user->last_name) ?></div>
-                        <small class="text-muted">@<?= h($user->username) ?></small>
+                        <?= $this->Html->link(
+                            '<div class="fw-bold">' . h($user->first_name . ' ' . $user->last_name) . '</div><small class="text-muted">@' . h($user->username) . '</small>',
+                            ['action' => 'view', $user->id],
+                            ['escape' => false, 'class' => 'text-decoration-none']
+                        ) ?>
                     </td>
                     <td class="align-middle">
                         <div>
