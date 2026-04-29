@@ -165,6 +165,7 @@ class PatientsController extends AppController
     }
 
     // bella 4.2, 4.3
+    // TODO I do not believe this is being used, and was moved into VitalDataController - Mark
     public function patientHistory($patientId = null)
     {
         // get logged-in clinician
@@ -189,5 +190,73 @@ class PatientsController extends AppController
             ->orderBy(['recorded_at' => 'ASC']);
 
         $this->set(compact('patient', 'vitalHistory'));
+    }
+
+    public function assign($clinicianId = null)
+    {
+
+        // Create empty entity for authorization check
+        $patient = $this->Patients->newEmptyEntity();
+
+        // Check authorization
+        if (!$this->Authorization->can($patient, 'assign')) {
+            $this->Flash->error(__('You do not have permission to assign patients.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $clinician = null;
+        $assignedPatientIds = [];
+
+        // Get clinician if ID provided
+        if ($clinicianId) {
+            $clinician = $this->Patients->Clinicians->get($clinicianId, [
+                'contain' => ['Users', 'Patients']
+            ]);
+
+            // Get currently assigned patient IDs
+            $assignedPatientIds = collection($clinician->patients)->extract('id')->toArray();
+        }
+
+        // Handle form submission
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+
+            // If no clinician selected yet, redirect with clinician_id
+            if (!$clinicianId && !empty($data['clinician_id'])) {
+                return $this->redirect(['action' => 'assign', $data['clinician_id']]);
+            }
+
+            // Save patient assignments
+            if ($clinicianId) {
+                $clinician = $this->Patients->Clinicians->get($clinicianId);
+                $patientIds = $data['patient_ids'] ?? [];
+
+                // Update the clinician's patient associations
+                $clinician = $this->Patients->Clinicians->patchEntity($clinician, [
+                    'patients' => ['_ids' => $patientIds]
+                ]);
+
+                if ($this->Patients->Clinicians->save($clinician)) {
+                    $this->Flash->success(__('Patient assignments have been updated.'));
+                    return $this->redirect(['controller' => 'Patients', 'action' => 'index']);
+                }
+
+                $this->Flash->error(__('Unable to save patient assignments. Please try again.'));
+            }
+        }
+
+        // Get all clinicians for dropdown
+        $clinicians = $this->Patients->Clinicians
+            ->find('list')
+            ->contain(['Users'])
+            ->all();
+
+        // Get all patients for checkboxes
+        $patients = $this->Patients
+            ->find('list')
+            ->contain(['Users'])
+            ->all();
+
+        $this->set(compact('clinician', 'clinicians', 'patients', 'assignedPatientIds'));
     }
 }

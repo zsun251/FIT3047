@@ -38,6 +38,27 @@ $identity = $this->request->getAttribute('identity');
         <h1 class="dash-title mb-1">Assigned Patients</h1>
         <p class="text-muted mb-0">Manage assigned patient accounts and records</p>
     </div>
+    <div>
+        <?php if (UserAccess::isAdmin($identity)): ?>
+            <?= $this->Html->link(
+                '<i class="bi bi-people"></i> Assign Patients to Clinician',
+                ['controller' => 'Patients', 'action' => 'assign'],
+                [
+                    'class' => 'btn btn-outline-primary',
+                    'escape' => false
+                ]
+            ) ?>
+        <?php elseif (UserAccess::isClinician($identity)): ?>
+            <?= $this->Html->link(
+                '<i class="bi bi-people"></i> Manage My Patients',
+                ['controller' => 'Patients', 'action' => 'assign', UserAccess::getClinicianId($identity)],
+                [
+                    'class' => 'btn btn-outline-primary',
+                    'escape' => false
+                ]
+            ) ?>
+        <?php endif; ?>
+    </div>
 <!--    TODO Patients are created automatically via schema-->
 <!--    <div>-->
 <!--        --><?php //if (UserAccess::isAdmin($identity)): ?>
