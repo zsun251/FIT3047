@@ -101,10 +101,10 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
 <!--            --><?php //= $this->Html->link('Clinicians', ['controller' => 'Clinicians', 'action' => 'index'],
 //                ['class' => $linkClass . ($currentController === 'Clinicians' ? ' active' : '')]) ?>
 <!--        </li>-->
-<!--        <li class="--><?php //= $itemClass ?><!--">-->
-<!--            --><?php //= $this->Html->link('Patients', ['controller' => 'Patients', 'action' => 'index'],
-//                ['class' => $linkClass . ($currentController === 'Patients' ? ' active' : '')]) ?>
-<!--        </li>-->
+        <li class="<?= $itemClass ?>">
+            <?= $this->Html->link('Patients', ['controller' => 'Patients', 'action' => 'index'],
+                ['class' => $linkClass . ($currentController === 'Patients' ? ' active' : '')]) ?>
+        </li>
 
         <!-- CLINICAL DATA SECTION: Medical data management -->
         <?php if ($showSections): ?><div class="sidebar-section-title">Clinical Data</div><?php endif; ?>
