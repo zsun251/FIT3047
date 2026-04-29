@@ -33,7 +33,7 @@ class VitalDataController extends AppController
         }
 
         $query = $this->VitalData->find()
-            ->contain(['Patients', 'Symptoms']);
+            ->contain(['Patients.Users', 'Symptoms']);
 
         $query = $this->Authorization->applyScope($query, 'index');
         $vitalData = $this->paginate($query);

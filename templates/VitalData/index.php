@@ -110,12 +110,10 @@ $this->Html->script('vital-data-index', ['block' => 'script']);
                 <td class="align-middle">
                     <?php if ($vitalDataEntity->hasValue('patient')): ?>
                         <?= $this->Html->link(
-                            'Patient #' . $vitalDataEntity->patient->id,
+                            h($vitalDataEntity->patient->display_name),
                             ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id],
                             ['class' => 'fw-bold text-decoration-none']
                         ) ?>
-                    <?php else: ?>
-                        <span class="text-muted">N/A</span>
                     <?php endif; ?>
                 </td>
                 <td class="align-middle">
