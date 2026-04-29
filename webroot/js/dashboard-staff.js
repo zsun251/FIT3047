@@ -44,3 +44,25 @@ $(function(){
         }
     });
 });
+
+
+// Enables click functionality on table row.
+document.addEventListener('DOMContentLoaded', function() {
+    // Make table rows clickable
+    const tableRows = document.querySelectorAll('#recentTable tbody tr');
+
+    tableRows.forEach(row => {
+        row.addEventListener('click', function(e) {
+            // Don't trigger if clicking on action buttons
+            if (e.target.closest('td:last-child')) {
+                return;
+            }
+
+            // Get the view link from the row
+            const viewLink = this.querySelector('a[title="View"]');
+            if (viewLink) {
+                window.location.href = viewLink.href;
+            }
+        });
+    });
+});

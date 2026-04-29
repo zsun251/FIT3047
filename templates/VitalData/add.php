@@ -10,10 +10,8 @@
 <?php
 $identity = $this->request->getAttribute('identity');
 
-$isStaff = false;
 if ($identity) {
     $user = $identity->getOriginalData();
-    $isStaff = !empty($user->is_staff);
 }
 
 $backText = $isStaff ? 'Back' : 'Back';
@@ -37,11 +35,11 @@ $isStaff
 
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body py-3 px-4">
-            <h2 class="fw-bold mb-1">Add New Entry</h2>
+            <h2 class="fw-bold mb-1">Add Health Record</h2>
             <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 10px;"></div>
 
             <p class="text-muted mb-3">
-                Record the patient’s vital signs and symptoms.
+                Record the patient's respiratory health and symptoms.
             </p>
         </div>
     </div>
@@ -52,8 +50,11 @@ $isStaff
             <?= $this->Form->create($vitalDataEntity, ['novalidate' => true]) ?>
 
             <div class="mb-4">
-                <h4 class="fw-bold mb-1">Vital Signs</h4>
+                <h4 class="fw-bold mb-1">Respiratory Health</h4>
                 <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 12px;"></div>
+                <p class="text-muted mb-3">
+                    <span class="text-danger">*</span> Required fields
+                </p>
             </div>
 
             <?php
@@ -67,7 +68,9 @@ $isStaff
                 if ($isStaff) {
                     echo $this->Form->control('patient_id', [
                         'options' => $patients,
-                        'empty' => 'Select a patient Id',
+                        'empty' => '-- Select Patient --',
+                        'label' => 'Patient <span class="text-danger">*</span>',
+                        'escape' => false,
                         'class' => 'form-select mb-3'
                     ]);
                 }
@@ -77,8 +80,9 @@ $isStaff
                     'step' => '1',
                     'min' => 70,
                     'max' => 100,
-                    'label' => 'Oxygen Saturation (%)',
-                    'placeholder' => 'e.g. 90',
+                    'label' => 'Oxygen Saturation (%) <span class="text-danger">*</span>',
+                    'escape' => false,
+                    'placeholder' => '90',
                     'class' => 'form-control mb-3',
                     'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')",
                     ]);
@@ -88,14 +92,16 @@ $isStaff
                         'step' => '1',
                         'min' => 8,
                         'max' => 40,
-                        'label' => 'Respiratory Rate (breaths/min)',
-                        'placeholder' => 'e.g. 12',
+                        'label' => 'Respiratory Rate (breaths/min) <span class="text-danger">*</span>',
+                        'escape' => false,
+                        'placeholder' => '12',
                         'class' => 'form-control mb-3',
                     ]);
                     echo $this->Form->control('blood_pressure', [
                         'type' => 'text',
-                        'label' => 'Blood Pressure (mmHg)',
-                        'placeholder' => 'e.g. 120/80',
+                        'label' => 'Blood Pressure (mmHg) <span class="text-danger">*</span>',
+                        'escape' => false,
+                        'placeholder' => '120/80',
                         'class' => 'form-control mb-3',
                         'inputmode' => 'numeric',
                         'pattern' => '\d{2,3}/\d{2,3}',
@@ -105,8 +111,9 @@ $isStaff
                         'step' => '1',
                         'min' => 70,
                         'max' => 100,
-                        'label' => 'Pulse Oximetry (%)',
-                        'placeholder' => 'e.g. 98',
+                        'label' => 'Pulse Oximetry (%) <span class="text-danger">*</span>',
+                        'escape' => false,
+                        'placeholder' => '98',
                         'class' => 'form-control mb-3',
                     ]);
                     echo $this->Form->control('weight', [
@@ -114,8 +121,9 @@ $isStaff
                         'step' => '1',
                         'min' => 0,
                         'max' => 300,
-                        'label' => 'Weight (kg)',
-                        'placeholder' => 'e.g. 65.5',
+                        'label' => 'Weight (kg) <span class="text-danger">*</span>',
+                        'escape' => false,
+                        'placeholder' => '65.5',
                         'class' => 'form-control mb-3',
                     ]);
                    // echo $this->Form->control('symptoms._ids', [

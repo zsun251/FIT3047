@@ -13,6 +13,8 @@ $currentPage = $this->request->getParam('pass.0'); // For PagesController 'displ
 $isLoggedIn = $identity !== null;
 $isStaff = $identity && UserAccess::isStaff($identity);
 $isPatient = $identity && UserAccess::isPatient($identity);
+$isAdmin = $identity && UserAccess::isAdmin($identity);
+$isClinician = $identity && UserAccess::isClinician($identity);
 
 // ============================================================================
 // CONTEXT CONFIGURATION: Determine styling based on where this is rendered
@@ -89,10 +91,12 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
 
         <!-- MANAGEMENT SECTION: User management links -->
         <?php if ($showSections): ?><div class="sidebar-section-title">Management</div><?php endif; ?>
+        <?php if ($isAdmin): ?>
         <li class="<?= $itemClass ?>">
             <?= $this->Html->link('Users', ['controller' => 'Users', 'action' => 'index'],
                 ['class' => $linkClass . ($currentController === 'Users' ? ' active' : '')]) ?>
         </li>
+        <?php endif; ?>
 <!--        <li class="--><?php //= $itemClass ?><!--">-->
 <!--            --><?php //= $this->Html->link('Admins', ['controller' => 'Admins', 'action' => 'index'],
 //                ['class' => $linkClass . ($currentController === 'Admins' ? ' active' : '')]) ?>
@@ -101,10 +105,10 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
 <!--            --><?php //= $this->Html->link('Clinicians', ['controller' => 'Clinicians', 'action' => 'index'],
 //                ['class' => $linkClass . ($currentController === 'Clinicians' ? ' active' : '')]) ?>
 <!--        </li>-->
-<!--        <li class="--><?php //= $itemClass ?><!--">-->
-<!--            --><?php //= $this->Html->link('Patients', ['controller' => 'Patients', 'action' => 'index'],
-//                ['class' => $linkClass . ($currentController === 'Patients' ? ' active' : '')]) ?>
-<!--        </li>-->
+            <li class="<?= $itemClass ?>">
+                <?= $this->Html->link('Patients', ['controller' => 'Patients', 'action' => 'index'],
+                    ['class' => $linkClass . ($currentController === 'Patients' ? ' active' : '')]) ?>
+            </li>
 
         <!-- CLINICAL DATA SECTION: Medical data management -->
         <?php if ($showSections): ?><div class="sidebar-section-title">Clinical Data</div><?php endif; ?>

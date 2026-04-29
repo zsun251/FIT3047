@@ -297,3 +297,23 @@
     background-color: #dc3545;
     color: white;
 }
+
+
+/* Clickable table rows */
+#recentTable tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#recentTable tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Prevent action buttons from triggering row click */
+#recentTable tbody tr td:last-child {
+    pointer-events: none;
+}
+
+#recentTable tbody tr td:last-child * {
+    pointer-events: auto;
+}
