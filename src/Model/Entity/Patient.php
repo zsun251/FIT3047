@@ -36,4 +36,23 @@ class Patient extends Entity
         'vitals_reminders' => true,
         'clinicians' => true,
     ];
+
+    /**
+     * Virtual field - Display name for dropdowns
+     *
+     * @return string
+     */
+    protected function _getDisplayName(): string
+    {
+        if (isset($this->user)) {
+            return sprintf(
+                '%s %s (@%s) - Patient #%d',
+                $this->user->first_name,
+                $this->user->last_name,
+                $this->user->username,
+                $this->id
+            );
+        }
+        return 'Patient #' . $this->id;
+    }
 }
