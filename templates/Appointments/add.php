@@ -101,7 +101,8 @@ if (!empty($scheduledAtErrors)) {
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('patient_id', [
-                    'label' => 'Patient',
+                    'label' => 'Patient <span class="text-danger">*</span>',
+                    'escape' => false,
                     'type' => 'select',
                     'options' => $patients,
                     'required' => true,
@@ -112,7 +113,8 @@ if (!empty($scheduledAtErrors)) {
 
             <div class="form-group">
                 <?= $this->Form->control('clinician_id', [
-                    'label' => 'Clinician',
+                    'label' => 'Clinician <span class="text-danger">*</span>',
+                    'escape' => false,
                     'type' => 'select',
                     'options' => $clinicians,
                     'required' => true,
@@ -129,9 +131,9 @@ if (!empty($scheduledAtErrors)) {
         </h2>
 
         <div class="appointment-schedule-label-grid">
-            <div class="appointment-date-label">Appointment Date</div>
-            <div class="appointment-duration-label">Duration</div>
-            <div class="appointment-time-label">Appointment Time <span class="required"></span></div>
+            <div class="appointment-date-label">Appointment Date <span class="text-danger">*</span></div>
+            <div class="appointment-duration-label">Duration <span class="text-danger">*</span></div>
+            <div class="appointment-time-label">Appointment Time <span class="text-danger">*</span><span class="required"></span></div>
         </div>
 
         <div class="appointment-schedule-input-grid">

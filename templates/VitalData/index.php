@@ -101,17 +101,19 @@ $this->Html->script('vital-data-index', ['block' => 'script']);
         <?php foreach ($vitalData as $vitalDataEntity): ?>
             <tr>
                 <td class="align-middle">
-                    <span class="badge bg-secondary">#<?= $this->Number->format($vitalDataEntity->id) ?></span>
+                    <?= $this->Html->link(
+                        '<span class="badge bg-secondary">#' . $this->Number->format($vitalDataEntity->id) . '</span>',
+                        ['action' => 'view', $vitalDataEntity->id],
+                        ['escape' => false, 'class' => 'text-decoration-none']
+                    ) ?>
                 </td>
                 <td class="align-middle">
                     <?php if ($vitalDataEntity->hasValue('patient')): ?>
                         <?= $this->Html->link(
-                            'Patient #' . $vitalDataEntity->patient->id,
+                            h($vitalDataEntity->patient->display_name),
                             ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id],
                             ['class' => 'fw-bold text-decoration-none']
                         ) ?>
-                    <?php else: ?>
-                        <span class="text-muted">N/A</span>
                     <?php endif; ?>
                 </td>
                 <td class="align-middle">
@@ -217,10 +219,11 @@ $this->Html->script('vital-data-index', ['block' => 'script']);
              data-search-text="<?= h(strtolower($vitalDataEntity->id . ' ' . ($vitalDataEntity->patient->id ?? ''))) ?>">
             <div class="card-top">
                 <div>
-                    <div class="card-name">
-                        Vital Record
-                        <span class="badge bg-secondary ms-2">#<?= h($vitalDataEntity->id) ?></span>
-                    </div>
+                    <?= $this->Html->link(
+                        'Health Record <span class="badge bg-secondary ms-2">#' . h($vitalDataEntity->id) . '</span>',
+                        ['action' => 'view', $vitalDataEntity->id],
+                        ['class' => 'card-name text-decoration-none', 'escape' => false]
+                    ) ?>
                     <?php if ($vitalDataEntity->hasValue('patient')): ?>
                         <div class="card-phone text-muted">
                             <?= $this->Html->link(
