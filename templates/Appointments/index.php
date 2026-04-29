@@ -203,7 +203,11 @@ foreach ($appointmentList as $appointment) {
                 <?php $normalizedStatus = $normalizeStatus($appointment->status ?? null); ?>
                 <tr data-appointment-status="<?= h($normalizedStatus) ?>">
                     <td class="align-middle" data-order="<?= h((int)$appointment->id) ?>">
-                        <span class="badge bg-secondary">#<?= h($appointment->id) ?></span>
+                        <?= $this->Html->link(
+                            '<span class="badge bg-secondary">#' . h($appointment->id) . '</span>',
+                            ['action' => 'view', $appointment->id],
+                            ['escape' => false, 'class' => 'text-decoration-none']
+                        ) ?>
                     </td>
                     <td class="align-middle">
                         <div class="name-cell"><?= h($getPatientLabel($appointment)) ?></div>
@@ -213,6 +217,21 @@ foreach ($appointmentList as $appointment) {
                         <div class="name-cell"><?= h($getClinicianLabel($appointment)) ?></div>
                         <div class="phone-text">Clinician #<?= h($appointment->clinician_id) ?></div>
                     </td>
+<!--         TODO           Clickable clinician and patient. Add when those pages are complete -->
+<!--                    <td class="align-middle">-->
+<!--                        --><?php //= $this->Html->link(
+//                            '<div class="name-cell">' . h($getPatientLabel($appointment)) . '</div><div class="phone-text">Patient #' . h($appointment->patient_id) . '</div>',
+//                            ['controller' => 'Patients', 'action' => 'view', $appointment->patient_id],
+//                            ['escape' => false, 'class' => 'text-decoration-none']
+//                        ) ?>
+<!--                    </td>-->
+<!--                    <td class="align-middle">-->
+<!--                        --><?php //= $this->Html->link(
+//                            '<div class="name-cell">' . h($getClinicianLabel($appointment)) . '</div><div class="phone-text">Clinician #' . h($appointment->clinician_id) . '</div>',
+//                            ['controller' => 'Clinicians', 'action' => 'view', $appointment->clinician_id],
+//                            ['escape' => false, 'class' => 'text-decoration-none']
+//                        ) ?>
+<!--                    </td>-->
                     <td class="align-middle nowrap" data-order="<?= h($appointment->scheduled_at ? $appointment->scheduled_at->format('Y-m-d H:i:s') : '') ?>">
                         <?= h($getDateLabel($appointment->scheduled_at ?? null)) ?>
                         <div class="submitted-time"><?= h($getTimeLabel($appointment->scheduled_at ?? null)) ?></div>
