@@ -26,14 +26,17 @@ class PatientsController extends AppController
     {
         $patient = $this->Patients->newEmptyEntity();
 
-        // Check authorization
-        if (!$this->Authorization->can($patient, 'index')) {
-            $this->Flash->error(__('You do not have permission to access that page.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
+        // Authorize before any operations
+        $this->Authorization->authorize($patient, 'index');
 
         $query = $this->Patients->find()
             ->contain(['Users']);
+
+        $query = $this->Authorization->applyScope($query, 'index')
+            ->orderBy([
+                'Patients.id' => 'DESC',
+            ]);
+
         $patients = $this->paginate($query);
 
         $this->set(compact('patients'));
@@ -136,7 +139,7 @@ class PatientsController extends AppController
         // Check authorization
         if (!$this->Authorization->can($patient, 'delete')) {
             $this->Flash->error(__('You do not have permission to delete this patient.'));
-            return $this->redirect($this->getRedirectUrl());
+            return $this->redirect(['action' => 'index']);
         }
 
         if ($this->Patients->delete($patient)) {

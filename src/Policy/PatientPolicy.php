@@ -5,88 +5,116 @@ namespace App\Policy;
 
 use App\Model\Entity\Patient;
 use Authorization\IdentityInterface;
+use Cake\Datasource\FactoryLocator;
 
 /**
  * PatientPolicy
  *
- * Handles authorization for individual Patient entities.
- * Used when authorizing actions on specific patient records.
+ * Handles authorization for individual patient records.
  *
- * Methods in this policy determine:
- * - Who can view a specific patient
- * - Who can add new patients
- * - Who can edit existing patients
- * - Who can delete patients
- *
- * Note: No PatientsTablePolicy is needed because there's no query scoping.
- * Only staff can access patient records, and they see all of them.
+ * Access rules:
+ * - Admins can manage all patients
+ * - Clinicians can view/edit patients assigned to them
+ * - Patients can view only their own record
+ * - Only admins can create or delete patient records
  */
 class PatientPolicy
 {
     /**
-     * View patient
+     * View patient.
      */
     public function canView(IdentityInterface $user, Patient $resource): bool
     {
-        return $this->hasPatientAccess($user, $resource);
+        if (UserAccess::isAdmin($user)) {
+            return true;
+        }
+
+        if ($this->isOwnPatientRecord($user, $resource)) {
+            return true;
+        }
+
+        return $this->canClinicianAccessPatient($user, $resource);
     }
 
     /**
-     * Add patient (only staff can create)
+     * Add patient (only admins can create).
      */
     public function canAdd(IdentityInterface $user, Patient $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
-     * Edit patient (only staff can edit)
+     * Edit patient.
      */
     public function canEdit(IdentityInterface $user, Patient $resource): bool
     {
-        return UserAccess::isStaff($user);
+        if (UserAccess::isAdmin($user)) {
+            return true;
+        }
+
+        return $this->canClinicianAccessPatient($user, $resource);
     }
 
     /**
-     * Delete patient (only staff can delete)
+     * Delete patient (only admins can delete).
      */
     public function canDelete(IdentityInterface $user, Patient $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
-     * List patients
+     * Access patients index.
      */
-    public function canIndex(IdentityInterface $user): bool
+    public function canIndex(IdentityInterface $user, Patient $resource): bool
     {
         return UserAccess::isStaff($user);
     }
 
     /**
-     * Check if user has access to this specific patient record
+     * Check if a clinician can access this patient.
      */
-    private function hasPatientAccess(IdentityInterface $user, Patient $resource): bool
+    private function canClinicianAccessPatient(IdentityInterface $user, Patient $resource): bool
     {
-        // Staff can access all patient records
-        if (UserAccess::isStaff($user)) {
-            return true;
+        if (!UserAccess::isClinician($user)) {
+            return false;
         }
 
-        // Users can access their own patient record
-        if ($this->isPatientOwner($user, $resource)) {
-            return true;
+        $clinicianId = UserAccess::getClinicianId($user);
+
+        if ($clinicianId === null) {
+            return false;
         }
 
-        return false;
+        return $this->isAssignedPatientForClinician($clinicianId, (int)$resource->id);
     }
 
     /**
-     * Check if user is the owner of this patient record
+     * Check if this patient record belongs to the user as a patient.
      */
-    private function isPatientOwner(IdentityInterface $user, Patient $resource): bool
+    private function isOwnPatientRecord(IdentityInterface $user, Patient $resource): bool
     {
         $patientId = UserAccess::getPatientId($user);
-        return $patientId !== null && $patientId === $resource->id;
+
+        return $patientId !== null && $patientId === (int)$resource->id;
+    }
+
+    /**
+     * Check if the patient is currently assigned to the clinician.
+     */
+    private function isAssignedPatientForClinician(int $clinicianId, int $patientId): bool
+    {
+        if ($clinicianId <= 0 || $patientId <= 0) {
+            return false;
+        }
+
+        return FactoryLocator::get('Table')
+            ->get('CliniciansPatients')
+            ->exists([
+                'CliniciansPatients.clinician_id' => $clinicianId,
+                'CliniciansPatients.patient_id' => $patientId,
+                'CliniciansPatients.unassigned_at IS' => null,
+            ]);
     }
 }
