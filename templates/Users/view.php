@@ -183,11 +183,11 @@ $typeBadgeClass = 'badge-' . strtolower($user->type);
                         </div>
                     </div>
                     <div class="related-item-actions">
-                        <?= $this->Html->link(
-                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
-                            ['controller' => 'Clinicians', 'action' => 'view', $clinicianId],
-                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
-                        ) ?>
+<!--                        --><?php //= $this->Html->link(
+//                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
+//                            ['controller' => 'Clinicians', 'action' => 'view', $clinicianId],
+//                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+//                        ) ?>
                     </div>
                 </div>
             </div>
@@ -211,11 +211,11 @@ $typeBadgeClass = 'badge-' . strtolower($user->type);
                         </div>
                     </div>
                     <div class="related-item-actions">
-<!--                        --><?php //= $this->Html->link(
-//                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
-//                            ['controller' => 'Patients', 'action' => 'view', $patientId],
-//                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
-//                        ) ?>
+                        <?= $this->Html->link(
+                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
+                            ['controller' => 'Patients', 'action' => 'view', $patientId],
+                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                        ) ?>
                     </div>
                 </div>
             </div>
