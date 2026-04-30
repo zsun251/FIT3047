@@ -1,0 +1,94 @@
+/* Vital Data Specific Styles */
+
+/* Vitals summary */
+.vitals-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.vital-item {
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.vital-item i {
+    font-size: 1rem;
+}
+
+/* Symptoms container - compact grid */
+.symptoms-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    max-width: 250px;
+}
+
+/* Symptom card - small, clean design */
+.symptom-card {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Severity colors - solid, no gradients for cleaner look */
+.severity-mild {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.severity-moderate {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.severity-severe {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* "+X more" badge */
+.more-badge {
+    background-color: #e9ecef;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+/* Mobile symptoms list */
+.card-field .symptoms-container {
+    max-width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* Mobile card styles */
+.card-field {
+    margin-bottom: 0.75rem;
+}
+
+.card-field strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+/* No wrap */
+.nowrap {
+    white-space: nowrap;
+}
+
+/* "No symptoms" text */
+.text-muted.small {
+    font-style: italic;
+    color: #6c757d;
+}

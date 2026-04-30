@@ -2,76 +2,91 @@
 /**
  * @var \App\View\AppView $this
  */
+$this->assign('title', 'Login');
+
+// Add login-specific CSS
+echo $this->Html->css('login', ['block' => true]);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Login</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<div class="login-container">
+    <div class="login-card">
+        <!-- Logo/Brand -->
+        <div class="login-brand">
+            <i class="bi bi-heart-pulse-fill"></i>
+            <h1>RespiraCare</h1>
+        </div>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+        <!-- Login Form -->
+        <div class="login-form">
+            <h2>Welcome Back</h2>
+            <p class="login-subtitle">Sign in to access your account</p>
 
-<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-lg">
-                <div class="card-header bg-white text-dark text-center border-bottom">
-                    <h1 class="h3 mb-0">Login</h1>
-                </div>
-                <div class="card-body p-4">
+            <?= $this->Form->create(null, [
+                'class' => 'needs-validation',
+                'novalidate' => true
+            ]) ?>
 
-                    <?= $this->Flash->render() ?>
-
-                    <?= $this->Form->create() ?>
-
-                    <div class="mb-3">
-                        <?= $this->Form->label('username', 'Username', ['class' => 'form-label']) ?>
-                        <?= $this->Form->control('username', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) ?>
-                    </div>
-
-                    <div class="mb-3">
-                        <?= $this->Form->label('password', 'Password', ['class' => 'form-label']) ?>
-                        <?= $this->Form->control('password', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) ?>
-                    </div>
-
-                    <div class="d-grid">
-                        <?= $this->Form->button('Login', [
-                            'class' => 'btn btn-dark'
-                        ]) ?>
-                    </div>
-
-                    <div class="text-center mt-3">
-                        <a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'forgotPassword']) ?>">
-                            Forgot Password?
-                        </a>
-                    </div>
-
-                    <div class="text-center mt-2">
-                        <a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'resetPassword']) ?>">
-                            Reset Password
-                        </a>
-                    </div>
-
-                    <?= $this->Form->end() ?>
-
-                </div>
+            <div class="form-group">
+                <label for="username" class="form-label">
+                    <i class="bi bi-person"></i> Username or Email
+                </label>
+                <?= $this->Form->control('username', [
+                    'label' => false,
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter your username or email',
+                    'required' => true,
+                    'autocomplete' => 'username',
+                    'autofocus' => true
+                ]) ?>
             </div>
+
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <i class="bi bi-lock"></i> Password
+                </label>
+                <?= $this->Form->control('password', [
+                    'label' => false,
+                    'class' => 'form-control',
+                    'placeholder' => 'Enter your password',
+                    'required' => true,
+                    'autocomplete' => 'current-password'
+                ]) ?>
+            </div>
+
+
+            <button type="submit" class="btn btn-primary btn-login">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </button>
+
+            <?= $this->Form->end() ?>
+
+            <!-- Additional Links -->
+            <div class="login-links">
+                <?= $this->Html->link(
+                    '<i class="bi bi-key"></i> Forgot Password?',
+                    ['controller' => 'Users', 'action' => 'forgotPassword'],
+                    ['escape' => false, 'class' => 'login-link']
+                ) ?>
+            </div>
+
+            <!-- Registration Link -->
+            <div class="login-footer">
+                <p>Don't have an account?
+                    <?= $this->Html->link(
+                        'Register here',
+                        ['controller' => 'Users', 'action' => 'register'],
+                        ['class' => 'login-link']
+                    ) ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="login-info">
+            <p>
+                <i class="bi bi-shield-check"></i>
+                Your data is secure and encrypted
+            </p>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

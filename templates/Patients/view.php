@@ -3,176 +3,267 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Patient $patient
  */
+
+use App\Policy\UserAccess;
+
+$this->assign('title', 'Patient Details');
+
+// CSS
+echo $this->Html->css('view-shared', ['block' => true]);
+echo $this->Html->css('user-view', ['block' => true]);
+
+// Get user initials for avatar
+$initials = 'PT';
+if ($patient->hasValue('user')) {
+    $initials = strtoupper(
+        substr($patient->user->first_name, 0, 1) .
+        substr($patient->user->last_name, 0, 1)
+    );
+}
+$identity = $this->request->getAttribute('identity');
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Patient'), ['action' => 'edit', $patient->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Patient'), ['action' => 'delete', $patient->id], ['confirm' => __('Are you sure you want to delete # {0}?', $patient->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Patients'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Patient'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
+
+<!-- Back Link -->
+<?= $this->Html->link(
+    '<i class="bi bi-arrow-left"></i> Back to Patients',
+    ['action' => 'index'],
+    ['class' => 'back-link', 'escape' => false]
+) ?>
+
+<div class="view-container">
+    <!-- Header -->
+    <div class="view-header">
+        <div class="user-header">
+            <div class="user-avatar"><?= $initials ?></div>
+            <div class="user-info">
+                <?php if ($patient->hasValue('user')): ?>
+                    <h1><?= h($patient->user->first_name . ' ' . $patient->user->last_name) ?></h1>
+                    <div class="user-meta">
+                        <span class="user-meta-item">
+                            <i class="bi bi-at"></i> <?= h($patient->user->username) ?>
+                        </span>
+                        <span class="badge-patient">Patient</span>
+                        <span class="user-meta-item">
+                            <i class="bi bi-hash"></i> ID: <?= $this->Number->format($patient->id) ?>
+                        </span>
+                    </div>
+                <?php else: ?>
+                    <h1>Patient #<?= h($patient->id) ?></h1>
+                    <div class="user-meta">
+                        <span class="badge-patient">Patient</span>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
-    </aside>
-    <div class="column column-80">
-        <div class="patients view content">
-            <h3><?= h($patient->id) ?></h3>
-            <table>
-                <tr>
-                    <th><?= __('User') ?></th>
-                    <td><?= $patient->hasValue('user') ? $this->Html->link($patient->user->username, ['controller' => 'Users', 'action' => 'view', $patient->user->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($patient->id) ?></td>
-                </tr>
-            </table>
-            <div class="related">
-                <h4><?= __('Related Clinicians') ?></h4>
-                <?php if (!empty($patient->clinicians)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('User Id') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($patient->clinicians as $clinician) : ?>
-                        <tr>
-                            <td><?= h($clinician->id) ?></td>
-                            <td><?= h($clinician->user_id) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Clinicians', 'action' => 'view', $clinician->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Clinicians', 'action' => 'edit', $clinician->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'Clinicians', 'action' => 'delete', $clinician->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $clinician->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
-            <div class="related">
-                <h4><?= __('Related Appointments') ?></h4>
-                <?php if (!empty($patient->appointments)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Clinician Id') ?></th>
-                            <th><?= __('Scheduled At') ?></th>
-                            <th><?= __('Duration') ?></th>
-                            <th><?= __('Status') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($patient->appointments as $appointment) : ?>
-                        <tr>
-                            <td><?= h($appointment->id) ?></td>
-                            <td><?= h($appointment->clinician_id) ?></td>
-                            <td><?= h($appointment->scheduled_at) ?></td>
-                            <td><?= h($appointment->duration) ?></td>
-                            <td><?= h($appointment->status) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Appointments', 'action' => 'view', $appointment->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Appointments', 'action' => 'edit', $appointment->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'Appointments', 'action' => 'delete', $appointment->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $appointment->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
-            <div class="related">
-                <h4><?= __('Related Vital Data') ?></h4>
-                <?php if (!empty($patient->vital_data)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Oxygen Saturation') ?></th>
-                            <th><?= __('Respiratory Rate') ?></th>
-                            <th><?= __('Lung Function') ?></th>
-                            <th><?= __('Blood Pressure') ?></th>
-                            <th><?= __('Pulse Oximetry') ?></th>
-                            <th><?= __('Weight') ?></th>
-                            <th><?= __('Recorded At') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($patient->vital_data as $vitalData) : ?>
-                        <tr>
-                            <td><?= h($vitalData->id) ?></td>
-                            <td><?= h($vitalData->oxygen_saturation) ?></td>
-                            <td><?= h($vitalData->respiratory_rate) ?></td>
-                            <td><?= h($vitalData->lung_function) ?></td>
-                            <td><?= h($vitalData->blood_pressure) ?></td>
-                            <td><?= h($vitalData->pulse_oximetry) ?></td>
-                            <td><?= h($vitalData->weight) ?></td>
-                            <td><?= h($vitalData->recorded_at) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'VitalData', 'action' => 'view', $vitalData->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'VitalData', 'action' => 'edit', $vitalData->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'VitalData', 'action' => 'delete', $vitalData->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $vitalData->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
-            <div class="related">
-                <h4><?= __('Related Vitals Reminders') ?></h4>
-                <?php if (!empty($patient->vitals_reminders)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Reminder Id') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($patient->vitals_reminders as $vitalsReminder) : ?>
-                        <tr>
-                            <td><?= h($vitalsReminder->id) ?></td>
-                            <td><?= h($vitalsReminder->reminder_id) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'VitalsReminders', 'action' => 'view', $vitalsReminder->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'VitalsReminders', 'action' => 'edit', $vitalsReminder->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'VitalsReminders', 'action' => 'delete', $vitalsReminder->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $vitalsReminder->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                </div>
-                <?php endif; ?>
-            </div>
+        <div class="view-actions">
+            <?= $this->Html->link(
+                '<i class="bi bi-pencil"></i> Edit',
+                ['action' => 'edit', $patient->id],
+                ['class' => 'btn btn-primary', 'escape' => false]
+            ) ?>
+<!--            --><?php //if (UserAccess::isAdmin($identity)): ?>
+<!--                --><?php //= $this->Form->postLink(
+//                    '<i class="bi bi-trash"></i> Delete',
+//                    ['action' => 'delete', $patient->id],
+//                    [
+//                        'confirm' => __('Are you sure you want to delete patient #{0}?', $patient->id),
+//                        'class' => 'btn btn-outline-danger',
+//                        'escape' => false
+//                    ]
+//                ) ?>
+<!--            --><?php //endif; ?>
         </div>
     </div>
+
+    <!-- Patient Information -->
+    <h2 class="section-title mb-3">
+        <i class="bi bi-person-badge"></i> Patient Information
+    </h2>
+    <div class="detail-grid">
+        <div class="detail-item user-patient">
+            <div class="detail-label">
+                <i class="bi bi-hash"></i> Patient ID
+            </div>
+            <div class="detail-value">
+                #<?= $this->Number->format($patient->id) ?>
+            </div>
+        </div>
+        <?php if ($patient->hasValue('user')): ?>
+            <div class="detail-item user-patient">
+                <div class="detail-label">
+                    <i class="bi bi-person-circle"></i> Associated User
+                </div>
+                <div class="detail-value">
+                    <?= $this->Html->link(
+                        h($patient->user->first_name . ' ' . $patient->user->last_name) . ' (@' . h($patient->user->username) . ')',
+                        ['controller' => 'Users', 'action' => 'view', $patient->user->id]
+                    ) ?>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Contact Information -->
+    <?php if ($patient->hasValue('user')): ?>
+        <h2 class="section-title mb-3 mt-4">
+            <i class="bi bi-envelope"></i> Contact Information
+        </h2>
+        <div class="detail-grid">
+            <div class="detail-item user-patient">
+                <div class="detail-label">
+                    <i class="bi bi-envelope"></i> Email
+                </div>
+                <div class="detail-value">
+                    <a href="mailto:<?= h($patient->user->email) ?>" class="email-link">
+                        <?= h($patient->user->email) ?>
+                    </a>
+                </div>
+            </div>
+            <div class="detail-item user-patient">
+                <div class="detail-label">
+                    <i class="bi bi-telephone"></i> Phone
+                </div>
+                <div class="detail-value <?= $patient->user->phone ? '' : 'text-muted' ?>">
+                    <?= $patient->user->phone ? h($patient->user->phone) : 'Not provided' ?>
+                </div>
+            </div>
+            <div class="detail-item user-patient">
+                <div class="detail-label">
+                    <i class="bi bi-geo-alt"></i> Address
+                </div>
+                <div class="detail-value <?= $patient->user->address ? '' : 'text-muted' ?>">
+                    <?= $patient->user->address ? h($patient->user->address) : 'Not provided' ?>
+                </div>
+            </div>
+            <div class="detail-item user-patient">
+                <div class="detail-label">
+                    <i class="bi bi-cake"></i> Date of Birth
+                </div>
+                <div class="detail-value <?= $patient->user->date_of_birth ? '' : 'text-muted' ?>">
+                    <?= $patient->user->date_of_birth ? h($patient->user->date_of_birth->format('M d, Y')) : 'Not provided' ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Assigned Clinicians -->
+    <?php if (!empty($patient->clinicians)): ?>
+        <div class="related-section">
+            <h2>
+                <i class="bi bi-people"></i> Assigned Clinicians
+            </h2>
+            <div class="related-items">
+                <?php foreach ($patient->clinicians as $clinician): ?>
+                    <div class="related-item">
+                        <div class="related-item-info">
+                            <div>
+                                <?php if ($clinician->hasValue('user')): ?>
+                                    <div class="related-item-title">
+                                        <?= h($clinician->user->first_name . ' ' . $clinician->user->last_name) ?>
+                                    </div>
+                                    <div class="related-item-subtitle">
+                                        @<?= h($clinician->user->username) ?> • Clinician #<?= h($clinician->id) ?>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="related-item-title">Clinician #<?= h($clinician->id) ?></div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="related-item-actions">
+                            <?= $this->Html->link(
+                                '<i class="bi bi-arrow-right-circle"></i> View Profile',
+                                ['controller' => 'Clinicians', 'action' => 'view', $clinician->id],
+                                ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                            ) ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Appointments -->
+    <?php if (!empty($patient->appointments)): ?>
+        <div class="related-section">
+            <h2>
+                <i class="bi bi-calendar-check"></i> Recent Appointments
+            </h2>
+            <div class="related-items">
+                <?php foreach (array_slice($patient->appointments, 0, 5) as $appointment): ?>
+                    <div class="related-item">
+                        <div class="related-item-info">
+                            <div>
+                                <div class="related-item-title">
+                                    <?= h($appointment->scheduled_at->format('M d, Y')) ?> at <?= h($appointment->scheduled_at->format('g:i A')) ?>
+                                </div>
+                                <div class="related-item-subtitle">
+                                    Status: <span class="badge bg-<?= $appointment->status === 'completed' ? 'success' : 'primary' ?>">
+                                        <?= h(ucfirst($appointment->status)) ?>
+                                    </span>
+                                    • Duration: <?= h($appointment->duration) ?> minutes
+                                </div>
+                            </div>
+                        </div>
+                        <div class="related-item-actions">
+                            <?= $this->Html->link(
+                                '<i class="bi bi-eye"></i> View',
+                                ['controller' => 'Appointments', 'action' => 'view', $appointment->id],
+                                ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false]
+                            ) ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <?php if (count($patient->appointments) > 5): ?>
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Showing 5 of <?= count($patient->appointments) ?> appointments
+                        </small>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Vital Data Records -->
+    <?php if (!empty($patient->vital_data)): ?>
+        <div class="related-section">
+            <h2>
+                <i class="bi bi-heart-pulse"></i> Recent Health Records
+            </h2>
+            <div class="related-items">
+                <?php foreach (array_slice($patient->vital_data, 0, 5) as $vitalData): ?>
+                    <div class="related-item">
+                        <div class="related-item-info">
+                            <div>
+                                <div class="related-item-title">
+                                    <?= h($vitalData->recorded_at->format('M d, Y')) ?> at <?= h($vitalData->recorded_at->format('g:i A')) ?>
+                                </div>
+                                <div class="related-item-subtitle">
+                                    O₂: <?= h($vitalData->oxygen_saturation) ?>%
+                                    • RR: <?= h($vitalData->respiratory_rate) ?> bpm
+                                    <?php if ($vitalData->blood_pressure): ?>
+                                        • BP: <?= h($vitalData->blood_pressure) ?>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="related-item-actions">
+                            <?= $this->Html->link(
+                                '<i class="bi bi-eye"></i> View',
+                                ['controller' => 'VitalData', 'action' => 'view', $vitalData->id],
+                                ['class' => 'btn btn-sm btn-outline-primary', 'escape' => false]
+                            ) ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                <?php if (count($patient->vital_data) > 5): ?>
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Showing 5 of <?= count($patient->vital_data) ?> records
+                        </small>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>

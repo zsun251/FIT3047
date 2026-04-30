@@ -44,7 +44,7 @@ class PatientsTable extends Table
         parent::initialize($config);
 
         $this->setTable('patients');
-        $this->setDisplayField('id');
+        $this->setDisplayField('display_name');
         $this->setPrimaryKey('id');
 
         $this->belongsTo('Users', [

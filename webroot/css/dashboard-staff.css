@@ -1,0 +1,319 @@
+/*
+ * webroot/css/dashboard-staff.css
+ *
+ * Staff Dashboard-specific styles for Contact Messages page.
+ * Extends app.css and datatable-shared.css
+ */
+
+/* ========================================================================
+   TABLE UTILITIES
+   ======================================================================== */
+.nowrap {
+    white-space: nowrap;
+}
+
+/* ========================================================================
+   TABLE CELL CONTENT
+   ======================================================================== */
+.name-cell {
+    font-weight: 500;
+}
+
+.phone-text {
+    font-size: .72rem;
+    color: var(--c-muted);
+    margin-top: .15rem;
+}
+
+.submitted-time {
+    font-size: .72rem;
+    color: var(--c-muted);
+    margin-top: .15rem;
+}
+
+.msg-text {
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ========================================================================
+   CONTACT MESSAGE STATUS BADGES
+   ======================================================================== */
+.badge-status {
+    padding: 0.35rem 0.65rem;
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-status.unread {
+    background-color: #dc3545; /* Red */
+    color: white;
+}
+
+.badge-status.read {
+    background-color: #198754; /* Green */
+    color: white;
+}
+
+.badge-status.archived {
+    background-color: #6c757d; /* Gray */
+    color: white;
+}
+
+/* ========================================================================
+   DASHBOARD STAT VALUES (Using Badge Colors)
+   ======================================================================== */
+.stat-value.stat-unread {
+    color: #dc3545; /* Red - matches unread badge */
+}
+
+.stat-value.stat-read {
+    color: #198754; /* Green - matches read badge */
+}
+
+.stat-value.stat-arch {
+    color: #6c757d; /* Gray - matches archived badge */
+}
+
+/* ========================================================================
+   STATUS-SPECIFIC FILTER BUTTONS (Using Badge Colors)
+   ======================================================================== */
+.filter-btn.unread {
+    border-color: #dc3545; /* Red */
+    color: #dc3545;
+}
+
+.filter-btn.unread.active,
+.filter-btn.unread:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.filter-btn.read {
+    border-color: #198754; /* Green */
+    color: #198754;
+}
+
+.filter-btn.read.active,
+.filter-btn.read:hover {
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
+.filter-btn.archived {
+    border-color: #6c757d; /* Gray */
+    color: #6c757d;
+}
+
+.filter-btn.archived.active,
+.filter-btn.archived:hover {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+/* ========================================================================
+   ACTION BUTTONS (Icon-based with status colors)
+   ======================================================================== */
+.btn-action {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #dee2e6;
+    background-color: white;
+    color: #495057;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.btn-action:hover {
+    background-color: #f8f9fa;
+    text-decoration: none;
+}
+
+/* View button - neutral blue */
+.btn-action.view {
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.btn-action.view:hover {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+/* Mark Read button - green (read status) */
+.btn-action.mark-read {
+    border-color: #198754;
+    color: #198754;
+}
+
+.btn-action.mark-read:hover {
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
+/* Archive button - gray (archived status) */
+.btn-action.archive {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.btn-action.archive:hover {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+/* Undo Read button - red (back to unread) */
+.btn-action.undo-read {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-action.undo-read:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+/* Undo Archive button - green (back to read) */
+.btn-action.undo-archive {
+    border-color: #198754;
+    color: #198754;
+}
+
+.btn-action.undo-archive:hover {
+    background-color: #198754;
+    color: white;
+    border-color: #198754;
+}
+
+/* Delete button - danger */
+.btn-action.danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-action.danger:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+/* Icon-only action buttons */
+.btn-action-icon {
+    padding: 0.375rem 0.5rem;
+    border: 1px solid #dee2e6;
+    background-color: white;
+    color: #495057;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+}
+
+.btn-action-icon:hover {
+    background-color: #f8f9fa;
+    text-decoration: none;
+}
+
+.btn-action-icon i {
+    margin: 0;
+}
+
+/* Icon-only variants with status colors */
+.btn-action-icon.view {
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.btn-action-icon.view:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.btn-action-icon.mark-read {
+    border-color: #198754; /* Green - matches read status */
+    color: #198754;
+}
+
+.btn-action-icon.mark-read:hover {
+    background-color: #198754;
+    color: white;
+}
+
+.btn-action-icon.archive {
+    border-color: #6c757d; /* Gray - matches archived status */
+    color: #6c757d;
+}
+
+.btn-action-icon.archive:hover {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-action-icon.undo-read {
+    border-color: #dc3545; /* Red - back to unread */
+    color: #dc3545;
+}
+
+.btn-action-icon.undo-read:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-action-icon.undo-archive {
+    border-color: #198754; /* Green - back to read */
+    color: #198754;
+}
+
+.btn-action-icon.undo-archive:hover {
+    background-color: #198754;
+    color: white;
+}
+
+.btn-action-icon.danger {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.btn-action-icon.danger:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+
+/* Clickable table rows */
+#recentTable tbody tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#recentTable tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Prevent action buttons from triggering row click */
+#recentTable tbody tr td:last-child {
+    pointer-events: none;
+}
+
+#recentTable tbody tr td:last-child * {
+    pointer-events: auto;
+}

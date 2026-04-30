@@ -9,19 +9,6 @@
 }
 
 
-/* NAVBAR */
-.navbar-logo-top {
-    font-family: 'Actor', sans-serif;
-    font-size: 1.5rem;
-    line-height: 1;
-}
-.navbar-logo-bottom {
-    font-family: 'Agbalumo', serif;
-    font-size: 1.25rem;
-    line-height: 1;
-    margin-top: -0.1rem;
-}
-
 /*  CONTACT FORM CARD */
 .contact-card {
     background: var(--c-surface);       /* clean white surface */
@@ -71,7 +58,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
     .contact-card {
         padding: 1.5rem 1.75rem;
     }
@@ -97,6 +84,12 @@
 .column-80 {
     flex: 0 0 auto;
     width: 75%;
+    padding: 0 12px;
+}
+
+.column-100 {
+    flex: 0 0 auto;
+    width: 100%;
     padding: 0 12px;
 }
 
@@ -171,12 +164,6 @@
     background-color: var(--bs-gray-100);
 }
 
-/* Wrap baked rows properly */
-.row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -12px;
-}
 
 /* Paginator */
 .paginator ul.pagination {
@@ -201,4 +188,272 @@
     background-color: var(--bs-primary);
     color: white;
     border-color: var(--bs-primary);
+}
+
+.card {
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.input {
+    margin-bottom: 1.5rem;
+}
+
+.input label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.side-nav-modern {
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.side-nav-modern .side-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #374151;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.side-nav-modern .side-nav-item:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.side-nav-modern .text-danger:hover {
+    background: #fee2e2;
+}
+
+.side-nav-modern i {
+    font-size: 16px;
+}
+
+.vital-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    height: 100%;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.vital-card:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+}
+
+.icon-box {
+    width: 45px;
+    height: 45px;
+    background: #e0e7ff;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.vital-card small {
+    font-size: 13px;
+}
+
+.vital-card .fw-semibold {
+    font-size: 16px;
+}
+
+.symptom-card {
+    background: #f8fafc;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    transition: 0.2s ease;
+}
+
+.symptom-card:hover {
+    background: #f1f5f9;
+}
+
+.symptom-name {
+    font-weight: 500;
+    color: #374151;
+}
+
+.severity-badge {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.severity-mild {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.severity-moderate {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.severity-severe {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.severity-unknown {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.vital-header-card {
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.record-icon-box {
+    width: 60px;
+    height: 60px;
+    background: #e8f0ff;
+    color: #2563eb;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+}
+.back-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #6b7280;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.back-link a:hover {
+    color: #111827;
+}
+
+.back-link i {
+    font-size: 16px;
+}
+
+
+
+.vital-card,
+.symptom-card {
+    background: #f8fafc;
+    border: 1px solid #dbe3ea;
+    border-left: 5px solid #198754;
+    border-radius: 12px;
+    padding: 18px 20px;
+    min-height: 110px;
+    width: 100%;
+}
+
+
+.symptom-card {
+    padding: 16px;
+    min-height: 10px;
+    transition: all 0.2s ease;
+}
+
+.symptom-card:hover {
+    background: #f1f5f9;
+}
+
+.profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.vitalData.view.content {
+    padding: 0 24px 32px;
+}
+
+.vitalData .section-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-top: 24px;
+}
+
+.vitalData .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 24px;
+}
+
+.vitalData .symptom-card {
+    width: 100%;
+    min-height: 120px;
+    background: #f8fafc;
+    border: 1px solid #dbe3ea;
+    border-left: 5px solid #198754;
+    border-radius: 12px;
+    padding: 22px 24px;
+}
+
+.vital-header-card .card-body {
+    padding-left: 12px;
+}
+
+.section-underline {
+    width: 50px;
+    height: 4px;
+    background-color: #0d6efd;
+    border-radius: 3px;
+    margin-bottom: 20px;
+}
+
+.btn-edit {
+    background-color: #f1f3f5;
+    border: 1px solid #d0d7de;
+    color: #495057;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.btn-edit:hover {
+    background-color: #e9ecef;
+}
+
+
+.btn-delete {
+    background-color: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.btn-delete:hover {
+    background-color: #dc3545;
+    color: white;
 }

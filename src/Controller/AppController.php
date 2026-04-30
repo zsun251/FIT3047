@@ -52,5 +52,62 @@ class AppController extends Controller
         //$this->loadComponent('FormProtection');
 
         $this->loadComponent('Authentication.Authentication');
+        $this->loadComponent('Authorization.Authorization');
+    }
+
+
+    public function beforeFilter(\Cake\Event\EventInterface $event)
+    {
+        parent::beforeFilter($event);
+
+        $authIdentity = $this->Authentication->getIdentity();
+
+        if ($authIdentity) {
+            $userId = $authIdentity->getIdentifier();
+
+            // Reload user with associations
+            $usersTable = $this->fetchTable('Users');
+            $userWithAssociations = $usersTable->get(
+                $userId,
+                contain: ['Patients', 'Clinicians', 'Admins'],
+            );
+
+            // Create Authentication\Identity with the updated user entity
+            $newAuthIdentity = new \Authentication\Identity($userWithAssociations);
+
+            // Update Authentication identity
+            $this->Authentication->setIdentity($newAuthIdentity);
+
+            // Get the authorization service from the request attribute
+            $authService = $this->request->getAttribute('authorization');
+
+            if ($authService) {
+                // Create new Authorization Identity wrapper with the Authentication Identity
+                $newAuthzIdentity = new \Authorization\Identity($authService, $newAuthIdentity);
+
+                // Replace the identity in the request
+                $this->request = $this->request->withAttribute('identity', $newAuthzIdentity);
+            }
+        }
+    }
+
+    /**
+     * Get redirect URL based on user type
+     *
+     * @return array
+     */
+    protected function getRedirectUrl(): array
+    {
+        $identity = $this->request->getAttribute('identity');
+
+        if ($identity) {
+            if ($identity->type === 'patient') {
+                return ['controller' => 'Dashboard', 'action' => 'patient'];
+            } elseif ($identity->type === 'clinician' || $identity->type === 'admin') {
+                return ['controller' => 'Dashboard', 'action' => 'staff'];
+            }
+        }
+
+        return ['controller' => 'Users', 'action' => 'login'];
     }
 }

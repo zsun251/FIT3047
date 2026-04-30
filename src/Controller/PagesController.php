@@ -51,13 +51,15 @@ class PagesController extends AppController
 
         $this->Authentication->addUnauthenticatedActions([
             'display',
-            'about'
         ]);
+
+        $this->Authorization->skipAuthorization();
     }
 
 
     public function display(string ...$path): ?Response
     {
+
         if (!$path) {
             return $this->redirect('/');
         }
