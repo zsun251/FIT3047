@@ -108,11 +108,18 @@ $identity = $this->Identity->get();
             <?php foreach ($users as $user): ?>
                 <tr data-user-type="<?= h($user->type) ?>">
                     <td class="align-middle">
-                        <span class="badge bg-secondary">#<?= $this->Number->format($user->id) ?></span>
+                        <?= $this->Html->link(
+                            '<span class="badge bg-secondary">#' . $this->Number->format($user->id) . '</span>',
+                            ['action' => 'view', $user->id],
+                            ['escape' => false, 'class' => 'text-decoration-none']
+                        ) ?>
                     </td>
                     <td class="align-middle">
-                        <div class="fw-bold"><?= h($user->first_name . ' ' . $user->last_name) ?></div>
-                        <small class="text-muted">@<?= h($user->username) ?></small>
+                        <?= $this->Html->link(
+                            '<div class="fw-bold">' . h($user->first_name . ' ' . $user->last_name) . '</div><small class="text-muted">@' . h($user->username) . '</small>',
+                            ['action' => 'view', $user->id],
+                            ['escape' => false, 'class' => 'text-decoration-none']
+                        ) ?>
                     </td>
                     <td class="align-middle">
                         <div>
@@ -159,16 +166,16 @@ $identity = $this->Identity->get();
                                     'title' => 'Edit'
                                 ]
                             ) ?>
-                            <?= $this->Form->postLink(
-                                '<i class="bi bi-trash"></i>',
-                                ['action' => 'delete', $user->id],
-                                [
-                                    'class' => 'btn btn-sm btn-outline-danger',
-                                    'escape' => false,
-                                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
-                                    'title' => 'Delete'
-                                ]
-                            ) ?>
+<!--                            --><?php //= $this->Form->postLink(
+//                                '<i class="bi bi-trash"></i>',
+//                                ['action' => 'delete', $user->id],
+//                                [
+//                                    'class' => 'btn btn-sm btn-outline-danger',
+//                                    'escape' => false,
+//                                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
+//                                    'title' => 'Delete'
+//                                ]
+//                            ) ?>
                         </div>
                     </td>
                 </tr>
@@ -226,15 +233,15 @@ $identity = $this->Identity->get();
                         ['action' => 'edit', $user->id],
                         ['class' => 'btn btn-sm btn-outline-secondary flex-fill', 'escape' => false]
                     ) ?>
-                    <?= $this->Form->postLink(
-                        '<i class="bi bi-trash"></i> Delete',
-                        ['action' => 'delete', $user->id],
-                        [
-                            'class' => 'btn btn-sm btn-outline-danger flex-fill',
-                            'escape' => false,
-                            'confirm' => __('Delete {0}?', $user->username)
-                        ]
-                    ) ?>
+<!--                    --><?php //= $this->Form->postLink(
+//                        '<i class="bi bi-trash"></i> Delete',
+//                        ['action' => 'delete', $user->id],
+//                        [
+//                            'class' => 'btn btn-sm btn-outline-danger flex-fill',
+//                            'escape' => false,
+//                            'confirm' => __('Delete {0}?', $user->username)
+//                        ]
+//                    ) ?>
                 </div>
             </div>
         <?php endforeach; ?>

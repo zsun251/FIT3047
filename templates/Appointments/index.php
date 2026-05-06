@@ -10,7 +10,6 @@ use App\Policy\UserAccess;
 
 $identity = $this->request->getAttribute('identity');
 $isAdmin = $identity && UserAccess::isAdmin($identity);
-$isClinician = $identity && UserAccess::isClinician($identity);
 
 $this->assign('title', $isAdmin ? 'Appointments' : 'Assigned Appointments');
 
@@ -32,7 +31,7 @@ $this->end();
 
 $this->Html->css([
     'datatable-shared',
-    'appointments-staff',
+    'appointments',
 ], ['block' => 'css']);
 
 $this->Html->script('mobile-datatable', ['block' => 'script']);
@@ -44,6 +43,7 @@ $normalizeStatus = function (?string $status): string {
     $value = strtolower(trim((string)$status));
 
     return match ($value) {
+        'scheduled', 'confirmed' => 'upcoming',
         'canceled' => 'cancelled',
         '' => 'unknown',
         default => $value,
@@ -88,7 +88,7 @@ $getClinicianLabel = function ($appointment): string {
 
 $getDateLabel = function ($dateTime): string {
     if (!$dateTime) {
-        return 'Not scheduled';
+        return 'No appointment date';
     }
 
     return $dateTime->format('d M Y');
@@ -103,25 +103,27 @@ $getTimeLabel = function ($dateTime): string {
 };
 
 $getStatusLabel = function (?string $status): string {
-    $status = trim((string)$status);
+    $value = strtolower(trim((string)$status));
 
-    if ($status === '') {
-        return 'Unknown';
-    }
-
-    return strtoupper(str_replace('_', ' ', $status));
+    return match ($value) {
+        'upcoming', 'scheduled', 'confirmed' => 'UPCOMING',
+        'completed' => 'COMPLETED',
+        'cancelled', 'canceled' => 'CANCELLED',
+        '' => 'UNKNOWN',
+        default => strtoupper(str_replace('_', ' ', $value)),
+    };
 };
 
 $stats = [
     'total' => count($appointmentList),
-    'scheduled' => 0,
-    'confirmed' => 0,
+    'upcoming' => 0,
     'completed' => 0,
     'cancelled' => 0,
 ];
 
 foreach ($appointmentList as $appointment) {
     $normalizedStatus = $normalizeStatus($appointment->status ?? null);
+
     if (array_key_exists($normalizedStatus, $stats)) {
         $stats[$normalizedStatus]++;
     }
@@ -153,14 +155,8 @@ foreach ($appointmentList as $appointment) {
         </div>
         <div class="col-6 col-md-3">
             <div class="stat-card">
-                <div class="stat-label">Scheduled</div>
-                <div class="stat-value stat-scheduled"><?= h($stats['scheduled']) ?></div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card">
-                <div class="stat-label">Confirmed</div>
-                <div class="stat-value stat-confirmed"><?= h($stats['confirmed']) ?></div>
+                <div class="stat-label">Upcoming</div>
+                <div class="stat-value stat-upcoming"><?= h($stats['upcoming']) ?></div>
             </div>
         </div>
         <div class="col-6 col-md-3">
@@ -169,12 +165,17 @@ foreach ($appointmentList as $appointment) {
                 <div class="stat-value stat-completed"><?= h($stats['completed']) ?></div>
             </div>
         </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Cancelled</div>
+                <div class="stat-value stat-cancelled"><?= h($stats['cancelled']) ?></div>
+            </div>
+        </div>
     </div>
 
     <div class="mb-3">
         <button class="filter-btn all active" data-filter="all">All</button>
-        <button class="filter-btn scheduled" data-filter="scheduled">Scheduled</button>
-        <button class="filter-btn confirmed" data-filter="confirmed">Confirmed</button>
+        <button class="filter-btn upcoming" data-filter="upcoming">Upcoming</button>
         <button class="filter-btn completed" data-filter="completed">Completed</button>
         <button class="filter-btn cancelled" data-filter="cancelled">Cancelled</button>
     </div>
@@ -191,7 +192,7 @@ foreach ($appointmentList as $appointment) {
                 <th>ID</th>
                 <th>Patient</th>
                 <th>Clinician</th>
-                <th>Scheduled For</th>
+                <th>Appointment Time</th>
                 <th>Duration</th>
                 <th>Status</th>
                 <th class="text-center">Actions</th>
@@ -202,7 +203,11 @@ foreach ($appointmentList as $appointment) {
                 <?php $normalizedStatus = $normalizeStatus($appointment->status ?? null); ?>
                 <tr data-appointment-status="<?= h($normalizedStatus) ?>">
                     <td class="align-middle" data-order="<?= h((int)$appointment->id) ?>">
-                        <span class="badge bg-secondary">#<?= h($appointment->id) ?></span>
+                        <?= $this->Html->link(
+                            '<span class="badge bg-secondary">#' . h($appointment->id) . '</span>',
+                            ['action' => 'view', $appointment->id],
+                            ['escape' => false, 'class' => 'text-decoration-none']
+                        ) ?>
                     </td>
                     <td class="align-middle">
                         <div class="name-cell"><?= h($getPatientLabel($appointment)) ?></div>
@@ -212,6 +217,21 @@ foreach ($appointmentList as $appointment) {
                         <div class="name-cell"><?= h($getClinicianLabel($appointment)) ?></div>
                         <div class="phone-text">Clinician #<?= h($appointment->clinician_id) ?></div>
                     </td>
+<!--         TODO           Clickable clinician and patient. Add when those pages are complete -->
+<!--                    <td class="align-middle">-->
+<!--                        --><?php //= $this->Html->link(
+//                            '<div class="name-cell">' . h($getPatientLabel($appointment)) . '</div><div class="phone-text">Patient #' . h($appointment->patient_id) . '</div>',
+//                            ['controller' => 'Patients', 'action' => 'view', $appointment->patient_id],
+//                            ['escape' => false, 'class' => 'text-decoration-none']
+//                        ) ?>
+<!--                    </td>-->
+<!--                    <td class="align-middle">-->
+<!--                        --><?php //= $this->Html->link(
+//                            '<div class="name-cell">' . h($getClinicianLabel($appointment)) . '</div><div class="phone-text">Clinician #' . h($appointment->clinician_id) . '</div>',
+//                            ['controller' => 'Clinicians', 'action' => 'view', $appointment->clinician_id],
+//                            ['escape' => false, 'class' => 'text-decoration-none']
+//                        ) ?>
+<!--                    </td>-->
                     <td class="align-middle nowrap" data-order="<?= h($appointment->scheduled_at ? $appointment->scheduled_at->format('Y-m-d H:i:s') : '') ?>">
                         <?= h($getDateLabel($appointment->scheduled_at ?? null)) ?>
                         <div class="submitted-time"><?= h($getTimeLabel($appointment->scheduled_at ?? null)) ?></div>
@@ -220,7 +240,7 @@ foreach ($appointmentList as $appointment) {
                         <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : '—' ?>
                     </td>
                     <td class="align-middle">
-                        <span class="badge-status <?= h($normalizedStatus) ?>">
+                        <span class="appointment-status appointment-status-<?= h($normalizedStatus === 'unknown' ? 'default' : $normalizedStatus) ?>">
                             <?= h($getStatusLabel($appointment->status ?? null)) ?>
                         </span>
                     </td>
@@ -277,14 +297,18 @@ foreach ($appointmentList as $appointment) {
                         <div class="card-name"><?= h($getPatientLabel($appointment)) ?></div>
                         <div class="card-phone"><?= h($getClinicianLabel($appointment)) ?></div>
                     </div>
-                    <span class="badge-status <?= h($normalizedStatus) ?>">
+                    <span class="appointment-status appointment-status-<?= h($normalizedStatus === 'unknown' ? 'default' : $normalizedStatus) ?>">
                         <?= h($getStatusLabel($appointment->status ?? null)) ?>
                     </span>
                 </div>
 
                 <div class="card-field">
-                    <strong>Scheduled:</strong>
-                    <div><?= h($getDateLabel($appointment->scheduled_at ?? null)) ?> at <?= h($getTimeLabel($appointment->scheduled_at ?? null)) ?></div>
+                    <strong>Appointment Time:</strong>
+                    <div>
+                        <?= h($getDateLabel($appointment->scheduled_at ?? null)) ?>
+                        at
+                        <?= h($getTimeLabel($appointment->scheduled_at ?? null)) ?>
+                    </div>
                 </div>
 
                 <div class="card-field">

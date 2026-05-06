@@ -8,11 +8,7 @@ declare(strict_types=1);
 
 $this->assign('title', 'My Appointments');
 
-echo $this->Html->css([
-    'form-shared',
-    'appointments',
-    'appointment-patient',
-], ['block' => true]);
+echo $this->Html->css(['form-shared', 'appointments',], ['block' => true]);
 
 $appointmentList = is_array($appointments) ? $appointments : iterator_to_array($appointments);
 
@@ -38,11 +34,9 @@ $statusClass = function (?string $status): string {
     $value = strtolower(trim((string)$status));
 
     return match ($value) {
-        'scheduled', 'upcoming' => 'appointment-status-scheduled',
-        'confirmed' => 'appointment-status-confirmed',
+        'upcoming', 'scheduled', 'confirmed' => 'appointment-status-upcoming',
         'completed' => 'appointment-status-completed',
         'cancelled', 'canceled' => 'appointment-status-cancelled',
-        'pending' => 'appointment-status-pending',
         default => 'appointment-status-default',
     };
 };
@@ -113,8 +107,8 @@ foreach ($appointmentList as $appointment) {
     ['class' => 'back-link', 'escape' => false]
 ) ?>
 
-<div class="form-container patient-appointments-page">
-    <div class="form-header appointments-page-header patient-appointments-header">
+<div class="form-container appointments-page">
+    <div class="form-header appointments-page-header">
         <div class="appointments-page-heading">
             <h1><?= __('My Appointments') ?></h1>
             <p class="appointments-page-subtitle">
@@ -137,20 +131,20 @@ foreach ($appointmentList as $appointment) {
         </h2>
 
         <?php if (!empty($upcomingAppointments)): ?>
-            <div class="patient-appointments-list">
+            <div class="appointments-card-list">
                 <?php foreach ($upcomingAppointments as $appointment): ?>
-                    <article class="patient-appointment-card">
-                        <div class="patient-appointment-top">
+                    <article class="appointment-card">
+                        <div class="appointment-card-header">
                             <div>
-                                <div class="patient-appointment-date">
+                                <div class="appointment-card-title">
                                     <?= h($formatDate($appointment->scheduled_at ?? null)) ?>
                                 </div>
-                                <div class="patient-appointment-time">
+                                <div class="appointment-card-subtitle">
                                     <?= h($formatTime($appointment->scheduled_at ?? null)) ?>
                                 </div>
 
-                                <div class="patient-appointment-meta-row">
-                                    <span class="patient-appointment-meta-pill">
+                                <div class="appointment-card-meta">
+                                    <span class="appointment-meta-pill">
                                         <i class="bi bi-hourglass-split"></i>
                                         <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Duration not provided') ?>
                                     </span>
@@ -162,7 +156,7 @@ foreach ($appointmentList as $appointment) {
                             </span>
                         </div>
 
-                        <div class="appointments-detail-grid patient-appointment-detail-grid patient-appointment-detail-grid-compact">
+                        <div class="appointments-detail-grid appointments-detail-grid--compact">
                             <div class="appointments-detail-item">
                                 <div class="appointments-detail-label"><?= __('Date & Time') ?></div>
                                 <div class="appointments-detail-value">
@@ -178,7 +172,7 @@ foreach ($appointmentList as $appointment) {
                             </div>
                         </div>
 
-                        <div class="patient-appointment-actions">
+                        <div class="appointment-card-actions">
                             <?= $this->Html->link(
                                 '<i class="bi bi-eye"></i><span>View Details</span>',
                                 ['action' => 'view', $appointment->id],
@@ -206,20 +200,20 @@ foreach ($appointmentList as $appointment) {
                 <?= __('Appointment History') ?>
             </h2>
 
-            <div class="patient-appointments-list patient-appointments-history-list">
+            <div class="appointments-card-list appointments-card-list--history">
                 <?php foreach ($pastAppointments as $appointment): ?>
-                    <article class="patient-appointment-card patient-appointment-card-history">
-                        <div class="patient-appointment-top">
+                    <article class="appointment-card appointment-card--muted">
+                        <div class="appointment-card-header">
                             <div>
-                                <div class="patient-appointment-date">
+                                <div class="appointment-card-title">
                                     <?= h($formatDate($appointment->scheduled_at ?? null)) ?>
                                 </div>
-                                <div class="patient-appointment-time">
+                                <div class="appointment-card-subtitle">
                                     <?= h($formatTime($appointment->scheduled_at ?? null)) ?>
                                 </div>
 
-                                <div class="patient-appointment-meta-row">
-                                    <span class="patient-appointment-meta-pill">
+                                <div class="appointment-card-meta">
+                                    <span class="appointment-meta-pill">
                                         <i class="bi bi-hourglass-split"></i>
                                         <?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : __('Duration not provided') ?>
                                     </span>
@@ -231,7 +225,7 @@ foreach ($appointmentList as $appointment) {
                             </span>
                         </div>
 
-                        <div class="appointments-detail-grid patient-appointment-detail-grid patient-appointment-detail-grid-compact">
+                        <div class="appointments-detail-grid appointments-detail-grid--compact">
                             <div class="appointments-detail-item">
                                 <div class="appointments-detail-label"><?= __('Date & Time') ?></div>
                                 <div class="appointments-detail-value">
@@ -247,7 +241,7 @@ foreach ($appointmentList as $appointment) {
                             </div>
                         </div>
 
-                        <div class="patient-appointment-actions">
+                        <div class="appointment-card-actions">
                             <?= $this->Html->link(
                                 '<i class="bi bi-eye"></i><span>View Details</span>',
                                 ['action' => 'view', $appointment->id],
