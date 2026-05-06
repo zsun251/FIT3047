@@ -232,15 +232,15 @@ $typeBadgeClass = 'badge-' . strtolower($user->type);
                 ['action' => 'index'],
                 ['class' => 'btn btn-outline-secondary', 'escape' => false]
             ) ?>
-            <?= $this->Form->postLink(
-                '<i class="bi bi-trash"></i> Delete User',
-                ['action' => 'delete', $user->id],
-                [
-                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
-                    'class' => 'btn btn-outline-danger ms-auto',
-                    'escape' => false
-                ]
-            ) ?>
+<!--            --><?php //= $this->Form->postLink(
+//                '<i class="bi bi-trash"></i> Delete User',
+//                ['action' => 'delete', $user->id],
+//                [
+//                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
+//                    'class' => 'btn btn-outline-danger ms-auto',
+//                    'escape' => false
+//                ]
+//            ) ?>
         <?php endif; ?>
     </div>
 

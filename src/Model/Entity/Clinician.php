@@ -34,4 +34,23 @@ class Clinician extends Entity
         'resources' => true,
         'patients' => true,
     ];
+
+
+    /**
+     * Virtual field - Display name for dropdowns
+     *
+     * @return string
+     */
+    protected function _getDisplayName(): string
+    {
+        if (isset($this->user)) {
+            return sprintf(
+                '%s %s - Clinician #%d',
+                $this->user->first_name,
+                $this->user->last_name,
+                $this->id
+            );
+        }
+        return 'Patient #' . $this->id;
+    }
 }

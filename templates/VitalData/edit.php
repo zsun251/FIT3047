@@ -16,39 +16,34 @@
 </div>
 
 <div class="row">
-    <aside class="column">
-        <div class="side-nav-modern">
 
-            <?= $this->Form->postLink(
-                '<i class="bi bi-trash"></i> Delete Vital Data',
-                ['action' => 'delete', $vitalDataEntity->id],
-                [
-                    'confirm' => __('Are you sure you want to delete # {0}?', $vitalDataEntity->id),
-                    'escape' => false,
-                    'class' => 'side-nav-item'
-                ]
-            ) ?>
-
-            <?= $this->Html->link(
-                '<i class="bi bi-list"></i> List Vital Data',
-                ['action' => 'index'],
-                ['escape' => false, 'class' => 'side-nav-item']
-            ) ?>
-
-        </div>
-    </aside>
-
-    <div class="column column-80">
         <div class="container-fluid px-0">
 
             <div class="card shadow-sm border-0 mb-4">
-                <div class="card-body py-3 px-4">
-                    <h2 class="fw-bold mb-1">Edit Vital Data</h2>
-                    <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 10px;"></div>
+                <div class="card-body d-flex justify-content-between align-items-start p-4">
 
-                    <p class="text-muted mb-3">
-                        Update the patient’s vital signs and symptoms.
-                    </p>
+                    <!-- LEFT -->
+                    <div>
+                        <h2 class="fw-bold mb-1">Edit Health Record</h2>
+                        <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 10px;"></div>
+                        <p class="text-muted mb-0">
+                            Update the patient’s vital signs and symptoms.
+                        </p>
+                    </div>
+
+                    <!-- RIGHT DELETE BUTTON -->
+                    <div>
+                        <?= $this->Form->postLink(
+                            '<i class="bi bi-trash"></i> Delete',
+                            ['action' => 'delete', $vitalDataEntity->id],
+                            [
+                                'confirm' => 'Are you sure you want to delete this record?',
+                                'class' => 'btn btn-outline-danger rounded-pill px-4 py-2',
+                                'escape' => false
+                            ]
+                        ) ?>
+                    </div>
+
                 </div>
             </div>
 
@@ -58,7 +53,7 @@
                     <?= $this->Form->create($vitalDataEntity, ['novalidate' => true]) ?>
 
                     <div class="mb-4">
-                        <h4 class="fw-bold mb-1">Vital Signs</h4>
+                        <h4 class="fw-bold mb-1">Respiratory Health</h4>
                         <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 12px;"></div>
                     </div>
 
@@ -179,13 +174,6 @@
                             </div>
                         <?php endforeach; ?>
                     </div>
-
-                    <?php
-                    echo $this->Form->control('recorded_at', [
-                        'class' => 'form-control mb-3',
-                        'label' => 'Recorded At'
-                    ]);
-                    ?>
 
                     <div class="d-flex justify-content-end mt-4 pt-2 border-top">
                         <?= $this->Form->button(__('Update Entry'), [

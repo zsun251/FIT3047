@@ -37,11 +37,6 @@
                                 'class' => 'form-control' . ($user->hasErrors() && $user->getError('first_name') ? ' is-invalid' : ''),
                                 'required' => true,
                             ]) ?>
-                            <?php if ($user->getError('first_name')): ?>
-                                <div class="invalid-feedback d-block">
-                                    <?= h(implode(', ', $user->getError('first_name'))) ?>
-                                </div>
-                            <?php endif; ?>
                         </div>
                         <div class="col-md-6 mb-3">
                             <?= $this->Form->label('last_name', 'Last Name', ['class' => 'form-label']) ?>
@@ -50,11 +45,6 @@
                                 'class' => 'form-control' . ($user->hasErrors() && $user->getError('last_name') ? ' is-invalid' : ''),
                                 'required' => true,
                             ]) ?>
-                            <?php if ($user->getError('last_name')): ?>
-                                <div class="invalid-feedback d-block">
-                                    <?= h(implode(', ', $user->getError('last_name'))) ?>
-                                </div>
-                            <?php endif; ?>
                         </div>
                     </div>
 
@@ -65,11 +55,6 @@
                             'class' => 'form-control' . ($user->hasErrors() && $user->getError('username') ? ' is-invalid' : ''),
                             'required' => true,
                         ]) ?>
-                        <?php if ($user->getError('username')): ?>
-                            <div class="invalid-feedback d-block">
-                                <?= h(implode(', ', $user->getError('username'))) ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
 
                     <div class="mb-3">
@@ -80,11 +65,6 @@
                             'class' => 'form-control' . ($user->hasErrors() && $user->getError('email') ? ' is-invalid' : ''),
                             'required' => true,
                         ]) ?>
-                        <?php if ($user->getError('email')): ?>
-                            <div class="invalid-feedback d-block">
-                                <?= h(implode(', ', $user->getError('email'))) ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
 
                     <div class="mb-3">
@@ -94,11 +74,6 @@
                             'class' => 'form-control' . ($user->hasErrors() && $user->getError('password') ? ' is-invalid' : ''),
                             'required' => true,
                         ]) ?>
-                        <?php if ($user->getError('password')): ?>
-                            <div class="invalid-feedback d-block">
-                                <?= h(implode(', ', $user->getError('password'))) ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
 
                     <div class="mb-3">
@@ -109,11 +84,6 @@
                             'class' => 'form-control' . ($user->hasErrors() && $user->getError('phone') ? ' is-invalid' : ''),
                             'required' => true,
                         ]) ?>
-                        <?php if ($user->getError('phone')): ?>
-                            <div class="invalid-feedback d-block">
-                                <?= h(implode(', ', $user->getError('phone'))) ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
 
                     <div class="mb-3">
@@ -123,11 +93,6 @@
                             'type' => 'date',
                             'class' => 'form-control' . ($user->hasErrors() && $user->getError('date_of_birth') ? ' is-invalid' : ''),
                         ]) ?>
-                        <?php if ($user->getError('date_of_birth')): ?>
-                            <div class="invalid-feedback d-block">
-                                <?= h(implode(', ', $user->getError('date_of_birth'))) ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
 
                     <div class="mb-3">

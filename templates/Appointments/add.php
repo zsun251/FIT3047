@@ -10,7 +10,10 @@ declare(strict_types=1);
 
 $this->assign('title', 'Add Appointment');
 
-echo $this->Html->css('form-shared', ['block' => true]);
+echo $this->Html->css([
+    'form-shared',
+    'appointments',
+], ['block' => true]);
 
 $durationOptions = [
     15 => '15 minutes',
@@ -75,71 +78,6 @@ if (!empty($scheduledAtErrors)) {
 }
 ?>
 
-<style>
-    /* ============================================================================
-       APPOINTMENT ADD PAGE LAYOUT
-       Keep the schedule inputs aligned to the same width and height.
-       ========================================================================== */
-    .appointment-schedule-label-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 1rem;
-        align-items: end;
-        margin-bottom: 0.5rem;
-    }
-
-    .appointment-schedule-input-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 1rem;
-        align-items: start;
-    }
-
-    .appointment-schedule-label-grid > div,
-    .appointment-schedule-input-grid > div {
-        min-width: 0;
-    }
-
-    .appointment-date-label,
-    .appointment-time-label,
-    .appointment-duration-label {
-        font-size: 1rem;
-        color: var(--c-text, #334155);
-    }
-
-    .appointment-date-label,
-    .appointment-duration-label {
-        font-weight: 700;
-    }
-
-    .appointment-time-label {
-        grid-column: 3 / span 3;
-        font-weight: 700;
-    }
-
-    .appointment-schedule-input-grid .form-group {
-        margin-bottom: 0;
-        min-width: 0;
-    }
-
-    .appointment-schedule-input-grid .form-select,
-    .appointment-schedule-input-grid .form-control {
-        width: 100%;
-        min-height: 56px;
-    }
-
-    @media (max-width: 991.98px) {
-        .appointment-schedule-label-grid,
-        .appointment-schedule-input-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .appointment-time-label {
-            grid-column: auto;
-        }
-    }
-</style>
-
 <?= $this->Html->link(
     '<i class="bi bi-arrow-left"></i> Back to Appointments',
     ['action' => 'index'],
@@ -154,7 +92,6 @@ if (!empty($scheduledAtErrors)) {
     </div>
 
     <?= $this->Form->create($appointment) ?>
-    <?= $this->Form->hidden('status', ['value' => 'scheduled']) ?>
 
     <div class="form-section">
         <h2 class="form-section-title">
@@ -164,7 +101,8 @@ if (!empty($scheduledAtErrors)) {
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('patient_id', [
-                    'label' => 'Patient',
+                    'label' => 'Patient <span class="text-danger">*</span>',
+                    'escape' => false,
                     'type' => 'select',
                     'options' => $patients,
                     'required' => true,
@@ -175,7 +113,8 @@ if (!empty($scheduledAtErrors)) {
 
             <div class="form-group">
                 <?= $this->Form->control('clinician_id', [
-                    'label' => 'Clinician',
+                    'label' => 'Clinician <span class="text-danger">*</span>',
+                    'escape' => false,
                     'type' => 'select',
                     'options' => $clinicians,
                     'required' => true,
@@ -188,13 +127,13 @@ if (!empty($scheduledAtErrors)) {
 
     <div class="form-section">
         <h2 class="form-section-title">
-            <i class="bi bi-calendar2-week"></i> <?= __('Schedule Details') ?>
+            <i class="bi bi-calendar2-week"></i> <?= __('Appointment Details') ?>
         </h2>
 
         <div class="appointment-schedule-label-grid">
-            <div class="appointment-date-label">Appointment Date</div>
-            <div class="appointment-duration-label">Duration</div>
-            <div class="appointment-time-label">Appointment Time <span class="required"></span></div>
+            <div class="appointment-date-label">Appointment Date <span class="text-danger">*</span></div>
+            <div class="appointment-duration-label">Duration <span class="text-danger">*</span></div>
+            <div class="appointment-time-label">Appointment Time <span class="text-danger">*</span><span class="required"></span></div>
         </div>
 
         <div class="appointment-schedule-input-grid">

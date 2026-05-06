@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Policy\UserAccess;
+
 /**
  * Appointments Controller
  *
@@ -10,6 +12,15 @@ namespace App\Controller;
  */
 class AppointmentsController extends AppController
 {
+    /**
+     * Appointment status values allowed by the existing database constraint.
+     */
+    private const APPOINTMENT_STATUS_OPTIONS = [
+        'upcoming' => 'Upcoming',
+        'completed' => 'Completed',
+        'cancelled' => 'Cancelled',
+    ];
+
     public function initialize(): void
     {
         parent::initialize();
@@ -18,24 +29,24 @@ class AppointmentsController extends AppController
     }
 
     /**
-     * Staff appointments index
+     * Staff appointments index.
      *
-     * Admins and clinicians use this page.
-     * Patients are redirected to their dedicated upcoming appointments page.
+     * Admins and clinicians use this page. Patients are redirected to the
+     * dedicated upcoming appointments page.
      *
      * @return \Cake\Http\Response|null|void
      */
     public function index()
     {
-        if ($this->getCurrentUserType() === 'patient') {
-            return $this->redirect(['action' => 'upcomingAppointments']);
-        }
-
+        $identity = $this->request->getAttribute('identity');
         $appointment = $this->Appointments->newEmptyEntity();
 
-        if (!$this->Authorization->can($appointment, 'index')) {
-            $this->Flash->error(__('You do not have permission to access that page.'));
-            return $this->redirect($this->getRedirectUrl());
+        // Authorize before redirecting. Authorization middleware requires
+        // an authorization check even when returning a redirect response.
+        $this->Authorization->authorize($appointment, 'index');
+
+        if ($identity && UserAccess::isPatient($identity)) {
+            return $this->redirect(['action' => 'upcomingAppointments']);
         }
 
         $query = $this->Appointments->find()
@@ -55,22 +66,15 @@ class AppointmentsController extends AppController
     }
 
     /**
-     * Patient upcoming appointments page
+     * Patient upcoming appointments page.
      *
      * @return \Cake\Http\Response|null|void
      */
     public function upcomingAppointments()
     {
-        if ($this->getCurrentUserType() !== 'patient') {
-            return $this->redirect(['action' => 'index']);
-        }
-
         $appointment = $this->Appointments->newEmptyEntity();
 
-        if (!$this->Authorization->can($appointment, 'upcomingAppointments')) {
-            $this->Flash->error(__('You do not have permission to access that page.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
+        $this->Authorization->authorize($appointment, 'upcomingAppointments');
 
         $query = $this->Appointments->find()
             ->contain([
@@ -91,10 +95,11 @@ class AppointmentsController extends AppController
     }
 
     /**
-     * View method
+     * View method.
      *
      * @param string|null $id Appointment id.
      * @return \Cake\Http\Response|null|void
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function view($id = null)
     {
@@ -103,16 +108,13 @@ class AppointmentsController extends AppController
             'Clinicians.Users',
         ]);
 
-        if (!$this->Authorization->can($appointment, 'view')) {
-            $this->Flash->error(__('You do not have permission to view this appointment.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
+        $this->Authorization->authorize($appointment, 'view');
 
         $this->set(compact('appointment'));
     }
 
     /**
-     * Add method
+     * Add method.
      *
      * @return \Cake\Http\Response|null|void
      */
@@ -120,21 +122,20 @@ class AppointmentsController extends AppController
     {
         $appointment = $this->Appointments->newEmptyEntity();
 
-        if (!$this->Authorization->can($appointment, 'add')) {
-            $this->Flash->error(__('You do not have permission to add appointments.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
-
-        $this->ensureAppointmentParticipantRecords();
+        $this->Authorization->authorize($appointment, 'add');
 
         if ($this->request->is('post')) {
             $data = $this->combineScheduledDateTime($this->request->getData());
 
-            if (empty($data['status'])) {
-                $data['status'] = 'scheduled';
-            }
+            // The existing database only allows upcoming, completed, cancelled.
+            // New appointments should always start as upcoming.
+            $data['status'] = 'upcoming';
 
             $appointment = $this->Appointments->patchEntity($appointment, $data);
+
+            // Re-authorize after patching so clinicians cannot submit
+            // manipulated patient_id or clinician_id values.
+            $this->Authorization->authorize($appointment, 'add');
 
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
@@ -144,32 +145,49 @@ class AppointmentsController extends AppController
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
 
-        $patients = $this->buildPatientOptions();
-        $clinicians = $this->buildClinicianOptions();
-
+        ['patients' => $patients, 'clinicians' => $clinicians] = $this->getParticipantOptions();
         $this->set(compact('appointment', 'patients', 'clinicians'));
     }
 
     /**
-     * Edit method
+     * Edit method.
      *
      * @param string|null $id Appointment id.
      * @return \Cake\Http\Response|null|void
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function edit($id = null)
     {
         $appointment = $this->Appointments->get($id, contain: []);
 
-        if (!$this->Authorization->can($appointment, 'edit')) {
-            $this->Flash->error(__('You do not have permission to edit this appointment.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
-
-        $this->ensureAppointmentParticipantRecords();
+        $this->Authorization->authorize($appointment, 'edit');
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $data = $this->combineScheduledDateTime($this->request->getData());
+
+            if (array_key_exists('status', $data)) {
+                $status = $this->normaliseAppointmentStatus($data['status']);
+
+                if ($status === null) {
+                    $appointment->setError('status', [
+                        'valid' => __('Please select a valid appointment status.'),
+                    ]);
+                    $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
+
+                    ['patients' => $patients, 'clinicians' => $clinicians] = $this->getParticipantOptions();
+                    $appointmentStatusOptions = self::APPOINTMENT_STATUS_OPTIONS;
+                    $this->set(compact('appointment', 'patients', 'clinicians', 'appointmentStatusOptions'));
+                    return;
+                }
+
+                $data['status'] = $status;
+            }
+
             $appointment = $this->Appointments->patchEntity($appointment, $data);
+
+            // Re-authorize after patching so clinicians cannot submit
+            // manipulated patient_id or clinician_id values.
+            $this->Authorization->authorize($appointment, 'edit');
 
             if ($this->Appointments->save($appointment)) {
                 $this->Flash->success(__('The appointment has been saved.'));
@@ -179,27 +197,24 @@ class AppointmentsController extends AppController
             $this->Flash->error(__('The appointment could not be saved. Please, try again.'));
         }
 
-        $patients = $this->buildPatientOptions();
-        $clinicians = $this->buildClinicianOptions();
-
-        $this->set(compact('appointment', 'patients', 'clinicians'));
+        ['patients' => $patients, 'clinicians' => $clinicians] = $this->getParticipantOptions();
+        $appointmentStatusOptions = self::APPOINTMENT_STATUS_OPTIONS;
+        $this->set(compact('appointment', 'patients', 'clinicians', 'appointmentStatusOptions'));
     }
 
     /**
-     * Delete method
+     * Delete method.
      *
      * @param string|null $id Appointment id.
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null Redirects to index.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
     public function delete($id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
         $appointment = $this->Appointments->get($id);
 
-        if (!$this->Authorization->can($appointment, 'delete')) {
-            $this->Flash->error(__('You do not have permission to delete this appointment.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
+        $this->Authorization->authorize($appointment, 'delete');
 
         if ($this->Appointments->delete($appointment)) {
             $this->Flash->success(__('The appointment has been deleted.'));
@@ -211,183 +226,100 @@ class AppointmentsController extends AppController
     }
 
     /**
-     * Get the current user's type directly from the database.
+     * Build patient and clinician dropdown options.
      *
-     * @return string|null
+     * @return array{patients: array<int, string>, clinicians: array<int, string>}
      */
-    private function getCurrentUserType(): ?string
+    private function getParticipantOptions(): array
     {
-        $identity = $this->request->getAttribute('identity');
-
-        if (!$identity) {
-            return null;
-        }
-
-        $userId = (int)$identity->getIdentifier();
-
-        if ($userId <= 0) {
-            return null;
-        }
-
-        $user = $this->fetchTable('Users')->find()
-            ->select(['id', 'type'])
-            ->where(['Users.id' => $userId])
-            ->first();
-
-        if ($user && is_string($user->type)) {
-            return strtolower(trim($user->type));
-        }
-
-        return null;
-    }
-
-    /**
-     * Ensure patient and clinician role records exist for typed users.
-     *
-     * @return void
-     */
-    private function ensureAppointmentParticipantRecords(): void
-    {
-        $usersTable = $this->fetchTable('Users');
-        $patientsTable = $this->fetchTable('Patients');
-        $cliniciansTable = $this->fetchTable('Clinicians');
-
-        $patientUsers = $usersTable->find()
-            ->select(['id'])
-            ->where(['Users.type' => 'patient'])
-            ->all();
-
-        foreach ($patientUsers as $user) {
-            $patientsTable->findOrCreate([
-                'user_id' => $user->id,
-            ]);
-        }
-
-        $clinicianUsers = $usersTable->find()
-            ->select(['id'])
-            ->where(['Users.type' => 'clinician'])
-            ->all();
-
-        foreach ($clinicianUsers as $user) {
-            $cliniciansTable->findOrCreate([
-                'user_id' => $user->id,
-            ]);
-        }
-    }
-
-    /**
-     * Build patient dropdown options keyed by patient record id.
-     *
-     * @return array<int, string>
-     */
-    private function buildPatientOptions(): array
-    {
-        $patients = $this->fetchTable('Patients')->find()
+        $patients = $this->Appointments->Patients->find()
             ->contain(['Users'])
             ->orderBy([
                 'Users.first_name' => 'ASC',
                 'Users.last_name' => 'ASC',
                 'Users.username' => 'ASC',
             ])
-            ->all();
+            ->limit(200)
+            ->all()
+            ->combine('id', fn($patient): string => $this->formatParticipantLabel($patient, 'Patient'))
+            ->toArray();
 
-        $options = [];
-
-        foreach ($patients as $patient) {
-            $firstName = trim((string)($patient->user->first_name ?? ''));
-            $lastName = trim((string)($patient->user->last_name ?? ''));
-            $username = trim((string)($patient->user->username ?? ''));
-
-            $fullName = trim($firstName . ' ' . $lastName);
-
-            if ($fullName !== '' && $username !== '') {
-                $label = $fullName . ' (@' . $username . ')';
-            } elseif ($fullName !== '') {
-                $label = $fullName;
-            } elseif ($username !== '') {
-                $label = '@' . $username;
-            } else {
-                $label = 'Patient #' . $patient->id;
-            }
-
-            $options[(int)$patient->id] = $label;
-        }
-
-        return $options;
-    }
-
-    /**
-     * Build clinician dropdown options keyed by clinician record id.
-     *
-     * @return array<int, string>
-     */
-    private function buildClinicianOptions(): array
-    {
-        $clinicians = $this->fetchTable('Clinicians')->find()
+        $clinicians = $this->Appointments->Clinicians->find()
             ->contain(['Users'])
             ->orderBy([
                 'Users.first_name' => 'ASC',
                 'Users.last_name' => 'ASC',
                 'Users.username' => 'ASC',
             ])
-            ->all();
+            ->limit(200)
+            ->all()
+            ->combine('id', fn($clinician): string => $this->formatParticipantLabel($clinician, 'Clinician'))
+            ->toArray();
 
-        $options = [];
+        return compact('patients', 'clinicians');
+    }
 
-        foreach ($clinicians as $clinician) {
-            $firstName = trim((string)($clinician->user->first_name ?? ''));
-            $lastName = trim((string)($clinician->user->last_name ?? ''));
-            $username = trim((string)($clinician->user->username ?? ''));
+    /**
+     * Format a patient or clinician option label from the related user record.
+     *
+     * @param object $participant Patient or clinician entity
+     * @param string $fallbackPrefix Label prefix if user details are missing
+     * @return string
+     */
+    private function formatParticipantLabel(object $participant, string $fallbackPrefix): string
+    {
+        $firstName = trim((string)($participant->user->first_name ?? ''));
+        $lastName = trim((string)($participant->user->last_name ?? ''));
+        $username = trim((string)($participant->user->username ?? ''));
+        $fullName = trim($firstName . ' ' . $lastName);
 
-            $fullName = trim($firstName . ' ' . $lastName);
-
-            if ($fullName !== '' && $username !== '') {
-                $label = $fullName . ' (@' . $username . ')';
-            } elseif ($fullName !== '') {
-                $label = $fullName;
-            } elseif ($username !== '') {
-                $label = '@' . $username;
-            } else {
-                $label = 'Clinician #' . $clinician->id;
-            }
-
-            $options[(int)$clinician->id] = $label;
+        if ($fullName !== '' && $username !== '') {
+            return $fullName . ' (@' . $username . ')';
         }
 
-        return $options;
+        if ($fullName !== '') {
+            return $fullName;
+        }
+
+        if ($username !== '') {
+            return '@' . $username;
+        }
+
+        return $fallbackPrefix . ' #' . (int)$participant->id;
     }
 
     /**
      * Combine separate date/time form fields into scheduled_at.
+     *
+     * The edit form still supports the default scheduled_at input. Split fields
+     * are only processed when the appointment form submits them.
      *
      * @param array<string, mixed> $data Request data
      * @return array<string, mixed>
      */
     private function combineScheduledDateTime(array $data): array
     {
-        $scheduledDate = trim((string)($data['scheduled_date'] ?? ''));
+        $hasSplitScheduleFields = array_key_exists('scheduled_date', $data)
+            || array_key_exists('scheduled_hour', $data)
+            || array_key_exists('scheduled_minute', $data)
+            || array_key_exists('scheduled_meridiem', $data);
 
+        if (!$hasSplitScheduleFields) {
+            return $data;
+        }
+
+        $scheduledDate = trim((string)($data['scheduled_date'] ?? ''));
         $scheduledHour = trim((string)($data['scheduled_hour'] ?? ''));
         $scheduledMinute = trim((string)($data['scheduled_minute'] ?? ''));
         $scheduledMeridiem = strtoupper(trim((string)($data['scheduled_meridiem'] ?? '')));
 
-        if (
-            $scheduledDate !== '' &&
-            $scheduledHour !== '' &&
-            $scheduledMinute !== '' &&
-            in_array($scheduledMeridiem, ['AM', 'PM'], true)
-        ) {
-            $hour = (int)$scheduledHour;
-            $minute = (int)$scheduledMinute;
+        $hour = filter_var($scheduledHour, FILTER_VALIDATE_INT);
+        $validDate = preg_match('/^\d{4}-\d{2}-\d{2}$/', $scheduledDate) === 1;
+        $validHour = is_int($hour) && $hour >= 1 && $hour <= 12;
+        $validMinute = in_array($scheduledMinute, ['00', '15', '30', '45'], true);
+        $validMeridiem = in_array($scheduledMeridiem, ['AM', 'PM'], true);
 
-            if ($hour < 1 || $hour > 12) {
-                $hour = 12;
-            }
-
-            if (!in_array($minute, [0, 15, 30, 45], true)) {
-                $minute = 0;
-            }
-
+        if ($validDate && $validHour && $validMinute && $validMeridiem) {
             if ($scheduledMeridiem === 'AM') {
                 $hour24 = $hour === 12 ? 0 : $hour;
             } else {
@@ -395,11 +327,13 @@ class AppointmentsController extends AppController
             }
 
             $data['scheduled_at'] = sprintf(
-                '%s %02d:%02d:00',
+                '%s %02d:%s:00',
                 $scheduledDate,
                 $hour24,
-                $minute
+                $scheduledMinute
             );
+        } else {
+            $data['scheduled_at'] = null;
         }
 
         unset(
@@ -410,5 +344,23 @@ class AppointmentsController extends AppController
         );
 
         return $data;
+    }
+
+    /**
+     * Normalise appointment statuses to values allowed by the existing database.
+     *
+     * @param mixed $status Submitted status
+     * @return string|null
+     */
+    private function normaliseAppointmentStatus(mixed $status): ?string
+    {
+        $value = strtolower(trim((string)$status));
+
+        return match ($value) {
+            'upcoming', 'scheduled', 'confirmed' => 'upcoming',
+            'completed' => 'completed',
+            'cancelled', 'canceled' => 'cancelled',
+            default => null,
+        };
     }
 }

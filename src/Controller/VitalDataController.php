@@ -25,18 +25,16 @@ class VitalDataController extends AppController
      */
     public function index()
     {
-        // Create an entity to check permissions
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
 
-        // Check if user can access index at all
         if (!$this->Authorization->can($vitalDataEntity, 'index')) {
             $this->Flash->error(__('You do not have permission to access that page.'));
             return $this->redirect($this->getRedirectUrl());
         }
 
         $query = $this->VitalData->find()
-            ->contain(['Patients', 'Symptoms']);
-        // Apply scope using the action name
+            ->contain(['Patients.Users', 'Symptoms']);
+
         $query = $this->Authorization->applyScope($query, 'index');
         $vitalData = $this->paginate($query);
         $this->set(compact('vitalData'));
@@ -69,11 +67,11 @@ class VitalDataController extends AppController
     {
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
 
-        // Check authorization
         if (!$this->Authorization->can($vitalDataEntity, 'add')) {
-            $this->Flash->error(__('You do not have permission to add vital data.'));
+            $this->Flash->error(__('You do not have permission to add a health record.'));
             return $this->redirect($this->getRedirectUrl());
         }
+
         $identity = $this->Authentication->getIdentity();
 
         $patientId = UserAccess::getPatientId($identity);
@@ -81,8 +79,30 @@ class VitalDataController extends AppController
 
         if ($this->request->is('post')) {
             $data = $this->request->getData();
+
+            // Handle patient_id based on user type
             if (!$isStaff) {
+                // Patient user - use their own patient ID
                 $data['patient_id'] = $patientId;
+            } else {
+                // Staff user - validate they selected a patient
+                if (empty($data['patient_id'])) {
+                    $this->Flash->error(__('Please select a patient.'));
+                    $patients = $this->VitalData->Patients->find('list', [
+                        'keyField' => 'id',
+                        'valueField' => 'id',
+                        'limit' => 200
+                    ])->all();
+
+                    $symptoms = $this->VitalData->Symptoms->find('list', [
+                        'keyField' => 'id',
+                        'valueField' => 'symptom_name',
+                        'limit' => 200
+                    ])->toArray();
+
+                    $this->set(compact('vitalDataEntity', 'patients', 'symptoms', 'patientId', 'isStaff'));
+                    return;
+                }
             }
 
             $selectedSymptoms = $data['selected_symptoms'] ?? [];
@@ -125,7 +145,10 @@ class VitalDataController extends AppController
 
             if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                if ($isStaff) {
+                    return $this->redirect(['action' => 'index']);
+                }
+                return $this->redirect($this->getRedirectUrl());
             }
             //dd($vitalDataEntity->getErrors());
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
@@ -133,11 +156,10 @@ class VitalDataController extends AppController
 
         $patients = [];
         if ($isStaff) {
-            $patients = $this->VitalData->Patients->find('list', [
-                'keyField' => 'id',
-                'valueField' => 'id',
-                'limit' => 200
-            ])->all();
+            $patients = $this->VitalData->Patients
+                ->find('list', ['limit' => 200])
+                ->contain(['Users'])
+                ->all();
         }
 
         $symptoms = $this->VitalData->Symptoms->find('list', [

@@ -43,7 +43,7 @@ class CliniciansTable extends Table
         parent::initialize($config);
 
         $this->setTable('clinicians');
-        $this->setDisplayField('id');
+        $this->setDisplayField('display_name');
         $this->setPrimaryKey('id');
 
         $this->belongsTo('Users', [
