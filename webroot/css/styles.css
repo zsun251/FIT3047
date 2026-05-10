@@ -782,7 +782,7 @@
 
 .getting-started-section {
     background: #f7faff;
-    padding: 90px 70px;
+    padding: 30px 70px 60px;
 }
 
 .getting-started-card {
@@ -1224,3 +1224,11 @@
     }
 }
 
+.nav-link.active {
+    color: #2563eb !important;
+    font-weight: 700;
+}
+
+.fancy-hero-title {
+    font-family: 'Marcellus', serif;
+}

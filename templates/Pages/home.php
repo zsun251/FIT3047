@@ -7,7 +7,7 @@
         <div class="hero-overlay">
 
             <!-- Headline -->
-            <h1 class="hero-title">
+            <h1 class="hero-title fancy-hero-title">
                 Take Control of Your Health with RespiraCare Online
             </h1>
 
