@@ -62,26 +62,58 @@ class ResourcesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
+//    public function add()
+//    {
+//        $resource = $this->Resources->newEmptyEntity();
+//
+//        // Check authorization
+//        if (!$this->Authorization->can($resource, 'add')) {
+//            $this->Flash->error(__('You do not have permission to add resources.'));
+//            return $this->redirect($this->getRedirectUrl());
+//        }
+//
+//        if ($this->request->is('post')) {
+//            $resource = $this->Resources->patchEntity($resource, $this->request->getData());
+//            if ($this->Resources->save($resource)) {
+//                $this->Flash->success(__('The resource has been saved.'));
+//                return $this->redirect(['action' => 'index']);
+//            }
+//            $this->Flash->error(__('The resource could not be saved. Please, try again.'));
+//        }
+//        $clinicians = $this->Resources->Clinicians->find('list', limit: 200)->all();
+//        $this->set(compact('resource', 'clinicians'));
+//    }
+
     public function add()
     {
+
+        // bella: this 1 line below is temporary just for me to test, shld remove later on
+        $this->Authorization->skipAuthorization();
+
         $resource = $this->Resources->newEmptyEntity();
 
-        // Check authorization
-        if (!$this->Authorization->can($resource, 'add')) {
-            $this->Flash->error(__('You do not have permission to add resources.'));
-            return $this->redirect($this->getRedirectUrl());
-        }
-
         if ($this->request->is('post')) {
-            $resource = $this->Resources->patchEntity($resource, $this->request->getData());
+
+            $data = $this->request->getData();
+
+            // set system-controlled fields
+            $data['status'] = 'published';
+            $data['published_at'] = date('Y-m-d H:i:s');
+
+            $identity = $this->request->getAttribute('identity');
+            $data['clinician_id'] = $identity->get('id');
+
+            $resource = $this->Resources->patchEntity($resource, $data);
+
             if ($this->Resources->save($resource)) {
                 $this->Flash->success(__('The resource has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }
+
             $this->Flash->error(__('The resource could not be saved. Please, try again.'));
         }
-        $clinicians = $this->Resources->Clinicians->find('list', limit: 200)->all();
-        $this->set(compact('resource', 'clinicians'));
+
+        $this->set(compact('resource'));
     }
     /**
      * Edit method
