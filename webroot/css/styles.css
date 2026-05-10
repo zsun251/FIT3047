@@ -1232,3 +1232,78 @@
 .fancy-hero-title {
     font-family: 'Marcellus', serif;
 }
+
+.sidebar {
+    background: #f8fbff;
+    border-right: 1px solid #e5e7eb;
+    padding: 32px 20px;
+    min-height: 100vh;
+    min-width: 220px;
+}
+
+.sidebar-section-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #6b7280;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 6px;
+}
+
+.sidebar-menu li {
+    margin-bottom: 12px;
+}
+
+
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start !important;
+
+    gap: 8px;
+
+    width: 100%;
+
+    padding: 14px 18px;
+
+    text-align: left;
+
+    margin-left: 0 !important;
+}
+
+.sidebar-link:hover {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.sidebar-link.active {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: white;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+}
+
+.sidebar li {
+    list-style: none;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+
+.sidebar-section-title {
+    text-align: left;
+}
+
+.sidebar-section-title:last-of-type {
+    margin-top: 13px;
+}

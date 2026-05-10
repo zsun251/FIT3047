@@ -67,16 +67,41 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
             ) ?>
         </li>
     <?php elseif ($isPatient): ?>
+
+        <?php if ($context === 'sidebar'): ?>
+            <ul class="sidebar-menu">
+        <?php endif; ?>
+
         <li class="<?= $itemClass ?><?= $context === 'topbar' ? ' topbar-always-show' : '' ?>">
-            <?= $this->Html->link('Dashboard',
+            <?= $this->Html->link(
+                $context === 'sidebar'
+                    ? '<i class="bi bi-grid"></i><span>Dashboard</span>'
+                    : 'Dashboard',
                 ['controller' => 'Dashboard', 'action' => 'patient'],
-                ['class' => $linkClass . ($currentController === 'Dashboard' && $currentAction === 'patient' ? ' active' : '')]
+                [
+                    'class' => $linkClass . ($currentController === 'Dashboard' && $currentAction === 'patient' ? ' active' : ''),
+                    'escape' => false
+                ]
             ) ?>
         </li>
+
         <li class="<?= $itemClass ?><?= $context === 'topbar' ? ' topbar-always-show' : '' ?>">
-            <?= $this->Html->link('Resources', ['controller' => 'Resources', 'action' => 'browse'],
-                ['class' => $linkClass . ($currentController === 'Resources' ? ' active' : '')]) ?>
+            <?= $this->Html->link(
+                $context === 'sidebar'
+                    ? '<i class="bi bi-journal-medical"></i><span>Resources</span>'
+                    : 'Resources',
+                ['controller' => 'Resources', 'action' => 'browse'],
+                [
+                    'class' => $linkClass . ($currentController === 'Resources' ? ' active' : ''),
+                    'escape' => false
+                ]
+            ) ?>
         </li>
+
+        <?php if ($context === 'sidebar'): ?>
+            </ul>
+        <?php endif; ?>
+
     <?php endif; ?>
 
     <?php if ($isStaff): ?>
@@ -147,20 +172,38 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
         <!-- MY HEALTH INFORMATION SECTION: Personal health data access -->
         <?php if ($showSections): ?><div class="sidebar-section-title">My Health Information</div><?php endif; ?>
         <li class="<?= $itemClass ?>">
-            <?= $this->Html->link('Appointments', ['controller' => 'Appointments', 'action' => 'index'],
-                ['class' => $linkClass . ($currentController === 'Appointments' ? ' active' : '')]) ?>
+            <?= $this->Html->link(
+                '<i class="bi bi-calendar-event"></i><span>Appointments</span>',
+                ['controller' => 'Appointments', 'action' => 'index'],
+                [
+                    'class' => $linkClass . ($currentController === 'Appointments' ? ' active' : ''),
+                    'escape' => false
+                ]
+            ) ?>
         </li>
         <li class="<?= $itemClass ?>">
-            <?= $this->Html->link('Health Records', ['controller' => 'VitalData', 'action' => 'patient-history'],
-                ['class' => $linkClass . ($currentController === 'VitalData' && $currentAction === 'patientHistory' ? ' active' : '')]) ?>
+            <?= $this->Html->link(
+                '<i class="bi bi-heart-pulse"></i><span>Health Records</span>',
+                ['controller' => 'VitalData', 'action' => 'patient-history'],
+                [
+                    'class' => $linkClass . ($currentController === 'VitalData' && $currentAction === 'patientHistory' ? ' active' : ''),
+                    'escape' => false
+                ]
+            ) ?>
         </li>
 
 
         <!-- SETTINGS SECTION: Personal account settings -->
         <?php if ($showSections): ?><div class="sidebar-section-title">Settings</div><?php endif; ?>
         <li class="<?= $itemClass ?>">
-            <?= $this->Html->link('Profile', ['controller' => 'Users', 'action' => 'edit', $identity ? $identity->getIdentifier() : null],
-                ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : '')]) ?>
+            <?= $this->Html->link(
+                '<i class="bi bi-person"></i><span>Profile</span>',
+                ['controller' => 'Users', 'action' => 'edit', $identity ? $identity->getIdentifier() : null],
+                [
+                    'class' => $linkClass . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : ''),
+                    'escape' => false
+                ]
+            ) ?>
         </li>
     <?php endif; ?>
 <?php endif; ?>
