@@ -255,15 +255,32 @@ $isStaff
 
         <div class="form-step d-none" data-step="2">
 
-            <div class="mt-4 pt-2">
-                <div class="mb-3">
-                    <h4 class="fw-bold mb-1">Symptoms</h4>
-                    <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 12px;"></div>
-                    <p class="text-muted mb-0">Choose any symptoms experienced and set their severity.</p>
+            <div>
+
+                <div class="mb-4 d-flex align-items-start gap-4">
+
+                    <div class="section-icon">
+                        <i class="bi bi-clipboard2-pulse"></i>
+                    </div>
+
+                    <div>
+                        <h4 class="fw-bold mb-1">Symptoms</h4>
+
+                        <p class="text-primary fw-semibold mb-2">
+                            Step 2 of 3
+                        </p>
+
+                        <div style="width: 40px; height: 3px; background: linear-gradient(90deg,#4f6df5,#7b4bb7); border-radius: 2px; margin-bottom: 12px;"></div>
+
+                        <p class="text-muted mb-0 section-description">
+                            Choose any symptoms experienced and set their severity.
+                        </p>
+                    </div>
+
                 </div>
 
                 <?php foreach ($symptoms as $id => $name): ?>
-                    <div class="border rounded-3 px-3 py-2 mb-2 bg-light">
+                    <div class="symptom-option">
                         <div class="row align-items-center w-100">
                         <div class="col-md-7 d-flex align-items-center gap-3 py-1">
                             <?= $this->Form->checkbox("selected_symptoms.$id", [
@@ -331,6 +348,18 @@ $isStaff
                 Please ensure all vital signs and symptoms have been entered correctly before submitting this health record.
             </div>
 
+            <div class="review-grid">
+                <div class="review-card">
+                    <h5>Vital Signs Summary</h5>
+                    <div id="review-vitals-list"></div>
+                </div>
+
+                <div class="review-card">
+                    <h5>Symptoms Summary</h5>
+                    <div id="review-symptoms-list"></div>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-between align-items-center mt-4 pt-2">
 
                 <button type="button"
@@ -338,9 +367,9 @@ $isStaff
                     Back
                 </button>
 
-                <button type="button"
-                        class="next-btn next-step">
-                    Next
+                <button type="submit"
+                        class="next-btn">
+                    Submit
                 </button>
 
             </div>
@@ -355,22 +384,11 @@ $isStaff
     .wizard-header {
         position: relative;
 
-        background:
-            radial-gradient(circle at top right, rgba(255,255,255,0.15), transparent 25%),
-            radial-gradient(circle at bottom left, rgba(255,255,255,0.10), transparent 20%),
-            linear-gradient(
-                135deg,
-                #6d8df7 0%,
-                #5f72e8 35%,
-                #6a5acd 70%,
-                #7b4bb7 100%
-            );
-
-        border-radius: 22px;
+        background: transparent
+        border-radius: 0px;
         padding: 38px 30px 33px;
 
-        box-shadow:
-            0 10px 30px rgba(167, 139, 250, 0.22);
+        box-shadow: none
 
         overflow: hidden;
     }
@@ -399,7 +417,7 @@ $isStaff
 
     .wizard-step {
         text-align: center;
-        color: white;
+        color: #1e293b;
         font-weight: 700;
     }
 
@@ -417,7 +435,10 @@ $isStaff
         width: 58px;
         height: 58px;
         border-radius: 50%;
-        border: 2px solid rgba(255,255,255,0.55);
+
+        background: #eef4ff;
+        border: 2px solid #dbe7ff;
+        color: white;
 
         display: flex;
         align-items: center;
@@ -426,12 +447,17 @@ $isStaff
         margin: 0 auto 8px;
 
         font-size: 24px;
+        font-weight: 800;
+        margin-top: -30px;
     }
 
     .wizard-step.active .wizard-number {
-        background: rgba(255,255,255,0.95);
-
-        color: #4f6df5;
+        background: linear-gradient(
+            135deg,
+            #2563eb 0%,
+            #4f6df5 40%,
+            #7c3aed 100%
+        );
 
         box-shadow:
             0 0 0 8px rgba(255,255,255,0.16),
@@ -441,7 +467,7 @@ $isStaff
     .wizard-line {
         width: 140px;
         height: 3px;
-        background: rgba(255,255,255,0.28);
+        background: #dbe7ff;
         margin-bottom: 34px;
     }
 
@@ -461,6 +487,10 @@ $isStaff
         justify-content: center;
         font-size: 28px;
         box-shadow: 0 10px 20px rgba(124, 58, 237, 0.18);
+    }
+
+    .wizard-step.active {
+        color: #2563eb;
     }
 
     .wizard-decor {
@@ -491,7 +521,11 @@ $isStaff
     }
 
     .wizard-content {
-        background: rgba(255,255,255,0.82);
+        background: linear-gradient(
+            135deg,
+            #e7f0ff 0%,
+            #efe7ff 100%
+        );
 
         backdrop-filter: blur(18px);
         -webkit-backdrop-filter: blur(18px);
@@ -722,6 +756,233 @@ $isStaff
         margin-bottom: 20px !important;
     }
 
+    .step-icon-box {
+        width: 60px;
+        height: 60px;
+        min-width: 60px;
+
+        border-radius: 16px;
+
+        background: linear-gradient(
+            135deg,
+            #4f6df5,
+            #7b4bb7
+        );
+
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 28px;
+
+        box-shadow: 0 10px 20px rgba(124, 58, 237, 0.18);
+    }
+
+    .step-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .step-subtitle {
+        font-size: 1rem;
+        font-weight: 700;
+
+        background: linear-gradient(
+            90deg,
+            #4f6df5,
+            #7b4bb7
+        );
+
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+        margin-bottom: 6px;
+    }
+
+    .step-line {
+        width: 58px;
+        height: 4px;
+
+        border-radius: 999px;
+
+        background: linear-gradient(
+            90deg,
+            #4f6df5,
+            #7b4bb7
+        );
+
+        margin-bottom: 18px;
+    }
+
+    .step-description {
+        font-size: 1rem;
+        color: #4b5563;
+        margin-bottom: 0;
+    }
+
+    .symptom-option {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 18px 22px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+        position: relative;
+
+        transition: 0.2s ease;
+    }
+
+    .symptom-option:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    .symptom-option label {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .symptom-option .form-check-input {
+        width: 22px;
+        height: 22px;
+        border-radius: 7px;
+        border: 2px solid #d6dbe7;
+        cursor: pointer;
+    }
+
+    .symptom-option .form-check-input:checked {
+        background-color: #6d28d9;
+        border-color: #6d28d9;
+    }
+
+    .symptom-option .form-select {
+        height: 48px;
+        border-radius: 14px;
+        border: 1px solid #d8dee9;
+        font-weight: 600;
+        color: #334155;
+        padding-left: 16px;
+    }
+
+    .symptom-option .form-select:focus {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+    }
+
+    .symptom-option .row {
+        min-height: 56px;
+    }
+
+    .review-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-top: 28px;
+    }
+
+    .review-card {
+        background: rgba(255, 255, 255, 0.88);
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    }
+
+    .review-card h5 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin-bottom: 18px;
+        color: #1e293b;
+    }
+
+    .review-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+
+        padding: 12px 0;
+        border-bottom: 1px solid #e5e7eb;
+
+        font-size: 1rem;
+    }
+
+    .review-item:last-child {
+        border-bottom: none;
+    }
+
+    .review-item span {
+        color: #475569;
+        font-weight: 600;
+    }
+
+    .review-item strong {
+        color: #111827;
+        font-weight: 800;
+        text-align: right;
+    }
+
+    .form-control.is-invalid,
+    .was-validated .form-control:invalid {
+        background-image: none !important;
+        padding-right: 20px !important;
+    }
+
+    .vital-row {
+        align-items: center;
+    }
+
+    .vital-input {
+        position: relative;
+    }
+
+    .vital-input .error-message {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 6px;
+        color: #dc3545;
+        font-size: 0.85rem;
+    }
+
+    .severity-dropdown-wrapper {
+        position: relative;
+    }
+
+    .severity-dropdown-wrapper .form-select.is-invalid {
+        border: 2px solid #dc3545 !important;
+        color: #dc3545 !important;
+        padding-right: 55px;
+    }
+
+    .severity-dropdown-wrapper .form-select.is-invalid option {
+        color: #212529;
+    }
+
+    .severity-dropdown-wrapper .form-select.is-invalid:focus {
+        box-shadow: 0 0 0 0.2rem rgba(220,53,69,.15);
+    }
+
+    .severity-dropdown-wrapper .form-select.is-invalid::placeholder {
+        color: #dc3545 !important;
+    }
+
+    .symptom-option .severity-dropdown-wrapper .form-select.is-invalid {
+        border-color: #dc3545 !important;
+        color: #dc3545 !important;
+    }
+
+    .symptom-option .severity-dropdown-wrapper .error-message {
+        color: #dc3545 !important;
+        font-size: 0.9rem;
+        margin-top: 8px;
+        padding-left: 4px;
+    }
+
 </style>
 
 <script>
@@ -729,7 +990,7 @@ $isStaff
         let currentStep = 1;
 
         const steps = document.querySelectorAll('.form-step');
-        const indicators = document.querySelectorAll('.step-indicator');
+        const indicators = document.querySelectorAll('.wizard-step');
 
         function showStep(step) {
             steps.forEach(function (section) {
@@ -748,7 +1009,17 @@ $isStaff
         document.querySelectorAll('.next-step').forEach(function (button) {
             button.addEventListener('click', function () {
                 if (currentStep < 3) {
+
+                    if (!validateStep(currentStep)) {
+                        return;
+                    }
+
                     currentStep++;
+
+                    if (currentStep === 3) {
+                        updateReview();
+                    }
+
                     showStep(currentStep);
                 }
             });
@@ -762,6 +1033,161 @@ $isStaff
                 }
             });
         });
+
+        function clearFieldError(input) {
+            const wrapper = input.closest('.vital-input');
+
+            if (!wrapper) return;
+
+            const existingError = wrapper.querySelector('.error-message');
+
+            if (existingError) {
+                existingError.remove();
+            }
+
+            input.classList.remove('is-invalid');
+        }
+
+        function showFieldError(input, message) {
+
+            if (!input) return;
+
+            clearFieldError(input);
+
+            const wrapper = input.closest('.severity-dropdown-wrapper') || input.parentElement;
+
+            const error = document.createElement('div');
+
+            error.className = 'error-message text-danger';
+            error.innerText = message;
+
+            wrapper.appendChild(error);
+
+            input.classList.add('is-invalid');
+        }
+
+        function validateStep(step) {
+            let isValid = true;
+
+            if (step === 1) {
+                const oxygen = document.querySelector('[name="oxygen_saturation"]');
+                const respiratory = document.querySelector('[name="respiratory_rate"]');
+                const bloodPressure = document.querySelector('[name="blood_pressure"]');
+                const pulse = document.querySelector('[name="pulse_oximetry"]');
+                const weight = document.querySelector('[name="weight"]');
+
+                [oxygen, respiratory, bloodPressure, pulse, weight].forEach(clearFieldError);
+
+                if (oxygen.value === '') {
+                    showFieldError(oxygen, 'Please enter oxygen saturation.');
+                    isValid = false;
+                } else if (isNaN(oxygen.value) || oxygen.value < 0 || oxygen.value > 100) {
+                    showFieldError(oxygen, 'Oxygen saturation must be between 0 and 100%.');
+                    isValid = false;
+                }
+
+                if (respiratory.value === '') {
+                    showFieldError(respiratory, 'Please enter respiratory rate.');
+                    isValid = false;
+                } else if (isNaN(respiratory.value) || respiratory.value < 0 || respiratory.value > 100) {
+                    showFieldError(respiratory, 'Respiratory rate must be between 0 and 100.');
+                    isValid = false;
+                }
+
+                if (bloodPressure.value === '') {
+                    showFieldError(bloodPressure, 'Please enter blood pressure.');
+                    isValid = false;
+                } else if (!/^\d{1,3}\/\d{1,3}$/.test(bloodPressure.value)) {
+                    showFieldError(bloodPressure, 'Blood pressure must be in the format 120/80.');
+                    isValid = false;
+                } else {
+                    const parts = bloodPressure.value.split('/');
+                    const systolic = Number(parts[0]);
+                    const diastolic = Number(parts[1]);
+
+                    if (systolic < 0 || systolic > 300 || diastolic < 0 || diastolic > 300) {
+                        showFieldError(bloodPressure, 'Blood pressure must be between 0/0 and 300/300.');
+                        isValid = false;
+                    }
+                }
+
+                if (pulse.value === '') {
+                    showFieldError(pulse, 'Please enter pulse oximetry.');
+                    isValid = false;
+                } else if (isNaN(pulse.value) || pulse.value < 0 || pulse.value > 100) {
+                    showFieldError(pulse, 'Pulse oximetry must be between 0 and 100%.');
+                    isValid = false;
+                }
+
+                if (weight.value === '') {
+                    showFieldError(weight, 'Please enter weight.');
+                    isValid = false;
+                } else if (isNaN(weight.value) || weight.value < 0 || weight.value > 300) {
+                    showFieldError(weight, 'Weight must be between 0 and 300kg.');
+                    isValid = false;
+                }
+            }
+
+            if (step === 2) {
+
+                const selectedSymptoms = document.querySelectorAll('input[name^="selected_symptoms"]:checked');
+
+                selectedSymptoms.forEach(function (checkbox) {
+
+                    const symptomId = checkbox.value;
+
+                    const severity = document.querySelector(
+                        `[name="symptom_severity[${symptomId}]"]`
+                    );
+
+                    clearFieldError(severity);
+
+                    if (!severity || severity.value === '') {
+
+                        showFieldError(
+                            severity,
+                            'Please select a severity.'
+                        );
+
+                        isValid = false;
+                    }
+                });
+            }
+
+            return isValid;
+        }
+
+        function updateReview() {
+            const vitalsList = document.getElementById('review-vitals-list');
+            const symptomsList = document.getElementById('review-symptoms-list');
+
+            vitalsList.innerHTML = `
+        <div class="review-item"><span>Oxygen Saturation</span><strong>${document.querySelector('[name="oxygen_saturation"]').value || 'Not entered'}%</strong></div>
+        <div class="review-item"><span>Respiratory Rate</span><strong>${document.querySelector('[name="respiratory_rate"]').value || 'Not entered'} breaths/min</strong></div>
+        <div class="review-item"><span>Blood Pressure</span><strong>${document.querySelector('[name="blood_pressure"]').value || 'Not entered'} mmHg</strong></div>
+        <div class="review-item"><span>Pulse Oximetry</span><strong>${document.querySelector('[name="pulse_oximetry"]').value || 'Not entered'}%</strong></div>
+        <div class="review-item"><span>Weight</span><strong>${document.querySelector('[name="weight"]').value || 'Not entered'} kg</strong></div>
+    `;
+
+            symptomsList.innerHTML = '';
+
+            document.querySelectorAll('input[name^="selected_symptoms"]:checked').forEach(function (checkbox) {
+                const symptomId = checkbox.value;
+                const label = checkbox.closest('.row').querySelector('label').innerText;
+                const severity = document.querySelector(`[name="symptom_severity[${symptomId}]"]`)?.value || 'No severity selected';
+
+                symptomsList.innerHTML += `
+            <div class="review-item">
+                <span>${label}</span>
+                <strong>${severity}</strong>
+            </div>
+        `;
+            });
+
+            if (symptomsList.innerHTML === '') {
+                symptomsList.innerHTML = `<p class="text-muted mb-0">No symptoms selected.</p>`;
+            }
+        }
 
         showStep(currentStep);
     });

@@ -337,6 +337,7 @@
     justify-content: center;
     font-size: 26px;
 }
+
 .back-link a {
     display: inline-flex;
     align-items: center;
@@ -346,6 +347,7 @@
     color: #6b7280;
     text-decoration: none;
     margin-bottom: 20px;
+    margin-left: 25px;
 }
 
 .back-link a:hover {
@@ -731,6 +733,7 @@
 
     opacity: 0.9;
 }
+
 
 .how-icon {
     width: 105px;
@@ -1307,3 +1310,5 @@
 .sidebar-section-title:last-of-type {
     margin-top: 13px;
 }
+
+
