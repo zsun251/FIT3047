@@ -26,7 +26,44 @@ class RemindersController extends AppController
      */
     public function index()
     {
+        $identity = $this->request->getAttribute('identity');
+        $reminder = $this->Reminders->newEmptyEntity();
 
+        // Check authorization
+        if (!$this->Authorization->can($reminder, 'index')) {
+            $this->Flash->error(__('You do not have permission to access reminders.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+        $patientId = UserAccess::getPatientId($identity);
+
+        // Build query with scope applied
+        $query = $this->Reminders->find()
+            ->contain(['VitalsReminders', 'VitalData']);
+
+        $query = $this->Authorization->applyScope($query, 'index')
+            ->order(['Reminders.scheduled_at' => 'DESC']);
+
+        $reminders = $query->all();
+
+        // Get patient's reminder configuration
+        $config = $this->fetchTable('VitalsReminders')->getPatientConfig($patientId);
+
+        // Separate reminders by status
+        $activeReminders = [];
+        $completedReminders = [];
+        $dismissedReminders = [];
+
+        foreach ($reminders as $reminder) {
+            if ($reminder->interaction_type === 'completed') {
+                $completedReminders[] = $reminder;
+            } elseif ($reminder->interaction_type === 'dismissed') {
+                $dismissedReminders[] = $reminder;
+            } else {
+                $activeReminders[] = $reminder;
+            }
+        }
+
+        $this->set(compact('activeReminders', 'completedReminders', 'dismissedReminders', 'config'));
     }
 
     /**
