@@ -25,12 +25,11 @@ DROP TABLE IF EXISTS appointments_reminders;
 DROP TABLE IF EXISTS vitals_reminders;
 
 -- 2. Drop tables that depend on patients/clinicians/appointments
+DROP TABLE IF EXISTS reminders;
 DROP TABLE IF EXISTS vital_data;
 DROP TABLE IF EXISTS appointments;
 DROP TABLE IF EXISTS clinicians_patients;
-
 DROP TABLE IF EXISTS symptoms;
-DROP TABLE IF EXISTS reminders;
 
 -- 5. Drop type-specific tables (admins, clinicians, patients)
 DROP TABLE IF EXISTS admins;
