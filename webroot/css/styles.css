@@ -1,79 +1,116 @@
-/* BOOTSTRAP */
-.btn-primary {
-    background-color: #4116f9 !important;
-    border-color: #4116f9 !important;
+:root {
+    --rc-primary: #4116f9;
+    --rc-primary-hover: #5b52ff;
+    --rc-info: #0d6efd;
+    --rc-text: #0f172a;
+    --rc-muted: #64748b;
+    --rc-surface: #ffffff;
+    --rc-border: rgba(148, 163, 184, 0.28);
+    --rc-radius: 0.9rem;
+    --rc-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+    --rc-topbar-height: 86px;
+    --rc-page-bg:
+        radial-gradient(circle at 8% 8%, rgba(37, 99, 235, 0.22), transparent 30rem),
+        radial-gradient(circle at 92% 12%, rgba(124, 58, 237, 0.18), transparent 32rem),
+        radial-gradient(circle at 50% 80%, rgba(20, 184, 166, 0.1), transparent 34rem),
+        linear-gradient(180deg, #dcecff 0%, #eee7ff 45%, #dff5ff 100%);
+    --rc-topbar-bg: linear-gradient(90deg, #1e3a8a 0%, #312e81 58%, #2563eb 100%);
+    --rc-sidebar-bg: linear-gradient(180deg, #0f172a 0%, #111c31 55%, #172554 100%);
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    background: var(--rc-page-bg) fixed;
+    color: var(--rc-text);
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+main,
+.main,
+.main-content,
+.content,
+.page-content,
+.dashboard-content,
+.container-fluid,
+.patient-dashboard,
+.patient-page,
+.staff-dashboard,
+.admin-dashboard {
+    background: transparent !important;
+}
+
+.btn-primary,
+button.btn-primary,
+input.btn-primary,
+a.btn-primary {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--rc-primary) 0%, #3b16ff 100%) !important;
+    border-color: transparent !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+button.btn-primary:hover,
+button.btn-primary:focus,
+input.btn-primary:hover,
+input.btn-primary:focus,
+a.btn-primary:hover,
+a.btn-primary:focus {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--rc-primary-hover) 0%, #451cff 100%) !important;
+    border-color: transparent !important;
+    box-shadow: 0 14px 28px rgba(79, 70, 229, 0.24);
 }
 
 .text-primary {
-    color: #4116f9 !important;
+    color: var(--rc-primary) !important;
 }
 
-
-/*  CONTACT FORM CARD */
-.contact-card {
-    background: var(--c-surface);       /* clean white surface */
-    border: 1px solid var(--c-border);  /* subtle border */
-    border-radius: 1rem;                /* more rounded edges */
-    padding: 2rem 2.5rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);  /* soft shadow even when not hovering */
-    transition: all 0.25s ease-in-out;
+.bg-light,
+.bg-body-tertiary {
+    background-color: rgba(255, 255, 255, 0.42) !important;
 }
 
-.contact-card:hover {
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12); /* slightly stronger on hover */
-    transform: translateY(-2px);             /* subtle lift effect */
+.card,
+.stat-card,
+.table-card,
+.content-card,
+.dashboard-card,
+.filter-card,
+.vital-list-card,
+.records-card,
+.appointments-card,
+.users-card,
+.patients-card,
+.resources-card,
+.contact-messages-card,
+.form-container,
+.auth-card {
+    background: var(--rc-surface) !important;
+    background-image: none !important;
+    border: 1px solid var(--rc-border) !important;
+    box-shadow: var(--rc-shadow);
 }
 
-.contact-card h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+.card {
+    border-radius: 12px;
 }
 
-.contact-card p {
-    color: var(--c-muted);
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+.card-body {
+    padding: 2rem;
 }
 
-/* Input fields */
-.contact-card .form-control {
-    display: block;     /* ensures they show */
-    width: 100%;        /* full width */
-    border-radius: 0.6rem;
-    padding: 0.75rem 1rem;
-    box-sizing: border-box; /* important for padding + width */
+.dash-header,
+.page-header,
+.index-header,
+.admin-header,
+.staff-header {
+    background: transparent !important;
 }
-
-.contact-card .form-control:focus {
-    border-color: var(--c-accent);
-    box-shadow: 0 0 0 3px rgba(45,91,227,0.1);
-}
-
-/* Submit button */
-.contact-card .btn {
-    border-radius: 0.6rem;
-    font-weight: 600;
-    padding: 0.75rem 1rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .contact-card {
-        padding: 1.5rem 1.75rem;
-    }
-
-    .contact-card h2 {
-        font-size: 1.6rem;
-    }
-
-    .contact-card p {
-        font-size: 0.9rem;
-    }
-}
-/* Map CakePHP baked classes to Bootstrap equivalents */
-/* TEMPORARY STYLES TO REPLACE CAKEPHP STYLES WHILE USING BOOTSTRAP */
-
 
 .column {
     flex: 0 0 auto;
@@ -93,44 +130,9 @@
     padding: 0 12px;
 }
 
-.side-nav {
-    background: var(--bs-white);
-    border: 1px solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
-    margin-bottom: 1rem;
-}
-
-.side-nav .heading {
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--bs-border-color);
-    margin: 0;
-}
-
-.side-nav-item {
-    display: block;
-    padding: 0.5rem 1rem;
-    color: var(--bs-body-color);
-    text-decoration: none;
-    border-bottom: 1px solid var(--bs-border-color);
-    font-size: 0.9rem;
-    transition: background-color 0.15s;
-}
-
-.side-nav-item:last-child {
-    border-bottom: none;
-}
-
-.side-nav-item:hover {
-    background-color: var(--bs-light);
-    color: var(--bs-primary);
-}
-
 .content {
-    background: var(--bs-white);
-    border: 1px solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
+    border: 0;
+    border-radius: var(--rc-radius);
     padding: 1.5rem;
     margin-bottom: 1rem;
 }
@@ -150,22 +152,20 @@
 .content table th,
 .content table td {
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--bs-border-color);
+    border: 1px solid var(--rc-border);
     font-size: 0.9rem;
 }
 
 .content table th {
-    background-color: var(--bs-light);
+    background-color: #fafbff;
     font-weight: 600;
     width: 200px;
 }
 
 .content table tr:nth-child(even) {
-    background-color: var(--bs-gray-100);
+    background-color: #f3f4f6;
 }
 
-
-/* Paginator */
 .paginator ul.pagination {
     display: flex;
     gap: 4px;
@@ -177,26 +177,134 @@
 .paginator .page-item a,
 .paginator .page-item span {
     padding: 0.375rem 0.75rem;
-    border: 1px solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
-    color: var(--bs-primary);
+    border: 1px solid var(--rc-border);
+    border-radius: 0.5rem;
+    color: var(--rc-info);
     text-decoration: none;
     font-size: 0.875rem;
 }
 
 .paginator .page-item.active span {
-    background-color: var(--bs-primary);
-    color: white;
-    border-color: var(--bs-primary);
+    background-color: var(--rc-info);
+    color: #ffffff;
+    border-color: var(--rc-info);
 }
 
-.card {
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
+.dataTables_wrapper,
+.dt-container,
+.table-responsive,
+table.table {
+    background: #ffffff !important;
+    background-image: none !important;
 }
 
-.card-body {
-    padding: 2rem;
+.dataTables_wrapper,
+.dt-container,
+.table-responsive {
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: var(--rc-radius);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.vital-list-card .dataTables_wrapper,
+.vital-list-card .dt-container,
+.vital-list-card .table-responsive,
+.records-card .dataTables_wrapper,
+.records-card .dt-container,
+.records-card .table-responsive {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+table.table thead th,
+table.dataTable thead th,
+.dataTable thead th {
+    background: #fafbff !important;
+    color: #1f2937 !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.28) !important;
+}
+
+table.table tbody tr,
+table.dataTable tbody tr,
+.dataTable tbody tr {
+    background-color: #ffffff !important;
+}
+
+table.table tbody tr:nth-child(odd),
+table.dataTable tbody tr:nth-child(odd),
+.dataTable tbody tr:nth-child(odd) {
+    background-color: #f3f4f6 !important;
+}
+
+table.table tbody tr:hover,
+table.dataTable tbody tr:hover,
+.dataTable tbody tr:hover {
+    background-color: #eef4ff !important;
+}
+
+.resources.index.content,
+.users.index.content,
+.patients.index.content,
+.appointments.index.content,
+.contactMessages.index.content,
+.contact-messages.index.content {
+    background: transparent !important;
+}
+
+.resources.index.content > table,
+.users.index.content > table,
+.patients.index.content > table,
+.appointments.index.content > table,
+.contactMessages.index.content > table,
+.contact-messages.index.content > table {
+    width: 100%;
+    background: #ffffff !important;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: var(--rc-radius);
+    overflow: hidden;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.contact-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(148, 163, 184, 0.24) !important;
+    border-radius: 1rem;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.1);
+}
+
+.contact-card h1,
+.contact-card h2 {
+    color: var(--rc-text);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.contact-card p {
+    color: var(--rc-muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+.contact-card .form-control {
+    width: 100%;
+    border-radius: 0.6rem;
+    padding: 0.75rem 1rem;
+    box-sizing: border-box;
+}
+
+.contact-card .form-control:focus {
+    border-color: var(--rc-info);
+    box-shadow: 0 0 0 3px rgba(45, 91, 227, 0.1);
+}
+
+.contact-card .btn {
+    border-radius: 0.6rem;
+    font-weight: 700;
+    padding: 0.75rem 1rem;
 }
 
 .input {
@@ -210,11 +318,11 @@
 }
 
 .side-nav-modern {
-    background: #fff;
+    background: #ffffff;
     border-radius: 12px;
     padding: 10px;
     border: 1px solid #e5e7eb;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 .side-nav-modern .side-nav-item {
@@ -242,30 +350,45 @@
     font-size: 16px;
 }
 
-.vital-card {
+.vital-card,
+.symptom-card {
     background: #f8fafc;
+    border: 1px solid #dbe3ea;
+    border-left: 5px solid #198754;
     border-radius: 12px;
-    padding: 16px;
-    height: 100%;
-    border: 1px solid #e5e7eb;
+    padding: 18px 20px;
+    min-height: 110px;
+    width: 100%;
     transition: all 0.2s ease;
 }
 
-.vital-card:hover {
+.vital-card:hover,
+.symptom-card:hover {
     background: #f1f5f9;
     transform: translateY(-2px);
+}
+
+.icon-box,
+.record-icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8f0ff;
+    color: #2563eb;
 }
 
 .icon-box {
     width: 45px;
     height: 45px;
-    background: #e0e7ff;
-    color: #3b82f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-radius: 10px;
     font-size: 20px;
+}
+
+.record-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    font-size: 26px;
 }
 
 .vital-card small {
@@ -277,15 +400,8 @@
 }
 
 .symptom-card {
-    background: #f8fafc;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    transition: 0.2s ease;
-}
-
-.symptom-card:hover {
-    background: #f1f5f9;
+    padding: 16px;
+    min-height: 10px;
 }
 
 .symptom-name {
@@ -326,18 +442,8 @@
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
-.record-icon-box {
-    width: 60px;
-    height: 60px;
-    background: #e8f0ff;
-    color: #2563eb;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-}
-.back-link a {
+.back-link a,
+.back-link {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -348,50 +454,13 @@
     margin-bottom: 20px;
 }
 
-.back-link a:hover {
+.back-link a:hover,
+.back-link:hover {
     color: #111827;
 }
 
 .back-link i {
     font-size: 16px;
-}
-
-
-
-.vital-card,
-.symptom-card {
-    background: #f8fafc;
-    border: 1px solid #dbe3ea;
-    border-left: 5px solid #198754;
-    border-radius: 12px;
-    padding: 18px 20px;
-    min-height: 110px;
-    width: 100%;
-}
-
-
-.symptom-card {
-    padding: 16px;
-    min-height: 10px;
-    transition: all 0.2s ease;
-}
-
-.symptom-card:hover {
-    background: #f1f5f9;
-}
-
-.profile-avatar {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    color: white;
-    font-size: 24px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
 }
 
 .vitalData.view.content {
@@ -411,12 +480,7 @@
 }
 
 .vitalData .symptom-card {
-    width: 100%;
     min-height: 120px;
-    background: #f8fafc;
-    border: 1px solid #dbe3ea;
-    border-left: 5px solid #198754;
-    border-radius: 12px;
     padding: 22px 24px;
 }
 
@@ -427,9 +491,23 @@
 .section-underline {
     width: 50px;
     height: 4px;
-    background-color: #0d6efd;
+    background-color: var(--rc-info);
     border-radius: 3px;
     margin-bottom: 20px;
+}
+
+.profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: #ffffff;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .btn-edit {
@@ -444,7 +522,6 @@
     background-color: #e9ecef;
 }
 
-
 .btn-delete {
     background-color: transparent;
     border: 1px solid #dc3545;
@@ -455,5 +532,575 @@
 
 .btn-delete:hover {
     background-color: #dc3545;
-    color: white;
+    color: #ffffff;
+}
+
+.message,
+.alert,
+main > .message,
+main > .alert,
+.flash-message {
+    width: calc(100% - 2rem) !important;
+    max-width: 1180px;
+    margin: 1rem auto !important;
+    padding: 0.9rem 1.1rem !important;
+    border-radius: 1rem !important;
+    border: 1px solid rgba(148, 163, 184, 0.28) !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(10px);
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.message.success,
+.alert-success {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, rgba(220, 252, 231, 0.96), rgba(236, 253, 245, 0.96)) !important;
+    border-color: rgba(34, 197, 94, 0.38) !important;
+    color: #064e3b !important;
+}
+
+.message.error,
+.alert-danger {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, rgba(254, 226, 226, 0.96), rgba(254, 242, 242, 0.96)) !important;
+    border-color: rgba(239, 68, 68, 0.42) !important;
+    color: #7f1d1d !important;
+}
+
+.message.success::before,
+.alert-success::before,
+.message.error::before,
+.alert-danger::before {
+    width: 1.4rem;
+    height: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 999px;
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.message.success::before,
+.alert-success::before {
+    content: "✓";
+    background: #047857;
+    font-size: 0.8rem;
+}
+
+.message.error::before,
+.alert-danger::before {
+    content: "!";
+    background: #dc2626;
+    font-size: 0.85rem;
+}
+
+.alert .btn-close,
+.message .btn-close,
+.message button.close,
+.alert button.close {
+    margin-left: auto;
+    opacity: 0.65;
+    filter: none;
+}
+
+.alert .btn-close:hover,
+.message .btn-close:hover,
+.message button.close:hover,
+.alert button.close:hover {
+    opacity: 1;
+}
+
+#sidebar,
+.sidebar,
+.app-sidebar,
+.side-nav,
+.sidebar-wrapper {
+    background: var(--rc-sidebar-bg) !important;
+    border-right: 1px solid rgba(96, 165, 250, 0.18) !important;
+    box-shadow: 6px 0 18px rgba(15, 23, 42, 0.08) !important;
+    color: rgba(255, 255, 255, 0.88);
+    z-index: 1020;
+}
+
+#sidebar {
+    position: fixed;
+    top: var(--rc-topbar-height);
+    left: 0;
+    bottom: 0;
+    width: var(--sidebar-width, 180px);
+    overflow-y: auto;
+}
+
+#main-content {
+    margin-left: var(--sidebar-width, 180px);
+    min-width: 0;
+}
+
+.sidebar-section-title {
+    color: rgba(255, 255, 255, 0.58) !important;
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase;
+    margin: 1.2rem 1rem 0.5rem;
+}
+
+.sidebar-link,
+#sidebar a,
+.sidebar a,
+.app-sidebar a,
+.side-nav a,
+.sidebar-wrapper a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: rgba(255, 255, 255, 0.88) !important;
+    border-radius: 0.75rem;
+    padding: 0.72rem 0.95rem;
+    margin: 0.16rem 0.65rem;
+    text-decoration: none;
+    font-size: 0.98rem !important;
+    font-weight: 700 !important;
+    transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus,
+#sidebar a:hover,
+#sidebar a:focus,
+.sidebar a:hover,
+.sidebar a:focus,
+.app-sidebar a:hover,
+.app-sidebar a:focus,
+.side-nav a:hover,
+.side-nav a:focus,
+.sidebar-wrapper a:hover,
+.sidebar-wrapper a:focus {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff !important;
+    transform: translateX(2px);
+}
+
+.sidebar-link.active,
+#sidebar a.active,
+.sidebar a.active,
+.app-sidebar a.active,
+.side-nav a.active,
+.sidebar-wrapper a.active {
+    background: rgba(96, 165, 250, 0.18);
+    color: #ffffff !important;
+    box-shadow: inset 3px 0 0 #60a5fa;
+}
+
+.sidebar::after,
+.app-sidebar::after,
+.side-nav::after,
+.sidebar-wrapper::after {
+    display: none !important;
+}
+
+.site-footer,
+footer {
+    background: var(--rc-topbar-bg) !important;
+    border-top: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    margin-top: 0 !important;
+}
+
+.site-footer,
+.site-footer *,
+.site-footer a,
+footer,
+footer *,
+footer a,
+footer p,
+footer span,
+footer small,
+footer div {
+    color: #ffffff !important;
+}
+
+@media (max-width: 768px) {
+    #sidebar {
+        transform: translateX(-100%);
+        z-index: 1050;
+    }
+
+    #sidebar.open {
+        transform: translateX(0);
+    }
+
+    #main-content {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    body {
+        background:
+            radial-gradient(circle at 10% 4%, rgba(37, 99, 235, 0.28), transparent 18rem),
+            radial-gradient(circle at 90% 18%, rgba(124, 58, 237, 0.24), transparent 18rem),
+            linear-gradient(180deg, #dcecff 0%, #eee7ff 52%, #def5ff 100%) fixed;
+    }
+
+    .column,
+    .column-80,
+    .column-100 {
+        width: 100%;
+    }
+
+    .contact-card {
+        padding: 1.5rem 1.75rem;
+    }
+
+    .contact-card h1,
+    .contact-card h2 {
+        font-size: 1.6rem;
+    }
+
+    .contact-card p {
+        font-size: 0.9rem;
+    }
+
+    .message,
+    .alert,
+    main > .message,
+    main > .alert,
+    .flash-message {
+        width: calc(100% - 1.25rem) !important;
+        margin: 0.75rem auto !important;
+        padding: 0.85rem 0.95rem !important;
+        border-radius: 0.85rem !important;
+    }
+
+    .vitalData .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   RespiraCare app theme
+   ========================================================================== */
+
+:root {
+    --rc-topbar-height: 86px;
+
+    --rc-page-bg:
+        radial-gradient(circle at 8% 8%, rgba(37, 99, 235, 0.22), transparent 30rem),
+        radial-gradient(circle at 92% 12%, rgba(124, 58, 237, 0.18), transparent 32rem),
+        radial-gradient(circle at 50% 80%, rgba(20, 184, 166, 0.1), transparent 34rem),
+        linear-gradient(180deg, #dcecff 0%, #eee7ff 45%, #dff5ff 100%);
+
+    --rc-topbar-bg: linear-gradient(90deg, #1e3a8a 0%, #312e81 58%, #2563eb 100%);
+    --rc-sidebar-bg: linear-gradient(180deg, #0f172a 0%, #111c31 55%, #172554 100%);
+
+    --rc-border-soft: rgba(148, 163, 184, 0.24);
+    --rc-shadow-card: 0 12px 28px rgba(15, 23, 42, 0.07);
+}
+
+/* Page background */
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    background: var(--rc-page-bg) fixed !important;
+}
+
+/* Main page areas should show the gradient */
+main,
+#main-content,
+.main-content,
+.page-content,
+.dashboard-content,
+.container-fluid {
+    background: transparent !important;
+}
+
+/* Baked CakePHP index wrappers should not become full white pages */
+.index.content {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Form/detail pages should sit in white cards */
+.form-container,
+.contact-card,
+.card,
+.content-card,
+.dashboard-card,
+.table-card,
+.vital-list-card,
+.records-card,
+.appointments-card,
+.users-card,
+.patients-card,
+.resources-card,
+.contact-messages-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid var(--rc-border-soft) !important;
+    box-shadow: var(--rc-shadow-card);
+}
+
+/* Page headers stay on the gradient */
+.dash-header,
+.page-header,
+.index-header,
+.admin-header,
+.staff-header {
+    background: transparent !important;
+}
+
+/* Stat cards */
+.stat-card {
+    background: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid var(--rc-border-soft) !important;
+    box-shadow: var(--rc-shadow-card);
+}
+
+/* Tables and DataTables panels */
+.dataTables_wrapper,
+.dt-container,
+.table-responsive {
+    background: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid var(--rc-border-soft);
+    border-radius: 0.9rem;
+    box-shadow: var(--rc-shadow-card);
+    overflow: hidden;
+}
+
+table.table,
+table.dataTable,
+.dataTable {
+    background: #ffffff !important;
+    margin-bottom: 0;
+}
+
+table.table thead th,
+table.dataTable thead th,
+.dataTable thead th {
+    background: #fafbff !important;
+    color: #1f2937 !important;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.28) !important;
+}
+
+table.table tbody tr,
+table.dataTable tbody tr,
+.dataTable tbody tr {
+    background: #ffffff !important;
+}
+
+table.table tbody tr:nth-child(odd),
+table.dataTable tbody tr:nth-child(odd),
+.dataTable tbody tr:nth-child(odd) {
+    background: #f3f4f6 !important;
+}
+
+table.table tbody tr:hover,
+table.dataTable tbody tr:hover,
+.dataTable tbody tr:hover {
+    background: #eef4ff !important;
+}
+
+/* Avoid double borders where a custom card already wraps the table */
+.vital-list-card .dataTables_wrapper,
+.vital-list-card .dt-container,
+.vital-list-card .table-responsive,
+.records-card .dataTables_wrapper,
+.records-card .dt-container,
+.records-card .table-responsive,
+.table-card .dataTables_wrapper,
+.table-card .dt-container,
+.table-card .table-responsive {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Baked resource/admin tables */
+.index.content > table {
+    width: 100%;
+    background: #ffffff !important;
+    border: 1px solid var(--rc-border-soft);
+    border-radius: 0.9rem;
+    overflow: hidden;
+    box-shadow: var(--rc-shadow-card);
+}
+
+/* Primary buttons */
+.btn-primary,
+button.btn-primary,
+input.btn-primary,
+a.btn-primary {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b16ff 100%) !important;
+    border-color: transparent !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+button.btn-primary:hover,
+button.btn-primary:focus,
+input.btn-primary:hover,
+input.btn-primary:focus,
+a.btn-primary:hover,
+a.btn-primary:focus {
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #5b52ff 0%, #451cff 100%) !important;
+    border-color: transparent !important;
+    box-shadow: 0 14px 28px rgba(79, 70, 229, 0.24);
+}
+
+/* Flash messages */
+main > .message,
+main > .alert,
+.flash-message,
+.message,
+.alert {
+    width: calc(100% - 2rem) !important;
+    max-width: 1180px;
+    margin: 1rem auto !important;
+    padding: 0.9rem 1.1rem !important;
+    border-radius: 1rem !important;
+    border: 1px solid rgba(148, 163, 184, 0.28) !important;
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(10px);
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.message.success,
+.alert-success {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, rgba(220, 252, 231, 0.96) 0%, rgba(236, 253, 245, 0.96) 100%) !important;
+    border-color: rgba(34, 197, 94, 0.38) !important;
+    color: #064e3b !important;
+}
+
+.message.success::before,
+.alert-success::before {
+    content: "✓";
+    width: 1.4rem;
+    height: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: #047857;
+    color: #ffffff;
+    font-size: 0.8rem;
+    font-weight: 900;
+}
+
+.message.error,
+.alert-danger {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, rgba(254, 226, 226, 0.96) 0%, rgba(254, 242, 242, 0.96) 100%) !important;
+    border-color: rgba(239, 68, 68, 0.42) !important;
+    color: #7f1d1d !important;
+}
+
+.message.error::before,
+.alert-danger::before {
+    content: "!";
+    width: 1.4rem;
+    height: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 900;
+}
+
+.alert .btn-close,
+.message .btn-close,
+.message button.close,
+.alert button.close {
+    margin-left: auto;
+    opacity: 0.65;
+    filter: none;
+}
+
+.alert .btn-close:hover,
+.message .btn-close:hover,
+.message button.close:hover,
+.alert button.close:hover {
+    opacity: 1;
+}
+
+/* Footer */
+.site-footer,
+footer {
+    background: var(--rc-topbar-bg) !important;
+    border-top: 0 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    font-weight: 600;
+}
+
+.site-footer,
+.site-footer *,
+.site-footer a,
+footer,
+footer *,
+footer a,
+footer p,
+footer span,
+footer small,
+footer div {
+    color: #ffffff !important;
+}
+
+@media (max-width: 767.98px) {
+    body {
+        background:
+            radial-gradient(circle at 10% 4%, rgba(37, 99, 235, 0.28), transparent 18rem),
+            radial-gradient(circle at 90% 18%, rgba(124, 58, 237, 0.24), transparent 18rem),
+            linear-gradient(180deg, #dcecff 0%, #eee7ff 52%, #def5ff 100%) fixed !important;
+    }
+
+    main > .message,
+    main > .alert,
+    .flash-message,
+    .message,
+    .alert {
+        width: calc(100% - 1.25rem) !important;
+        margin: 0.75rem auto !important;
+        padding: 0.85rem 0.95rem !important;
+        border-radius: 0.85rem !important;
+    }
+}
+/* Hide built-in flash icons because custom success/error icons are added with CSS */
+.message.success > i,
+.message.success > svg,
+.alert-success > i,
+.alert-success > svg,
+.message.error > i,
+.message.error > svg,
+.alert-danger > i,
+.alert-danger > svg {
+    display: none !important;
 }
