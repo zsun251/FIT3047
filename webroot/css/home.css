@@ -1,75 +1,731 @@
-/* Home page styles */
-@font-face {
-    font-family: 'cakefont';
-    src: url('../font/cakedingbats-webfont.eot');
-    src: url('../font/cakedingbats-webfont.eot?#iefix') format('embedded-opentype'),
-    url('../font/cakedingbats-webfont.woff2') format('woff2'),
-    url('../font/cakedingbats-webfont.woff') format('woff'),
-    url('../font/cakedingbats-webfont.ttf') format('truetype'),
-    url('../font/cakedingbats-webfont.svg#cake_dingbatsregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-body {
-    padding: 60px 0;
-}
-header {
-    margin-bottom: 60px;
-}
-img {
-    margin-bottom: 30px;
-}
-h1 {
-    font-weight: bold;
-}
-ul {
-    list-style-type: none;
-    margin: 0 0 30px 0;
-    padding-left: 25px;
-}
-a {
-    color: #0071BC;
-    text-decoration: underline;
-}
-hr {
-    border-bottom: 1px solid #e7e7e7;
-    border-top: 0;
-    margin-bottom: 35px;
+/* ==========================================================================
+   RespiraCare Home Page
+   ========================================================================== */
+
+:root {
+    --rc-navy: #082344;
+    --rc-text: #475569;
+    --rc-muted: #64748b;
+    --rc-primary: #4f46e5;
+    --rc-primary-dark: #3730a3;
+    --rc-blue: #2563eb;
+    --rc-purple: #7c3aed;
+    --rc-green: #16a34a;
+
+    --rc-border: #dce3f1;
+    --rc-card: rgba(255, 255, 255, 0.9);
+    --rc-card-strong: #ffffff;
+
+    --rc-radius-sm: 0.9rem;
+    --rc-radius-md: 1.25rem;
+    --rc-radius-lg: 1.7rem;
+
+    --rc-shadow-sm: 0 10px 24px rgba(15, 23, 42, 0.05);
+    --rc-shadow-md: 0 18px 38px rgba(15, 23, 42, 0.1);
+    --rc-shadow-lg: 0 28px 60px rgba(15, 23, 42, 0.18);
 }
 
-.text-center {
-    text-align: center;
+/* --------------------------------------------------------------------------
+   Page background
+   -------------------------------------------------------------------------- */
+
+.home-page {
+    min-height: 100vh;
+    color: #0f172a;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 8% 8%, rgba(37, 99, 235, 0.28), transparent 30rem),
+        radial-gradient(circle at 90% 12%, rgba(124, 58, 237, 0.24), transparent 32rem),
+        radial-gradient(circle at 50% 48%, rgba(20, 184, 166, 0.12), transparent 34rem),
+        radial-gradient(circle at 80% 78%, rgba(37, 99, 235, 0.16), transparent 30rem),
+        linear-gradient(180deg, #dcecff 0%, #eee7ff 42%, #dff5ff 100%);
 }
-.links a {
-    margin-right: 10px;
+
+.home-page a {
+    text-decoration: none;
 }
-.release-name {
-    color: #D33C43;
-    font-weight: 400;
-    font-style: italic;
+
+.home-page .container {
+    position: relative;
+    z-index: 2;
 }
-.bullet:before {
-    font-family: 'cakefont', sans-serif;
-    font-size: 18px;
-    display: inline-block;
-    margin-left: -1.3em;
-    width: 1.2em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    vertical-align: -1px;
+
+/* --------------------------------------------------------------------------
+   Shared typography
+   -------------------------------------------------------------------------- */
+
+.intro-title,
+.section-heading h2,
+.section-title,
+.local-card h2,
+.final-cta-card h2 {
+    color: var(--rc-navy);
+    font-weight: 800;
+    letter-spacing: -0.04em;
 }
-.success:before {
-    color: #88c671;
-    content: "\0056";
+
+.intro-title {
+    font-size: clamp(2.35rem, 5vw, 4.8rem);
+    line-height: 1.03;
+    margin-bottom: 1.25rem;
 }
-.problem:before {
-    color: #d33d44;
-    content: "\0057";
+
+.section-heading h2,
+.section-title {
+    font-size: clamp(2rem, 3vw, 3rem);
+    line-height: 1.12;
+    margin-bottom: 1rem;
 }
-.cake-error {
-    padding: 10px;
-    margin: 10px 0;
+
+.local-card h2 {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    margin-bottom: 1rem;
 }
-#url-rewriting-warning {
-    display: none;
+
+.final-cta-card h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+.intro-lead,
+.section-heading p,
+.section-text,
+.local-card p,
+.final-cta-card p {
+    color: var(--rc-text);
+    font-size: 1.05rem;
+    line-height: 1.75;
+}
+
+.intro-lead {
+    max-width: 590px;
+    margin-bottom: 1.8rem;
+    font-size: 1.15rem;
+}
+
+.final-cta-card p {
+    max-width: 720px;
+    margin: 0 auto 1.6rem;
+    color: rgba(255, 255, 255, 0.86);
+}
+
+/* --------------------------------------------------------------------------
+   Shared badges, buttons, cards
+   -------------------------------------------------------------------------- */
+
+.intro-eyebrow,
+.section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.72rem;
+    border-radius: 999px;
+    background: #e8edff;
+    color: var(--rc-primary-dark);
+    border: 1px solid #cfd7ff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-bottom: 1rem;
+}
+
+.intro-primary-btn,
+.intro-secondary-btn,
+.final-cta-btn {
+    border-radius: var(--rc-radius-sm);
+    padding: 0.85rem 1.2rem;
+    font-weight: 700;
+}
+
+.intro-primary-btn {
+    box-shadow: 0 14px 28px rgba(79, 70, 229, 0.25);
+}
+
+.intro-secondary-btn {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.final-cta-btn {
+    color: var(--rc-primary-dark);
+    font-weight: 800;
+}
+
+.pathway-card,
+.benefit-card,
+.how-step,
+.local-checklist,
+.intro-trust-item,
+.intro-floating-card,
+.home-faq .accordion-item {
+    border: 1px solid var(--rc-border);
+    background: var(--rc-card);
+    box-shadow: var(--rc-shadow-sm);
+}
+
+.pathway-card,
+.benefit-card,
+.how-step,
+.local-checklist {
+    border-radius: var(--rc-radius-md);
+}
+
+.pathway-card,
+.benefit-card,
+.how-step {
+    padding: 1.5rem;
+}
+
+.pathway-card,
+.benefit-card,
+.how-step,
+.intro-trust-item,
+.intro-floating-card {
+    backdrop-filter: blur(8px);
+}
+
+.pathway-card {
+    height: 100%;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.pathway-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--rc-shadow-md);
+}
+
+.pathway-icon,
+.floating-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pathway-icon {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 1rem;
+    background: #ffffff;
+    color: var(--rc-primary);
+    box-shadow: 0 10px 22px rgba(79, 70, 229, 0.12);
+    font-size: 1.45rem;
+    margin-bottom: 1rem;
+}
+
+.floating-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 0.85rem;
+    font-size: 1.2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Intro
+   -------------------------------------------------------------------------- */
+
+.home-intro {
+    position: relative;
+    padding: 5.5rem 0 4.5rem;
+}
+
+.intro-copy {
+    max-width: 620px;
+}
+
+.intro-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-bottom: 2rem;
+}
+
+.intro-trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.intro-trust-item {
+    min-width: 125px;
+    padding: 0.8rem 0.9rem;
+    border-radius: var(--rc-radius-sm);
+}
+
+.intro-trust-item strong {
+    display: block;
+    color: #172554;
+    font-size: 1rem;
+}
+
+.intro-trust-item span {
+    display: block;
+    color: var(--rc-muted);
+    font-size: 0.85rem;
+}
+
+.intro-visual-card {
+    position: relative;
+    max-width: 620px;
+    margin-left: auto;
+}
+
+.intro-image-wrap {
+    border-radius: 2rem;
+    padding: 0.8rem;
+    background: linear-gradient(135deg, #93c5fd 0%, #c4b5fd 56%, #86efac 100%);
+    box-shadow: var(--rc-shadow-lg);
+}
+
+.intro-image {
+    display: block;
+    width: 100%;
+    height: min(520px, 60vw);
+    object-fit: cover;
+    border-radius: 1.45rem;
+    margin: 0;
+}
+
+.intro-floating-card {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 280px;
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--rc-shadow-md);
+}
+
+.intro-floating-card strong {
+    display: block;
+    color: #0f172a;
+    font-size: 0.95rem;
+}
+
+.intro-floating-card span {
+    display: block;
+    color: var(--rc-muted);
+    font-size: 0.82rem;
+}
+
+.intro-floating-card-top {
+    top: 1.5rem;
+    left: -1.6rem;
+}
+
+.intro-floating-card-bottom {
+    right: -1.25rem;
+    bottom: 2rem;
+}
+
+.floating-icon-blue {
+    background: #eff6ff;
+    color: var(--rc-blue);
+}
+
+.floating-icon-purple {
+    background: #f5f3ff;
+    color: var(--rc-purple);
+}
+
+.intro-soft-shape {
+    position: absolute;
+    border-radius: 999px;
+    filter: blur(10px);
+    opacity: 0.38;
+    z-index: 1;
+}
+
+.intro-soft-shape-one {
+    width: 18rem;
+    height: 18rem;
+    background: #93c5fd;
+    right: -8rem;
+    top: 4rem;
+}
+
+.intro-soft-shape-two {
+    width: 14rem;
+    height: 14rem;
+    background: #c4b5fd;
+    left: -6rem;
+    bottom: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Sections
+   -------------------------------------------------------------------------- */
+
+.home-section {
+    padding: 4.5rem 0;
+    background: transparent;
+}
+
+.section-heading {
+    max-width: 760px;
+    margin: 0 auto 2.4rem;
+}
+
+/* --------------------------------------------------------------------------
+   Pathways, benefits, how steps
+   -------------------------------------------------------------------------- */
+
+.pathway-card-blue {
+    background: linear-gradient(180deg, #ffffff 0%, #eaf4ff 100%);
+    border-color: #bfdbfe;
+}
+
+.pathway-card-purple {
+    background: linear-gradient(180deg, #ffffff 0%, #f2eaff 100%);
+    border-color: #d8c8ff;
+}
+
+.pathway-card-green {
+    background: linear-gradient(180deg, #ffffff 0%, #eafff3 100%);
+    border-color: #a7f3d0;
+}
+
+.pathway-card h3,
+.benefit-card h3,
+.how-step h3,
+.local-checklist h3 {
+    color: #172554;
+    font-weight: 800;
+    margin-bottom: 0.55rem;
+}
+
+.pathway-card h3 {
+    font-size: 1.2rem;
+}
+
+.benefit-card h3,
+.how-step h3,
+.local-checklist h3 {
+    font-size: 1.08rem;
+}
+
+.pathway-card p,
+.benefit-card p,
+.how-step p {
+    color: var(--rc-muted);
+    line-height: 1.65;
+    margin: 0;
+}
+
+.benefit-grid,
+.how-steps {
+    display: grid;
+    gap: 1rem;
+}
+
+.benefit-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.how-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.benefit-card i {
+    display: inline-flex;
+    color: var(--rc-primary);
+    font-size: 1.55rem;
+    margin-bottom: 0.8rem;
+}
+
+.how-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.7rem;
+    height: 2.7rem;
+    border-radius: 999px;
+    background: var(--rc-primary);
+    color: #ffffff;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    box-shadow: 0 10px 22px rgba(79, 70, 229, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Local support
+   -------------------------------------------------------------------------- */
+
+.local-card {
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--rc-radius-lg);
+    background:
+        radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.15), transparent 18rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(230, 241, 255, 0.96) 100%);
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.09);
+}
+
+.local-checklist {
+    padding: 1.25rem;
+    background: #ffffff;
+}
+
+.local-checklist ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.local-checklist li {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    color: var(--rc-text);
+    margin-bottom: 0.75rem;
+}
+
+.local-checklist li:last-child {
+    margin-bottom: 0;
+}
+
+.local-checklist i {
+    color: var(--rc-green);
+    margin-top: 0.12rem;
+}
+
+/* --------------------------------------------------------------------------
+   FAQ
+   -------------------------------------------------------------------------- */
+
+.faq-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.home-faq .accordion-item {
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-bottom: 0.8rem;
+}
+
+.home-faq .accordion-button {
+    font-weight: 800;
+    color: #172554;
+    background: #ffffff;
+    box-shadow: none;
+}
+
+.home-faq .accordion-button:not(.collapsed) {
+    background: #eef2ff;
+    color: var(--rc-primary-dark);
+}
+
+.home-faq .accordion-body {
+    color: var(--rc-text);
+    line-height: 1.7;
+}
+
+/* --------------------------------------------------------------------------
+   Final CTA
+   -------------------------------------------------------------------------- */
+
+.home-final-cta {
+    padding: 4rem 0 5rem;
+}
+
+.final-cta-card {
+    padding: clamp(2rem, 4vw, 3.5rem);
+    border-radius: var(--rc-radius-lg);
+    background:
+        radial-gradient(circle at 15% 15%, rgba(147, 197, 253, 0.26), transparent 16rem),
+        radial-gradient(circle at 85% 20%, rgba(196, 181, 253, 0.3), transparent 16rem),
+        linear-gradient(135deg, #4338ca 0%, #4f46e5 50%, #2563eb 100%);
+    color: #ffffff;
+    box-shadow: 0 22px 48px rgba(37, 99, 235, 0.28);
+}
+
+.final-cta-card .section-kicker {
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* --------------------------------------------------------------------------
+   Tablet
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 991.98px) {
+    .home-intro {
+        padding: 4rem 0 3.5rem;
+    }
+
+    .intro-visual-card {
+        margin: 0 auto;
+    }
+
+    .intro-floating-card-top {
+        left: 1rem;
+    }
+
+    .intro-floating-card-bottom {
+        right: 1rem;
+    }
+
+    .benefit-grid,
+    .how-steps {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Phone
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767.98px) {
+    .home-page {
+        background:
+            radial-gradient(circle at 10% 4%, rgba(37, 99, 235, 0.3), transparent 18rem),
+            radial-gradient(circle at 90% 18%, rgba(124, 58, 237, 0.26), transparent 18rem),
+            radial-gradient(circle at 50% 72%, rgba(20, 184, 166, 0.14), transparent 18rem),
+            linear-gradient(180deg, #dcecff 0%, #eee7ff 52%, #def5ff 100%);
+    }
+
+    .home-intro {
+        padding: 2.6rem 0 2.75rem;
+        text-align: center;
+    }
+
+    .intro-copy,
+    .intro-visual-card {
+        max-width: none;
+        margin: 0 auto;
+    }
+
+    .intro-title {
+        font-size: clamp(2.25rem, 12vw, 3.25rem);
+        line-height: 1.04;
+        margin-bottom: 1rem;
+    }
+
+    .intro-lead {
+        max-width: 34rem;
+        margin: 0 auto 1.35rem;
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .intro-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .intro-actions .btn {
+        width: 100%;
+        min-height: 54px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .intro-trust-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.55rem;
+        margin-bottom: 1.6rem;
+    }
+
+    .intro-trust-item {
+        min-width: 0;
+        padding: 0.7rem 0.35rem;
+        border-radius: 0.8rem;
+    }
+
+    .intro-trust-item strong {
+        font-size: 0.9rem;
+    }
+
+    .intro-trust-item span {
+        font-size: 0.73rem;
+        line-height: 1.25;
+    }
+
+    .intro-image-wrap {
+        padding: 0.55rem;
+        border-radius: 1.4rem;
+        box-shadow: 0 18px 38px rgba(15, 23, 42, 0.14);
+    }
+
+    .intro-image {
+        height: 300px;
+        border-radius: 1rem;
+        object-position: center;
+    }
+
+    .intro-floating-card {
+        position: static;
+        max-width: none;
+        margin-top: 0.75rem;
+        text-align: left;
+        box-shadow: var(--rc-shadow-sm);
+    }
+
+    .home-section {
+        padding: 3.25rem 0;
+    }
+
+    .section-heading {
+        margin-bottom: 1.7rem;
+    }
+
+    .section-heading h2,
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .section-heading p,
+    .section-text {
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+
+    .pathway-card,
+    .benefit-card,
+    .how-step,
+    .local-card,
+    .final-cta-card {
+        border-radius: 1.1rem;
+    }
+
+    .local-card h2 {
+        font-size: 1.9rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .intro-title {
+        font-size: 2.35rem;
+    }
+
+    .intro-image {
+        height: 255px;
+    }
+
+    .intro-trust-row {
+        grid-template-columns: 1fr;
+    }
+
+    .intro-trust-item {
+        padding: 0.75rem 0.85rem;
+        text-align: left;
+    }
+
+    .intro-trust-item strong,
+    .intro-trust-item span {
+        display: inline;
+    }
+
+    .intro-trust-item strong::after {
+        content: " — ";
+        color: var(--rc-muted);
+        font-weight: 500;
+    }
 }
