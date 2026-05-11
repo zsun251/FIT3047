@@ -27,7 +27,10 @@ class PatientsController extends AppController
         $patient = $this->Patients->newEmptyEntity();
 
         // Authorize before any operations
-        $this->Authorization->authorize($patient, 'index');
+        if (!$this->Authorization->can($patient, 'index')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
         $query = $this->Patients->find()
             ->contain(['Users']);
@@ -51,8 +54,6 @@ class PatientsController extends AppController
      */
     public function view($id = null)
     {
-        // TODO Removed VitalsReminders as the Table does not yet exist
-        //$patient = $this->Patients->get($id, contain: ['Users', 'Clinicians', 'Appointments', 'VitalData', 'VitalsReminders']);
         $patient = $this->Patients->get($id, [
             'contain' => [
                 'Users',
@@ -62,7 +63,8 @@ class PatientsController extends AppController
                 ],
                 'VitalData' => [
                     'sort' => ['VitalData.recorded_at' => 'DESC']
-                ]
+                ],
+                'VitalsReminders'
             ]
         ]);
         // Check authorization
