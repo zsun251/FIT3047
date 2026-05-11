@@ -337,75 +337,6 @@ CREATE TABLE appointments (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- =============================================================================
--- REMINDERS
--- =============================================================================
-
-CREATE TABLE reminders (
-                           id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-                           message         TEXT            NOT NULL,
-                           scheduled_at    DATETIME        NOT NULL,
-                           sent_at         DATETIME        NULL,               -- NULL until delivered
-                           created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                           status          VARCHAR(10)     NOT NULL DEFAULT 'pending',
-                           delivery_method VARCHAR(10)     NOT NULL,
-
-                           PRIMARY KEY (id),
-
-                           CONSTRAINT chk_reminders_status
-                               CHECK (status IN ('pending','sent')),
-
-                           CONSTRAINT chk_reminders_delivery
-                               CHECK (delivery_method IN ('sms','email','system'))
-
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
-CREATE TABLE appointments_reminders (
-                                        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                                        reminder_id     INT UNSIGNED    NOT NULL,
-                                        appointment_id  INT UNSIGNED    NOT NULL,
-
-                                        PRIMARY KEY (id),
-
-                                        KEY reminder_id (reminder_id),
-                                        KEY appointment_id (appointment_id),
-
-                                        CONSTRAINT fk_ar_reminder
-                                            FOREIGN KEY (reminder_id)
-                                                REFERENCES reminders(id)
-                                                ON DELETE CASCADE,
-
-                                        CONSTRAINT fk_ar_appointment
-                                            FOREIGN KEY (appointment_id)
-                                                REFERENCES appointments(id)
-
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
-CREATE TABLE vitals_reminders (
-                                  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                                  reminder_id     INT UNSIGNED    NOT NULL,
-                                  patient_id      INT UNSIGNED    NOT NULL,
-    -- Add attributes to facilitate recurring reminders.
-
-
-                                  PRIMARY KEY (id),
-
-                                  KEY reminder_id (reminder_id),
-                                  KEY patient_id (patient_id),
-
-                                  CONSTRAINT fk_vr_reminder
-                                      FOREIGN KEY (reminder_id)
-                                          REFERENCES reminders(id)
-                                          ON DELETE CASCADE,
-
-                                  CONSTRAINT fk_vr_patient
-                                      FOREIGN KEY (patient_id)
-                                          REFERENCES patients(id)
-
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
 
 -- =============================================================================
 -- VITAL DATA & SYMPTOMS
@@ -480,6 +411,96 @@ CREATE TABLE vital_data_symptoms (
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- =============================================================================
+-- REMINDERS
+-- =============================================================================
+
+CREATE TABLE reminders (
+                           id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+                           message         TEXT            NOT NULL,
+                           scheduled_at    DATETIME        NOT NULL,
+                           sent_at         DATETIME        NULL,
+                           created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                           status          VARCHAR(10)     NOT NULL DEFAULT 'pending',
+                           delivery_method VARCHAR(10)     NOT NULL,
+
+                           interacted_at   DATETIME        NULL,
+                           interaction_type VARCHAR(20)    NULL,
+                           vital_data_id   INT UNSIGNED    NULL,
+
+                           PRIMARY KEY (id),
+                           KEY vital_data_id (vital_data_id),
+
+                           CONSTRAINT chk_reminders_status
+                               CHECK (status IN ('pending','sent')),
+
+                           CONSTRAINT chk_reminders_delivery
+                               CHECK (delivery_method IN ('sms','email','system')),
+
+                           CONSTRAINT chk_reminder_interaction
+                               CHECK (interaction_type IS NULL OR interaction_type IN ('dismissed', 'completed')),
+
+                           CONSTRAINT fk_reminders_vital_data
+                               FOREIGN KEY (vital_data_id)
+                                   REFERENCES vital_data(id)
+                                   ON DELETE SET NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE appointments_reminders (
+                                        id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                        reminder_id     INT UNSIGNED    NOT NULL,
+                                        appointment_id  INT UNSIGNED    NOT NULL,
+
+                                        PRIMARY KEY (id),
+
+                                        KEY reminder_id (reminder_id),
+                                        KEY appointment_id (appointment_id),
+
+                                        CONSTRAINT fk_ar_reminder
+                                            FOREIGN KEY (reminder_id)
+                                                REFERENCES reminders(id)
+                                                ON DELETE CASCADE,
+
+                                        CONSTRAINT fk_ar_appointment
+                                            FOREIGN KEY (appointment_id)
+                                                REFERENCES appointments(id)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+CREATE TABLE vitals_reminders (
+                                  id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+                                  reminder_id     INT UNSIGNED    NOT NULL,
+                                  patient_id      INT UNSIGNED    NOT NULL,
+
+                                  recurrence_pattern VARCHAR(20)  NULL,
+                                  time_slot_1     TIME            NULL,
+                                  time_slot_2     TIME            NULL,
+                                  time_slot_3     TIME            NULL,
+                                  time_slot_4     TIME            NULL,
+
+                                  is_active       BOOLEAN         NOT NULL DEFAULT TRUE,
+                                  email_enabled   BOOLEAN         NOT NULL DEFAULT TRUE,
+
+                                  created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                  updated_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                                  PRIMARY KEY (id),
+
+                                  KEY reminder_id (reminder_id),
+                                  KEY patient_id (patient_id),
+
+                                  CONSTRAINT fk_vr_reminder
+                                      FOREIGN KEY (reminder_id)
+                                          REFERENCES reminders(id)
+                                          ON DELETE CASCADE,
+
+                                  CONSTRAINT fk_vr_patient
+                                      FOREIGN KEY (patient_id)
+                                          REFERENCES patients(id)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- =============================================================================
 -- RESOURCES
