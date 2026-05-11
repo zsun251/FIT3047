@@ -158,6 +158,11 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
             <?= $this->Html->link('Health Records', ['controller' => 'VitalData', 'action' => 'patient-history'],
                 ['class' => $linkClass . ($currentController === 'VitalData' && $currentAction === 'patientHistory' ? ' active' : '')]) ?>
         </li>
+        <li class="<?= $itemClass ?>">
+            <?= $this->Html->link('Reminders', ['controller' => 'Reminders', 'action' => 'index'],
+                ['class' => $linkClass . ($currentController === 'Reminders' ? ' active' : '')]) ?>
+            <span id="reminder-badge" class="badge"></span>
+        </li>
 
 
         <!-- SETTINGS SECTION: Personal account settings -->
