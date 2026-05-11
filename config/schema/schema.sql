@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS vital_data_symptoms;
 DROP TABLE IF EXISTS contact_messages;
 DROP TABLE IF EXISTS resources;
 DROP TABLE IF EXISTS appointments_reminders;
+DROP TABLE IF EXISTS reminder_settings;
 DROP TABLE IF EXISTS vitals_reminders;
 
 -- 2. Drop tables that depend on patients/clinicians/appointments
@@ -429,6 +430,8 @@ CREATE TABLE reminders (
 
                            PRIMARY KEY (id),
                            KEY vital_data_id (vital_data_id),
+                           KEY idx_scheduled (scheduled_at, status),
+                           KEY idx_interaction (interaction_type, interacted_at),
 
                            CONSTRAINT chk_reminders_status
                                CHECK (status IN ('pending','sent')),
@@ -473,20 +476,8 @@ CREATE TABLE vitals_reminders (
                                   reminder_id     INT UNSIGNED    NOT NULL,
                                   patient_id      INT UNSIGNED    NOT NULL,
 
-                                  recurrence_pattern VARCHAR(20)  NULL,
-                                  time_slot_1     TIME            NULL,
-                                  time_slot_2     TIME            NULL,
-                                  time_slot_3     TIME            NULL,
-                                  time_slot_4     TIME            NULL,
-
-                                  is_active       BOOLEAN         NOT NULL DEFAULT TRUE,
-                                  email_enabled   BOOLEAN         NOT NULL DEFAULT TRUE,
-
-                                  created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                  updated_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
                                   PRIMARY KEY (id),
-
+                                  UNIQUE KEY uq_vitals_reminders (reminder_id, patient_id),
                                   KEY reminder_id (reminder_id),
                                   KEY patient_id (patient_id),
 
@@ -498,8 +489,84 @@ CREATE TABLE vitals_reminders (
                                   CONSTRAINT fk_vr_patient
                                       FOREIGN KEY (patient_id)
                                           REFERENCES patients(id)
+                                          ON DELETE CASCADE
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =============================================================================
+-- REMINDER SETTINGS
+-- =============================================================================
+
+CREATE TABLE reminder_settings (
+                                   id              INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+                                   patient_id      INT UNSIGNED    NOT NULL,
+
+                                   recurrence_pattern VARCHAR(20)  NOT NULL DEFAULT 'daily',
+                                   time_slot_1     TIME            NULL,
+                                   time_slot_2     TIME            NULL,
+                                   time_slot_3     TIME            NULL,
+                                   time_slot_4     TIME            NULL,
+
+                                   is_active       BOOLEAN         NOT NULL DEFAULT TRUE,
+                                   email_enabled   BOOLEAN         NOT NULL DEFAULT TRUE,
+                                   sms_enabled     BOOLEAN         NOT NULL DEFAULT FALSE,
+
+                                   created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                   updated_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+                                   PRIMARY KEY (id),
+                                   UNIQUE KEY uq_reminder_settings_patient (patient_id),
+                                   KEY patient_id (patient_id),
+
+                                   CONSTRAINT fk_reminder_settings_patient
+                                       FOREIGN KEY (patient_id)
+                                           REFERENCES patients(id)
+                                           ON DELETE CASCADE
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =============================================================================
+-- TRIGGER - Auto-create default reminder settings for new patients
+-- =============================================================================
+
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS tr_patients_after_insert_create_reminder_config$$
+
+CREATE TRIGGER tr_patients_after_insert_create_reminder_config
+    AFTER INSERT ON patients
+    FOR EACH ROW
+BEGIN
+    -- Create default reminder settings for new patient
+    -- Default: 4 times daily (8am, 12pm, 4pm, 8pm), inactive until patient enables
+    INSERT INTO reminder_settings (
+        patient_id,
+        recurrence_pattern,
+        time_slot_1,
+        time_slot_2,
+        time_slot_3,
+        time_slot_4,
+        is_active,
+        email_enabled,
+        sms_enabled,
+        created_at,
+        updated_at
+    ) VALUES (
+                 NEW.id,
+                 'daily',
+                 '08:00:00',
+                 '12:00:00',
+                 '16:00:00',
+                 '20:00:00',
+                 TRUE,  -- Active by default - patient enables via settings
+                 TRUE,   -- Email enabled by default
+                 FALSE,  -- SMS disabled by default
+                 NOW(),
+                 NOW()
+             );
+    END$$
+
+    DELIMITER ;
 
 -- =============================================================================
 -- RESOURCES

@@ -4,7 +4,7 @@
  * @var \App\Model\Entity\Reminder[] $activeReminders
  * @var \App\Model\Entity\Reminder[] $completedReminders
  * @var \App\Model\Entity\Reminder[] $dismissedReminders
- * @var \App\Model\Entity\VitalsReminder|null $config
+ * @var \App\Model\Entity\VitalsReminder|null $settings$
  */
 $this->assign('title', 'My Reminders');
 
@@ -149,49 +149,65 @@ $this->Html->script('reminders-index', ['block' => true]);
     </div>
 
     <!-- Reminder Schedule Info -->
-<?php if ($config): ?>
-    <div class="section-card">
-        <div class="section-header">
-            <h3><i class="bi bi-calendar-week"></i> Your Schedule</h3>
+<!-- Reminder Schedule Info -->
+<?php if ($settings && $settings->is_active): ?>
+<div class="section-card">
+    <div class="section-header">
+        <h3><i class="bi bi-calendar-week"></i> Your Schedule</h3>
+    </div>
+    <div class="schedule-info">
+        <p class="mb-3">You will receive reminders at:</p>
+        <div class="row g-2">
+            <?php if ($settings->time_slot_1): ?>
+                <div class="col-6 col-md-3">
+                    <div class="time-slot-badge">
+                        <i class="bi bi-clock"></i> <?= $settings->time_slot_1->format('g:i A') ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php if ($settings->time_slot_2): ?>
+                <div class="col-6 col-md-3">
+                    <div class="time-slot-badge">
+                        <i class="bi bi-clock"></i> <?= $settings->time_slot_2->format('g:i A') ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php if ($settings->time_slot_3): ?>
+                <div class="col-6 col-md-3">
+                    <div class="time-slot-badge">
+                        <i class="bi bi-clock"></i> <?= $settings->time_slot_3->format('g:i A') ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <?php if ($settings->time_slot_4): ?>
+                <div class="col-6 col-md-3">
+                    <div class="time-slot-badge">
+                        <i class="bi bi-clock"></i> <?= $settings->time_slot_4->format('g:i A') ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         </div>
-        <div class="schedule-info">
-            <p class="mb-3">You will receive reminders at:</p>
-            <div class="row g-2">
-                <?php if ($config->time_slot_1): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= date('g:i A', strtotime($config->time_slot_1)) ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <?php if ($config->time_slot_2): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= date('g:i A', strtotime($config->time_slot_2)) ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <?php if ($config->time_slot_3): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= date('g:i A', strtotime($config->time_slot_3)) ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <?php if ($config->time_slot_4): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= date('g:i A', strtotime($config->time_slot_4)) ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
-            <div class="mt-3">
+        <div class="mt-3">
+            <small class="text-muted">
+                <i class="bi bi-envelope"></i>
+                Email notifications: <?= $settings->email_enabled ? '<span class="text-success">Enabled</span>' : '<span class="text-muted">Disabled</span>' ?>
+            </small>
+            <?php if ($settings->sms_enabled): ?>
+                <br>
                 <small class="text-muted">
-                    <i class="bi bi-envelope"></i>
-                    Email notifications: <?= $config->email_enabled ? '<span class="text-success">Enabled</span>' : '<span class="text-muted">Disabled</span>' ?>
+                    <i class="bi bi-phone"></i>
+                    SMS notifications: <span class="text-success">Enabled</span>
                 </small>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
+</div>
+<?php elseif ($settings && !$settings->is_active): ?>
+<div class="section-card">
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        Reminders are currently disabled.
+        <?= $this->Html->link('Enable them in settings', ['action' => 'settings'], ['class' => 'alert-link']) ?>
+    </div>
+</div>
 <?php endif; ?>

@@ -1,5 +1,5 @@
 <?php
-// src/Model/Table/VitalsRemindersTable.php
+declare(strict_types=1);
 
 namespace App\Model\Table;
 
@@ -15,14 +15,14 @@ class VitalsRemindersTable extends Table
         $this->setTable('vitals_reminders');
         $this->setPrimaryKey('id');
 
-        $this->addBehavior('Timestamp');
-
         $this->belongsTo('Reminders', [
-            'foreignKey' => 'reminder_id'
+            'foreignKey' => 'reminder_id',
+            'joinType' => 'INNER'
         ]);
 
         $this->belongsTo('Patients', [
-            'foreignKey' => 'patient_id'
+            'foreignKey' => 'patient_id',
+            'joinType' => 'INNER'
         ]);
     }
 
@@ -33,58 +33,15 @@ class VitalsRemindersTable extends Table
             ->allowEmptyString('id', null, 'create');
 
         $validator
-            ->boolean('is_active')
-            ->notEmptyString('is_active');
+            ->integer('reminder_id')
+            ->requirePresence('reminder_id', 'create')
+            ->notEmptyString('reminder_id');
 
         $validator
-            ->boolean('email_enabled')
-            ->notEmptyString('email_enabled');
+            ->integer('patient_id')
+            ->requirePresence('patient_id', 'create')
+            ->notEmptyString('patient_id');
 
         return $validator;
-    }
-
-    /**
-     * Get patient's reminder configuration
-     */
-    public function getPatientConfig($patientId)
-    {
-        return $this->find()
-            ->where([
-                'patient_id' => $patientId,
-                'is_active' => true
-            ])
-            ->order(['created_at' => 'DESC'])
-            ->first();
-    }
-
-    /**
-     * Update patient's time slots
-     */
-    public function updateTimeSlots($patientId, $timeSlots)
-    {
-        $config = $this->getPatientConfig($patientId);
-
-        if (!$config) {
-            // Create new configuration
-            $config = $this->newEntity([
-                'patient_id' => $patientId,
-                'time_slot_1' => $timeSlots[0] ?? null,
-                'time_slot_2' => $timeSlots[1] ?? null,
-                'time_slot_3' => $timeSlots[2] ?? null,
-                'time_slot_4' => $timeSlots[3] ?? null,
-                'is_active' => true,
-                'email_enabled' => true
-            ]);
-        } else {
-            // Update existing
-            $config = $this->patchEntity($config, [
-                'time_slot_1' => $timeSlots[0] ?? null,
-                'time_slot_2' => $timeSlots[1] ?? null,
-                'time_slot_3' => $timeSlots[2] ?? null,
-                'time_slot_4' => $timeSlots[3] ?? null
-            ]);
-        }
-
-        return $this->save($config);
     }
 }

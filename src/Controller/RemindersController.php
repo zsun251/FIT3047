@@ -22,7 +22,6 @@ class RemindersController extends AppController
 
     /**
      * Index method - Display all reminders for logged-in patient
-     * Route: /reminders
      */
     public function index()
     {
@@ -45,8 +44,8 @@ class RemindersController extends AppController
 
         $reminders = $query->all();
 
-        // Get patient's reminder configuration
-        $config = $this->fetchTable('VitalsReminders')->getPatientConfig($patientId);
+        // Get patient's reminder settings
+        $settings = $this->fetchTable('ReminderSettings')->getPatientSettings($patientId);
 
         // Separate reminders by status
         $activeReminders = [];
@@ -63,7 +62,7 @@ class RemindersController extends AppController
             }
         }
 
-        $this->set(compact('activeReminders', 'completedReminders', 'dismissedReminders', 'config'));
+        $this->set(compact('activeReminders', 'completedReminders', 'dismissedReminders', 'settings'));
     }
 
     /**
