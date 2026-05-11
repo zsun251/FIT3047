@@ -15,19 +15,11 @@
     --home-shadow-sm: 0 10px 30px rgba(15, 23, 42, 0.06);
     --home-shadow-md: 0 18px 45px rgba(15, 23, 42, 0.08);
     --home-shadow-lg: 0 28px 60px rgba(15, 23, 42, 0.16);
-
-    --home-gradient:
-        radial-gradient(circle at 8% 8%, rgba(37, 99, 235, 0.28), transparent 30rem),
-        radial-gradient(circle at 90% 12%, rgba(124, 58, 237, 0.24), transparent 32rem),
-        radial-gradient(circle at 50% 48%, rgba(20, 184, 166, 0.12), transparent 34rem),
-        radial-gradient(circle at 80% 78%, rgba(37, 99, 235, 0.16), transparent 30rem),
-        linear-gradient(180deg, #dcecff 0%, #eee7ff 42%, #dff5ff 100%);
 }
 
 .home-page {
     min-height: 100vh;
     overflow: hidden;
-    background: var(--home-gradient);
     color: var(--home-navy);
 }
 
@@ -49,7 +41,15 @@
 }
 
 .home-page p {
-    color: var(--home-text);
+    color: #334155;
+}
+
+/* Keep text clear on image backgrounds without adding panels */
+.home-intro h1,
+.home-intro p,
+.team-intro-section h2,
+.team-intro-section p {
+    color: #ffffff !important;
 }
 
 /* --------------------------------------------------------------------------
@@ -96,9 +96,7 @@
     min-height: 90vh;
     display: flex;
     align-items: center;
-    background:
-        linear-gradient(rgba(0, 10, 40, 0.75), rgba(0, 10, 40, 0.75)),
-        url('../img/home.png');
+    background-image: url('../img/home.png');
     background-size: cover;
     background-position: center;
 }
@@ -111,6 +109,10 @@
 .intro-copy {
     max-width: 650px;
     text-align: left;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
 }
 
 .intro-title {
@@ -119,14 +121,16 @@
     font-size: clamp(2.7rem, 5vw, 5rem);
     line-height: 1.08;
     margin-bottom: 1.6rem;
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.55);
 }
 
 .intro-description {
     max-width: 650px;
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: #ffffff !important;
     font-size: 1.25rem;
     line-height: 1.8;
     margin-bottom: 2.2rem;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
 }
 
 .intro-btn {
@@ -235,15 +239,17 @@
     display: flex;
     align-items: center;
     padding: 70px 80px;
-    background:
-        linear-gradient(90deg, rgba(0, 35, 90, 0.85), rgba(0, 35, 90, 0.25)),
-        url('../img/homepage.png');
+    background-image: url('../img/homepage.png');
     background-size: cover;
     background-position: center;
 }
 
 .team-intro-content {
     max-width: 520px;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
     color: #ffffff;
 }
 
@@ -252,13 +258,15 @@
     font-size: clamp(2.5rem, 4vw, 4rem);
     line-height: 1.05;
     margin-bottom: 22px;
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.55);
 }
 
 .team-intro-content p {
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: #ffffff !important;
     font-size: 1.2rem;
     line-height: 1.6;
     font-weight: 500;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.55);
 }
 
 /* --------------------------------------------------------------------------
@@ -612,7 +620,6 @@
     box-shadow: 0 8px 18px rgba(79, 70, 229, 0.22);
 }
 
-/* Horizontal bar */
 .faq-toggle::before {
     content: "";
     position: absolute;
@@ -625,7 +632,6 @@
     transform: translate(-50%, -50%);
 }
 
-/* Vertical bar, hidden when open */
 .faq-toggle::after {
     content: "";
     position: absolute;
@@ -639,7 +645,6 @@
     transition: transform 0.15s ease;
 }
 
-/* Closed state shows plus */
 .accordion-button.collapsed .faq-toggle {
     background: #dbeafe;
     border-color: #93c5fd;
