@@ -1,11 +1,12 @@
 <?php
-// src/Model/Table/RemindersTable.php
+declare(strict_types=1);
 
 namespace App\Model\Table;
 
 use Cake\ORM\Table;
 use Cake\ORM\Query;
 use Cake\Validation\Validator;
+use Cake\I18n\FrozenTime;
 
 class RemindersTable extends Table
 {
@@ -54,28 +55,31 @@ class RemindersTable extends Table
             ->notEmptyString('delivery_method');
 
         $validator
-            ->inList('interaction_type', ['dismissed', 'completed'], 'Invalid interaction type', true)
+            ->inList('interaction_type', ['dismissed', 'completed'])
             ->allowEmptyString('interaction_type');
 
         return $validator;
     }
 
     /**
-     * Get active reminders for a patient
+     * Get active reminders for a patient whose scheduled time has arrived
+     *
+     * @param int $patientId
+     * @return array
      */
     public function getActiveReminders($patientId)
     {
+        $now = FrozenTime::now();
+
         return $this->find()
             ->innerJoinWith('VitalsReminders', function (Query $q) use ($patientId) {
                 return $q->where([
                     'VitalsReminders.patient_id' => $patientId,
-                    'VitalsReminders.is_active' => true
                 ]);
             })
             ->where([
-                'Reminders.scheduled_at <=' => new \DateTime(),
-                'Reminders.interaction_type IS' => null,
-                'Reminders.delivery_method IN' => ['system', 'email']
+                'Reminders.scheduled_at <=' => $now, // Only show if scheduled time has passed
+                'Reminders.interaction_type IS' => null, // Not dismissed or completed
             ])
             ->order(['Reminders.scheduled_at' => 'DESC'])
             ->toArray();
@@ -83,18 +87,20 @@ class RemindersTable extends Table
 
     /**
      * Get count of pending reminders for a patient
+     *
+     * @param int $patientId
+     * @return int
      */
     public function getPendingCount($patientId)
     {
+        $now = FrozenTime::now();
+
         return $this->find()
             ->innerJoinWith('VitalsReminders', function (Query $q) use ($patientId) {
-                return $q->where([
-                    'VitalsReminders.patient_id' => $patientId,
-                    'VitalsReminders.is_active' => true
-                ]);
+                return $q->where(['VitalsReminders.patient_id' => $patientId]);
             })
             ->where([
-                'Reminders.scheduled_at <=' => new \DateTime(),
+                'Reminders.scheduled_at <=' => $now,
                 'Reminders.interaction_type IS' => null
             ])
             ->count();
@@ -102,6 +108,10 @@ class RemindersTable extends Table
 
     /**
      * Dismiss a reminder
+     *
+     * @param int $reminderId
+     * @param int $patientId
+     * @return bool
      */
     public function dismissReminder($reminderId, $patientId)
     {
@@ -117,20 +127,40 @@ class RemindersTable extends Table
         }
 
         $reminder->interaction_type = 'dismissed';
-        $reminder->interacted_at = new \DateTime();
+        $reminder->interacted_at = FrozenTime::now();
 
         return $this->save($reminder);
     }
 
     /**
      * Mark reminder as completed (linked to vital data submission)
+     *
+     * @param int $patientId
+     * @param int $vitalDataId
+     * @return bool
      */
-    public function completeReminder($reminderId, $vitalDataId)
+    public function completeReminderForVitalData($patientId, $vitalDataId)
     {
-        $reminder = $this->get($reminderId);
+        $now = FrozenTime::now();
+
+        // Find the most recent active reminder for this patient
+        $reminder = $this->find()
+            ->innerJoinWith('VitalsReminders', function (Query $q) use ($patientId) {
+                return $q->where(['VitalsReminders.patient_id' => $patientId]);
+            })
+            ->where([
+                'Reminders.scheduled_at <=' => $now,
+                'Reminders.interaction_type IS' => null
+            ])
+            ->order(['Reminders.scheduled_at' => 'DESC'])
+            ->first();
+
+        if (!$reminder) {
+            return false;
+        }
 
         $reminder->interaction_type = 'completed';
-        $reminder->interacted_at = new \DateTime();
+        $reminder->interacted_at = $now;
         $reminder->vital_data_id = $vitalDataId;
 
         return $this->save($reminder);
