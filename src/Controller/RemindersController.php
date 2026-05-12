@@ -74,10 +74,12 @@ class RemindersController extends AppController
                 $dismissedReminders[] = $reminder;
             } else {
                 if ($reminder->scheduled_at > $now) {
-                    $minutesUntil = (int) $reminder->scheduled_at->diffInMinutes($now, false);
+                    // Calculate time until reminder
+                    $minutesUntil = abs((int) $reminder->scheduled_at->diffInMinutes($now, false));
                     $reminder->minutes_until = $minutesUntil;
 
-                    $hoursUntil = floor($minutesUntil / 60);
+                    // Calculate hours (floor division) and remaining minutes
+                    $hoursUntil = (int) floor($minutesUntil / 60);
                     $remainingMinutes = $minutesUntil % 60;
                     $reminder->hours_until = $hoursUntil;
                     $reminder->remaining_minutes = $remainingMinutes;
