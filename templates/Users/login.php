@@ -2,85 +2,101 @@
 /**
  * @var \App\View\AppView $this
  */
-$this->assign('title', 'Login');
 
-// Add login-specific CSS
-echo $this->Html->css('login', ['block' => true]);
+$this->assign('title', 'Login');
+$this->Html->css('auth', ['block' => true]);
 ?>
 
-<div class="login-container">
-    <div class="login-card">
-        <!-- Logo/Brand -->
-        <div class="login-brand">
-            <i class="bi bi-heart-pulse-fill"></i>
-            <h1>RespiraCare</h1>
-        </div>
-
-        <!-- Login Form -->
-        <div class="login-form">
-            <h2>Welcome Back</h2>
-            <p class="login-subtitle">Sign in to access your account</p>
-
-            <?= $this->Form->create(null, [
-                'class' => 'needs-validation',
-                'novalidate' => true
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-brand-panel">
+            <?= $this->Html->image('logo.png', [
+                'alt' => 'RespiraCare logo',
+                'class' => 'auth-logo-img'
             ]) ?>
 
-            <div class="form-group">
-                <label for="username" class="form-label">
-                    <i class="bi bi-person"></i> Username or Email
+            <h1 class="auth-brand-name">RespiraCare</h1>
+        </div>
+
+        <div class="auth-form-panel">
+            <div class="auth-heading">
+                <h2>Welcome Back</h2>
+                <p>Sign in to access your account</p>
+            </div>
+
+            <?= $this->Flash->render() ?>
+
+            <?= $this->Form->create(null, [
+                'class' => 'auth-form'
+            ]) ?>
+
+            <div class="auth-field">
+                <label for="username" class="auth-label">
+                    <i class="bi bi-person"></i>
+                    Username or Email
                 </label>
+
                 <?= $this->Form->control('username', [
+                    'type' => 'text',
                     'label' => false,
-                    'class' => 'form-control',
                     'placeholder' => 'Enter your username or email',
+                    'class' => 'form-control auth-input',
+                    'id' => 'username',
                     'required' => true,
-                    'autocomplete' => 'username',
-                    'autofocus' => true
+                    'autocomplete' => 'username'
                 ]) ?>
             </div>
 
-            <div class="form-group">
-                <label for="password" class="form-label">
-                    <i class="bi bi-lock"></i> Password
+            <div class="auth-field">
+                <label for="password" class="auth-label">
+                    <i class="bi bi-lock"></i>
+                    Password
                 </label>
+
                 <?= $this->Form->control('password', [
+                    'type' => 'password',
                     'label' => false,
-                    'class' => 'form-control',
                     'placeholder' => 'Enter your password',
+                    'class' => 'form-control auth-input',
+                    'id' => 'password',
                     'required' => true,
                     'autocomplete' => 'current-password'
                 ]) ?>
             </div>
 
-
-            <button type="submit" class="btn btn-primary btn-login">
-                <i class="bi bi-box-arrow-in-right"></i> Sign In
-            </button>
+            <?= $this->Form->button(
+                '<i class="bi bi-box-arrow-in-right"></i> Sign In',
+                [
+                    'class' => 'btn btn-primary auth-submit',
+                    'escapeTitle' => false
+                ]
+            ) ?>
 
             <?= $this->Form->end() ?>
 
-            <!-- Additional Links -->
-            <div class="login-links">
+            <div class="auth-divider"></div>
+
+            <div class="auth-link-row">
                 <?= $this->Html->link(
                     '<i class="bi bi-key"></i> Forgot Password?',
                     ['controller' => 'Users', 'action' => 'forgotPassword'],
-                    ['escape' => false, 'class' => 'login-link']
+                    [
+                        'escape' => false,
+                        'class' => 'auth-link'
+                    ]
                 ) ?>
             </div>
 
-            <!-- Registration Link -->
-            <div class="login-footer">
-                <p>Don't have an account? Contact your clinic administrator.</p>
-            </div>
-        </div>
+            <div class="auth-divider"></div>
 
-        <!-- Footer Info -->
-        <div class="login-info">
-            <p>
-                <i class="bi bi-shield-check"></i>
-                Your data is secure and encrypted
-            </p>
+            <div class="auth-register-row">
+                <span>Don't have an account?</span>
+                <?= $this->Html->link(
+                    'Register here',
+                    ['controller' => 'Users', 'action' => 'register'],
+                    ['class' => 'auth-link']
+                ) ?>
+            </div>
         </div>
     </div>
 </div>

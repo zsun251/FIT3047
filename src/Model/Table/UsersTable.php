@@ -290,12 +290,12 @@ class UsersTable extends Table
                             : new \Cake\I18n\Date($value);
                         $today = new \Cake\I18n\Date();
                         $age = $today->diff($date)->y;
-                        return $age >= 13 && $age <= 120;
+                        return $age >= 0 && $age <= 150;
                     } catch (\Exception $e) {
                         return false;
                     }
                 },
-                'message' => 'You must be between 13 and 120 years old to register.'
+                'message' => 'You must enter a valid age.'
             ])
             ->add('date_of_birth', 'reasonableDate', [
                 'rule' => function ($value) {

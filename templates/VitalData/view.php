@@ -68,7 +68,7 @@
 
 
         <h2 class="section-title mb-1">
-            <i class="bi bi-clipboard2-pulse"></i> Vital Signs
+            <i class="bi bi-clipboard2-pulse"></i> Respiratory Health
         </h2>
         <div class="section-underline"></div>
         <div class="detail-grid">

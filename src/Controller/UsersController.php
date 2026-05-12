@@ -27,8 +27,45 @@ class UsersController extends AppController
         $this->Authentication->addUnauthenticatedActions([
             'login',
             'forgotPassword',
-            'resetPassword'
+            'resetPassword',
+            'register',
         ]);
+    }
+
+    public function register()
+    {
+        $this->viewBuilder()->setLayout('default');
+        $this->Authorization->skipAuthorization();
+        $this->request->allowMethod(['get', 'post']);
+
+        $user = $this->Users->newEmptyEntity();
+
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+            $data['type'] = 'patient';
+
+            $user = $this->Users->patchEntity($user, $data);
+
+            $patientsTable = $this->fetchTable('Patients');
+            $connection = $this->Users->getConnection();
+
+            $success = $connection->transactional(function () use ($patientsTable, $user) {
+                if (!$this->Users->save($user)) {
+                    return false;
+                }
+                $patient = $patientsTable->newEntity(['user_id' => $user->id]);
+                return (bool)$patientsTable->save($patient);
+            });
+
+            if ($success) {
+                $this->Flash->success(__('Account created successfully. Please log in.'));
+                return $this->redirect(['action' => 'login']);
+            }
+
+            $this->Flash->error(__('Registration failed. Please check the form and try again.'));
+        }
+
+        $this->set(compact('user'));
     }
 
     public function login()
