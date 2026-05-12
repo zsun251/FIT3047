@@ -107,9 +107,12 @@ return function (RouteBuilder $routes): void {
             ->setPass(['clinician_id']);
         $builder->connect('/assign', ['action' => 'assign']);
 
-        $builder->connect('/reminders/active', ['controller' => 'Reminders', 'action' => 'active', '_ext' => 'json']);
-        $builder->connect('/reminders/dismiss/:id', ['controller' => 'Reminders', 'action' => 'dismiss'], ['id' => '\d+', 'pass' => ['id'], '_ext' => 'json']);
-        $builder->connect('/reminders/count', ['controller' => 'Reminders', 'action' => 'count', '_ext' => 'json']);
+        $builder->connect('/reminders', ['controller' => 'Reminders', 'action' => 'index']);
+        $builder->connect('/reminders/dismiss/:id', ['controller' => 'Reminders', 'action' => 'dismiss'])
+            ->setPass(['id'])
+            ->setMethods(['POST']);
+        $builder->connect('/reminders/settings', ['controller' => 'Reminders', 'action' => 'settings']);
+        $builder->connect('/reminders/count', ['controller' => 'Reminders', 'action' => 'count']);
 
         /*
          * Connect catchall routes for all controllers.

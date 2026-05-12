@@ -75,6 +75,8 @@ $this->Html->script('reminders-index', ['block' => true]);
                                     Scheduled: <?= $reminder->scheduled_at->format('g:i A') ?>
                                 </small>
                                 <br>
+                                <?php debug($reminder->remaining_minutes) ?>
+                                <?php debug($reminder->hours_until) ?>
                                 <small class="text-info">
                                     <i class="bi bi-info-circle"></i>
                                     <?php if ($reminder->hours_until > 0): ?>
