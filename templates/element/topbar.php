@@ -14,8 +14,14 @@
         </button>
 
         <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto mb-2 mb-md-0 fw-semibold">
+            <!-- Desktop topbar links only -->
+            <ul class="navbar-nav ms-auto mb-2 mb-md-0 fw-semibold d-none d-md-flex">
                 <?= $this->element('nav_links', ['context' => 'topbar']) ?>
+            </ul>
+
+            <!-- Mobile menu replaces both the desktop topbar and sidebar links -->
+            <ul class="navbar-nav ms-auto mb-2 mb-md-0 fw-semibold d-md-none">
+                <?= $this->element('nav_links', ['context' => 'mobile']) ?>
             </ul>
         </div>
     </div>
