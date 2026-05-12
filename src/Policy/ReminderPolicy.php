@@ -5,7 +5,6 @@ namespace App\Policy;
 
 use App\Model\Entity\Reminder;
 use Authorization\IdentityInterface;
-use Cake\Datasource\FactoryLocator;
 
 /**
  * ReminderPolicy
@@ -25,8 +24,9 @@ class ReminderPolicy
      * Access reminders index (list of reminders).
      * Only patients can view their own reminders.
      */
-    public function canIndex(IdentityInterface $user, Reminder $resource): bool
+    public function canIndex(IdentityInterface $user, Reminder $reminder)
     {
+        // Only patients can view reminders
         return UserAccess::isPatient($user);
     }
 
@@ -43,21 +43,29 @@ class ReminderPolicy
      * Dismiss a reminder.
      * Only the patient who owns the reminder can dismiss it.
      */
-    public function canDismiss(IdentityInterface $user, Reminder $resource): bool
+    public function canDismiss(IdentityInterface $user, Reminder $reminder)
     {
+        // Only patients can dismiss reminders
         if (!UserAccess::isPatient($user)) {
             return false;
         }
 
-        return $this->isOwnReminder($user, $resource);
+        // If the reminder has an ID, check ownership through vitals_reminders
+        if ($reminder->id) {
+            return $this->isOwnReminder($user, $reminder->id);
+        }
+
+        // New empty entities can be checked (for initial authorization)
+        return true;
     }
 
     /**
      * Access reminder count API endpoint.
      * Only patients can access their reminder count.
      */
-    public function canCount(IdentityInterface $user, Reminder $resource): bool
+    public function canSettings(IdentityInterface $user, Reminder $reminder)
     {
+        // Only patients can access reminder settings
         return UserAccess::isPatient($user);
     }
 
@@ -65,28 +73,33 @@ class ReminderPolicy
      * Access reminder settings page.
      * Only patients can configure their own reminder settings.
      */
-    public function canSettings(IdentityInterface $user, Reminder $resource): bool
+    public function canCount(IdentityInterface $user, Reminder $reminder)
     {
+        // Only patients can get reminder count
         return UserAccess::isPatient($user);
     }
 
     /**
-     * Check if this reminder belongs to the logged-in patient.
+     * Check if a reminder belongs to the patient through vitals_reminders junction
+     *
+     * @param IdentityInterface $user
+     * @param int $reminderId
+     * @return bool
      */
-    private function isOwnReminder(IdentityInterface $user, Reminder $resource): bool
+    protected function isOwnReminder(IdentityInterface $user, int $reminderId): bool
     {
         $patientId = UserAccess::getPatientId($user);
 
-        if ($patientId === null) {
+        if (!$patientId) {
             return false;
         }
 
-        // Check if this reminder is linked to the patient via vitals_reminders
-        return FactoryLocator::get('Table')
-            ->get('VitalsReminders')
-            ->exists([
-                'VitalsReminders.reminder_id' => $resource->id,
-                'VitalsReminders.patient_id' => $patientId,
-            ]);
+        // Check in the vitals_reminders junction table
+        $vitalsRemindersTable = \Cake\ORM\TableRegistry::getTableLocator()->get('VitalsReminders');
+
+        return $vitalsRemindersTable->exists([
+            'VitalsReminders.reminder_id' => $reminderId,
+            'VitalsReminders.patient_id' => $patientId
+        ]);
     }
 }
