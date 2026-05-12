@@ -32,7 +32,7 @@
         radial-gradient(circle at 58% 58%, rgba(99, 102, 241, 0.22), transparent 28rem),
         radial-gradient(circle at 88% 74%, rgba(14, 165, 233, 0.24), transparent 26rem),
         radial-gradient(circle at 32% 92%, rgba(124, 58, 237, 0.22), transparent 28rem),
-        linear-gradient(180deg, #cfe4ff 0%, #e5ddff 42%, #d3f4ff 100%);
+        linear-gradient(180deg, #fafcff 0%, #fcfbff 45%, #fbfeff 100%);
 
     /* Softer background used only on authenticated/sidebar pages */
     --rc-sidebar-page-bg:
