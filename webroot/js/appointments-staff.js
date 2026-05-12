@@ -1,44 +1,54 @@
 $(function () {
-    const table = $('#appointmentsTable').DataTable({
-        order: [[0, 'desc']],
-        pageLength: 10,
-        columnDefs: [
-            { orderable: false, targets: [6] }
-        ],
-        layout: {
-            topStart: 'pageLength',
-            topEnd: 'search',
-            bottomStart: 'info',
-            bottomEnd: 'paging'
-        }
-    });
+    const hasDesktopTable = $('#appointmentsTable').length > 0;
+    const hasMobileCards = $('#mobileCardsContainer .sub-card').length > 0;
 
-    $('#appointmentsTable').removeClass('dt-hidden');
+    let table = null;
 
-    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-        if (settings.nTable.id !== 'appointmentsTable') {
-            return true;
-        }
+    if (hasDesktopTable) {
+        table = $('#appointmentsTable').DataTable({
+            order: [[0, 'desc']],
+            pageLength: 10,
+            columnDefs: [
+                { orderable: false, targets: [6] }
+            ],
+            layout: {
+                topStart: 'pageLength',
+                topEnd: 'search',
+                bottomStart: 'info',
+                bottomEnd: 'paging'
+            }
+        });
 
-        const activeFilter = $('.filter-btn.active').data('filter');
+        $('#appointmentsTable').removeClass('dt-hidden');
 
-        if (activeFilter === 'all') {
-            return true;
-        }
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            if (settings.nTable.id !== 'appointmentsTable') {
+                return true;
+            }
 
-        const row = table.row(dataIndex).node();
-        const status = $(row).data('appointment-status');
+            const activeFilter = $('.filter-btn.active').data('filter');
 
-        return status === activeFilter;
-    });
+            if (activeFilter === 'all') {
+                return true;
+            }
 
-    const mobileTable = new MobileDataTable({
-        itemsPerPage: 10,
-        defaultFilter: 'all',
-        cardSelector: '.sub-card',
-        filterAttribute: 'data-appointment-status',
-        searchAttribute: 'data-search-text'
-    });
+            const row = table.row(dataIndex).node();
+            const status = $(row).data('appointment-status');
+
+            return status === activeFilter;
+        });
+    }
+
+    let mobileTable = null;
+    if (hasMobileCards && typeof MobileDataTable !== 'undefined') {
+        mobileTable = new MobileDataTable({
+            itemsPerPage: 10,
+            defaultFilter: 'all',
+            cardSelector: '.sub-card',
+            filterAttribute: 'data-appointment-status',
+            searchAttribute: 'data-search-text'
+        });
+    }
 
     $('.filter-btn').on('click', function () {
         const filter = $(this).data('filter');
@@ -46,7 +56,12 @@ $(function () {
         $('.filter-btn').removeClass('active');
         $(this).addClass('active');
 
-        table.draw();
-        mobileTable.setFilter(filter);
+        if (table) {
+            table.draw();
+        }
+
+        if (mobileTable) {
+            mobileTable.setFilter(filter);
+        }
     });
 });

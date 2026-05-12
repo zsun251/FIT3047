@@ -206,82 +206,27 @@ VALUES
     (6, 3, DATE_SUB(NOW(), INTERVAL 2 DAY), 45, 'cancelled'),
     (2, 1, DATE_ADD(NOW(), INTERVAL 15 DAY), 30, 'cancelled');
 
--- =============================================================================
--- REMINDERS
--- =============================================================================
-
-INSERT INTO reminders
-(message, scheduled_at, sent_at, status, delivery_method)
-VALUES
-    -- Pending appointment reminders
-    ('Reminder: You have an appointment tomorrow at 10:00 AM with Dr. John Doctor', DATE_ADD(NOW(), INTERVAL 1 DAY), NULL, 'pending', 'email'),
-    ('Reminder: You have an appointment in 2 days at 2:00 PM with Dr. John Doctor', DATE_ADD(NOW(), INTERVAL 2 DAY), NULL, 'pending', 'sms'),
-    ('Reminder: You have an appointment in 3 days at 11:00 AM with Dr. Emily Chen', DATE_ADD(NOW(), INTERVAL 3 DAY), NULL, 'pending', 'email'),
-
-    -- Sent appointment reminders
-    ('Reminder: You had an appointment today at 9:00 AM', DATE_SUB(NOW(), INTERVAL 7 DAY), DATE_SUB(NOW(), INTERVAL 7 DAY), 'sent', 'sms'),
-    ('Reminder: You had an appointment yesterday', DATE_SUB(NOW(), INTERVAL 8 DAY), DATE_SUB(NOW(), INTERVAL 8 DAY), 'sent', 'email'),
-
-    -- Pending vitals reminders
-    ('Please record your vitals for today', DATE_ADD(NOW(), INTERVAL 1 HOUR), NULL, 'pending', 'system'),
-    ('Daily vitals reminder: Please update your oxygen saturation', NOW(), NULL, 'pending', 'email'),
-    ('Weekly check-in: Record your respiratory rate', DATE_ADD(NOW(), INTERVAL 3 DAY), NULL, 'pending', 'sms'),
-
-    -- Sent vitals reminders
-    ('Daily vitals reminder', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY), 'sent', 'system'),
-    ('Please record your vitals', DATE_SUB(NOW(), INTERVAL 3 DAY), DATE_SUB(NOW(), INTERVAL 3 DAY), 'sent', 'email');
-
--- =============================================================================
--- APPOINTMENT REMINDERS (JUNCTION TABLE)
--- =============================================================================
-
-INSERT INTO appointments_reminders
-(reminder_id, appointment_id)
-VALUES
-    (1, 1),  -- Appointment 1 has reminder 1
-    (2, 2),  -- Appointment 2 has reminder 2
-    (3, 4),  -- Appointment 4 has reminder 3
-    (4, 7),  -- Completed appointment 7 had reminder 4
-    (5, 8);  -- Completed appointment 8 had reminder 5
-
--- =============================================================================
--- VITALS REMINDERS (JUNCTION TABLE)
--- =============================================================================
-
-INSERT INTO vitals_reminders
-(reminder_id, patient_id)
-VALUES
-    (6, 1),   -- Patient 1 has system reminder
-    (7, 2),   -- Patient 2 has email reminder
-    (8, 4),   -- Patient 4 has SMS reminder
-    (9, 1),   -- Patient 1 had sent reminder
-    (10, 3);  -- Patient 3 had sent reminder
 
 -- =============================================================================
 -- SYMPTOMS
 -- =============================================================================
 
 INSERT INTO symptoms (symptom_name, description) VALUES
-                                                     ('Cough', 'Persistent or recurring cough'),
-                                                     ('Wheezing', 'High-pitched whistling sound when breathing'),
-                                                     ('Shortness of breath', 'Difficulty breathing or breathlessness'),
-                                                     ('Chest tightness', 'Feeling of pressure or tightness in chest'),
-                                                     ('Fatigue', 'Extreme tiredness or lack of energy'),
-                                                     ('Chronic cough', 'Cough lasting more than 8 weeks'),
-                                                     ('Mucus production', 'Excessive phlegm or sputum'),
-                                                     ('Difficulty breathing', 'Labored or difficult respiration'),
-                                                     ('Rapid breathing', 'Faster than normal breathing rate'),
-                                                     ('Blue lips or fingernails', 'Cyanosis - bluish discoloration indicating low oxygen'),
-                                                     ('Frequent respiratory infections', 'Recurrent colds, flu, or chest infections'),
-                                                     ('Reduced exercise tolerance', 'Unable to exercise as much as before'),
-                                                     ('Night-time coughing', 'Cough that worsens at night'),
-                                                     ('Morning headaches', 'Headaches upon waking'),
-                                                     ('Dizziness', 'Feeling lightheaded or unsteady'),
-                                                     ('Loss of appetite', 'Decreased desire to eat'),
-                                                     ('Unintentional weight loss', 'Weight loss without trying'),
-                                                     ('Swelling in ankles', 'Edema in lower extremities'),
-                                                     ('Confusion', 'Mental confusion or disorientation'),
-                                                     ('Sleep disturbances', 'Difficulty sleeping or poor sleep quality');
+    ('Shortness of breath', 'Difficulty breathing or feeling breathless'),
+    ('Cough', 'Persistent cough (may be worse at certain times)'),
+    ('Mucus/phlegm production', 'Producing sputum (note color: clear, yellow, green)'),
+    ('Wheezing', 'Whistling or squeaky sound when breathing'),
+    ('Chest tightness', 'Feeling of pressure or tightness in chest'),
+
+    ('Increased fatigue', 'More tired than usual or lacking energy'),
+    ('Difficulty with daily activities', 'Unable to do usual tasks or exercise'),
+    ('Difficulty sleeping', 'Trouble sleeping due to breathing problems'),
+
+    ('Blue lips or fingernails', 'Bluish color on lips, fingernails, or skin'),
+    ('Confusion or drowsiness', 'Feeling confused, disoriented, or unusually sleepy'),
+
+    ('Swollen ankles or feet', 'Swelling in lower legs, ankles, or feet'),
+    ('Morning headaches', 'Headaches when waking up (may indicate low oxygen overnight)');
 
 -- =============================================================================
 -- VITAL DATA
@@ -330,30 +275,30 @@ INSERT INTO vital_data_symptoms
 (vital_data_id, symptom_id, severity, notes)
 VALUES
     -- Patient 1 - Mild symptoms
-    (1, 3, 'mild', 'Slight breathlessness after climbing stairs'),
-    (2, 5, 'mild', 'Feeling a bit tired today'),
+    (1, 1, 'mild', 'Slight breathlessness after climbing stairs'),
+    (2, 6, 'mild', 'Feeling a bit tired today'),
 
     -- Patient 2 - Moderate symptoms
-    (5, 2, 'moderate', 'Wheezing noticed during exercise'),
-    (5, 3, 'moderate', 'Shortness of breath during physical activity'),
-    (6, 4, 'moderate', 'Chest tightness in the morning'),
-    (7, 9, 'mild', 'Breathing slightly faster than normal'),
+    (5, 4, 'moderate', 'Wheezing noticed during exercise'),
+    (5, 1, 'moderate', 'Shortness of breath during physical activity'),
+    (6, 5, 'moderate', 'Chest tightness in the morning'),
+    (7, 1, 'mild', 'Breathing slightly faster than normal'),
 
     -- Patient 4 - Severe symptoms (concerning)
-    (12, 3, 'severe', 'Significant difficulty breathing'),
-    (12, 2, 'severe', 'Persistent wheezing throughout day'),
-    (12, 4, 'severe', 'Severe chest tightness'),
-    (13, 8, 'severe', 'Very difficult to breathe'),
-    (13, 5, 'severe', 'Extreme fatigue, unable to perform daily tasks'),
+    (12, 1, 'severe', 'Significant difficulty breathing'),
+    (12, 4, 'severe', 'Persistent wheezing throughout day'),
+    (12, 5, 'severe', 'Severe chest tightness'),
+    (13, 1, 'severe', 'Very difficult to breathe'),
+    (13, 6, 'severe', 'Extreme fatigue, unable to perform daily tasks'),
 
     -- Patient 5 - Mild symptoms
-    (15, 1, 'mild', 'Occasional dry cough'),
-    (16, 13, 'mild', 'Coughing at night occasionally'),
+    (15, 2, 'mild', 'Occasional dry cough'),
+    (16, 2, 'mild', 'Coughing at night occasionally'),
 
     -- Patient 6 - Moderate improving
-    (18, 3, 'moderate', 'Breathlessness improving'),
-    (19, 2, 'moderate', 'Wheezing less frequent'),
-    (20, 5, 'moderate', 'Energy levels improving');
+    (18, 1, 'moderate', 'Breathlessness improving'),
+    (19, 4, 'moderate', 'Wheezing less frequent'),
+    (20, 6, 'moderate', 'Energy levels improving');
 
 -- =============================================================================
 -- RESOURCES

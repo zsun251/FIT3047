@@ -35,7 +35,8 @@ echo $this->Html->css('form-shared', ['block' => true]);
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('username', [
-                    'label' => 'Username',
+                    'label' => 'Username <span class="text-danger">*</span>',
+                    'escape' => false,
                     'required' => true,
                     'minlength' => 3,
                     'maxlength' => 50,
@@ -48,7 +49,8 @@ echo $this->Html->css('form-shared', ['block' => true]);
             </div>
             <div class="form-group">
                 <?= $this->Form->control('password', [
-                    'label' => 'Password',
+                    'label' => 'Password <span class="text-danger">*</span>',
+                    'escape' => false,
                     'type' => 'password',
                     'required' => true,
                     'minlength' => 8,
@@ -71,7 +73,8 @@ echo $this->Html->css('form-shared', ['block' => true]);
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('first_name', [
-                    'label' => 'First Name',
+                    'label' => 'First Name <span class="text-danger">*</span>',
+                    'escape' => false,
                     'required' => true,
                     'minlength' => 2,
                     'maxlength' => 100,
@@ -84,7 +87,8 @@ echo $this->Html->css('form-shared', ['block' => true]);
             </div>
             <div class="form-group">
                 <?= $this->Form->control('last_name', [
-                    'label' => 'Last Name',
+                    'label' => 'Last Name <span class="text-danger">*</span>',
+                    'escape' => false,
                     'required' => true,
                     'minlength' => 2,
                     'maxlength' => 100,
@@ -116,7 +120,8 @@ echo $this->Html->css('form-shared', ['block' => true]);
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('email', [
-                    'label' => 'Email Address',
+                    'label' => 'Email <span class="text-danger">*</span>',
+                    'escape' => false,
                     'type' => 'email',
                     'required' => true,
                     'maxlength' => 255,
@@ -161,7 +166,8 @@ echo $this->Html->css('form-shared', ['block' => true]);
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('type', [
-                    'label' => 'User Type',
+                    'label' => 'User Type <span class="text-danger">*</span>',
+                    'escape' => false,
                     'type' => 'select',
                     'options' => [
                         'admin' => 'Admin',

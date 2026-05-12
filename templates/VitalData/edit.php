@@ -24,7 +24,7 @@
 
                     <!-- LEFT -->
                     <div>
-                        <h2 class="fw-bold mb-1">Edit Vital Data</h2>
+                        <h2 class="fw-bold mb-1">Edit Health Record</h2>
                         <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 10px;"></div>
                         <p class="text-muted mb-0">
                             Update the patient’s vital signs and symptoms.
@@ -53,7 +53,7 @@
                     <?= $this->Form->create($vitalDataEntity, ['novalidate' => true]) ?>
 
                     <div class="mb-4">
-                        <h4 class="fw-bold mb-1">Vital Signs</h4>
+                        <h4 class="fw-bold mb-1">Respiratory Health</h4>
                         <div style="width: 40px; height: 3px; background-color: #0d6efd; border-radius: 2px; margin-bottom: 12px;"></div>
                     </div>
 
