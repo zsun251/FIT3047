@@ -53,54 +53,55 @@ $this->Html->script('reminders-index', ['block' => true]);
         </div>
     </div>
 
-    <!-- Upcoming Reminders Section -->
-    <?php if (!empty($upcomingReminders)): ?>
-        <div class="section-card mb-4">
-            <div class="section-header">
-                <h3><i class="bi bi-clock-history"></i> Upcoming Today</h3>
-                <small class="text-muted">Reminders scheduled for later today</small>
-            </div>
+<!-- Upcoming Reminders Section -->
+<?php if (!empty($upcomingReminders)): ?>
+    <div class="section-card mb-4">
+        <div class="section-header">
+            <h3><i class="bi bi-clock-history"></i> Upcoming Today</h3>
+            <small class="text-muted">Reminders scheduled for later today</small>
+        </div>
 
-            <div class="reminders-list">
-                <?php foreach ($upcomingReminders as $reminder): ?>
-                    <div class="reminder-card upcoming">
-                        <div class="reminder-icon">
-                            <i class="bi bi-hourglass-split"></i>
-                        </div>
-                        <div class="reminder-content">
-                            <div class="reminder-message"><?= h($reminder->message) ?></div>
-                            <div class="reminder-time">
-                                <small class="text-muted">
-                                    <i class="bi bi-calendar3"></i>
-                                    Scheduled: <?= $reminder->scheduled_at->format('g:i A') ?>
-                                </small>
-                                <br>
-                                <?php debug($reminder->remaining_minutes) ?>
-                                <?php debug($reminder->hours_until) ?>
-                                <small class="text-info">
-                                    <i class="bi bi-info-circle"></i>
-                                    <?php if ($reminder->hours_until > 0): ?>
-                                        <strong>In <?= $reminder->hours_until ?> hour<?= $reminder->hours_until != 1 ? 's' : '' ?>
-                                            <?php if ($reminder->remaining_minutes > 0): ?>
-                                                <?= $reminder->remaining_minutes ?> min<?= $reminder->remaining_minutes != 1 ? 's' : '' ?>
-                                            <?php endif; ?>
-                                        </strong>
+        <div class="reminders-list">
+            <?php foreach ($upcomingReminders as $reminder): ?>
+                <div class="reminder-card upcoming">
+                    <div class="reminder-icon">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+                    <div class="reminder-content">
+                        <div class="reminder-message"><?= h($reminder->message) ?></div>
+                        <div class="reminder-time">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar3"></i>
+                                Scheduled: <?= $reminder->scheduled_at->format('g:i A') ?>
+                            </small>
+                            <br>
+                            <small class="text-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>
+                                    <?php if ($reminder->minutes_until === 0): ?>
+                                        Less than a minute
+                                    <?php elseif ($reminder->hours_until > 0): ?>
+                                        In <?= $reminder->hours_until ?> hour<?= $reminder->hours_until != 1 ? 's' : '' ?>
+                                        <?php if ($reminder->remaining_minutes > 0): ?>
+                                            <?= $reminder->remaining_minutes ?> min<?= $reminder->remaining_minutes != 1 ? 's' : '' ?>
+                                        <?php endif; ?>
                                     <?php else: ?>
-                                        <strong>In <?= $reminder->minutes_until ?> minute<?= $reminder->minutes_until != 1 ? 's' : '' ?></strong>
+                                        In <?= $reminder->minutes_until ?> minute<?= $reminder->minutes_until != 1 ? 's' : '' ?>
                                     <?php endif; ?>
-                                </small>
-                            </div>
-                        </div>
-                        <div class="reminder-actions">
-                            <button class="btn btn-sm btn-outline-secondary" disabled>
-                                <i class="bi bi-clock"></i> Not Yet
-                            </button>
+                                </strong>
+                            </small>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
+                    <div class="reminder-actions">
+                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                            <i class="bi bi-clock"></i> Not Yet
+                        </button>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
-    <?php endif; ?>
+    </div>
+<?php endif; ?>
 
     <!-- Active Reminders Section -->
     <div class="section-card mb-4">
@@ -132,7 +133,7 @@ $this->Html->script('reminders-index', ['block' => true]);
                                     <br>
                                     <small class="text-danger">
                                         <i class="bi bi-exclamation-triangle"></i>
-                                        <strong>Overdue</strong>
+                                        <strong>Please log your health data.</strong>
                                     </small>
                                 <?php endif; ?>
                             </div>
