@@ -133,12 +133,12 @@ $breadcrumbs = [
                             </span>
                         <?php endif; ?>
                     </div>
-                    <?= $this->fetch('postLink') ?>
                 </div>
 
             </div>
         <?php endforeach; ?>
     </div>
+    <?= $this->fetch('postLink') ?>
 
     <!-- Pagination -->
     <div class="pagination-wrapper">
