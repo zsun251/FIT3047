@@ -82,6 +82,8 @@ class DashboardController extends AppController
         $latestVital = null;
         $nextAppointment = null;
         $latestResource = null;
+        $activeReminders = [];
+        $reminderCount = 0;
 
         if ($patientId) {
             // Fetch the latest submitted vital data and linked symptoms
@@ -93,9 +95,30 @@ class DashboardController extends AppController
 
             // Fetch the next upcoming appointment for the patient
             $nextAppointment = $this->fetchTable('Appointments')->find()
-                ->where(['Appointments.patient_id' => $patientId, 'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime(),])
+                ->where([
+                    'Appointments.patient_id' => $patientId,
+                    'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime(),
+                ])
                 ->orderBy(['Appointments.scheduled_at' => 'ASC'])
                 ->first();
+
+            // Fetch active reminders for the patient
+            $remindersTable = $this->fetchTable('Reminders');
+            $now = \Cake\I18n\FrozenTime::now();
+
+            $activeReminders = $remindersTable->find()
+                ->innerJoinWith('VitalsReminders')
+                ->where([
+                    'VitalsReminders.patient_id' => $patientId,
+                    'Reminders.scheduled_at <=' => $now,
+                    'Reminders.interaction_type IS' => null
+                ])
+                ->orderBy(['Reminders.scheduled_at' => 'DESC'])
+                ->limit(3) // Show only 3 most recent
+                ->all();
+
+            // Get total count of active reminders
+            $reminderCount = $remindersTable->getPendingCount($patientId);
         }
 
         // Fetch the latest published resource to preview on the dashboard
@@ -108,7 +131,9 @@ class DashboardController extends AppController
             'currentUser',
             'latestVital',
             'nextAppointment',
-            'latestResource'
+            'latestResource',
+            'activeReminders',
+            'reminderCount'
         ));
     }
 }
