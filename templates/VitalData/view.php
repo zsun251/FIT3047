@@ -3,14 +3,33 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\VitalData $vitalDataEntity
  */
+
+use App\Policy\UserAccess;
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);
+
+// Build breadcrumbs based on user type
+$breadcrumbs = [];
+
+if ($isStaff) {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+        ['title' => 'Health Records', 'url' => ['controller' => 'VitalData', 'action' => 'index']],
+        ['title' => 'View Record', 'url' => null]
+    ];
+} else {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'View Record', 'url' => null]
+    ];
+}
 ?>
-<div class="back-link">
-    <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i><span>Back to Health Records</span>',
-        ['controller' => 'VitalData', 'action' => 'index'],
-        ['escape' => false]
-    ) ?>
-</div>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 <div class="container-fluid px-0">
     <div class="vitalData view content">
         <?php

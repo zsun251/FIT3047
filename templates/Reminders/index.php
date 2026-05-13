@@ -17,12 +17,17 @@ $this->Html->css('reminders-index', ['block' => true]);
 //$this->Html->script('reminders-index', ['block' => true]);
 ?>
 
+
     <!-- Header Section -->
-    <div class="dash-header d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="dash-title mb-1">My Reminders</h1>
-            <p class="text-muted mb-0">Manage your vital data entry reminders</p>
-        </div>
+    <div class="mb-5 pb-3">
+        <?= $this->element('page_header', [
+            'title' => 'My Reminders',
+            'subtitle' => 'Manage your vital data entry reminders',
+            'breadcrumbs' => [
+                ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+                ['title' => 'Reminders', 'url' => null] // Current page
+            ]
+        ]) ?>
     </div>
 
     <!-- Stats Cards -->

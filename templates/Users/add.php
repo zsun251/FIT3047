@@ -7,14 +7,17 @@ $this->assign('title', 'Add User');
 
 // CSS
 echo $this->Html->css('form-shared', ['block' => true]);
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Users', 'url' => ['controller' => 'Users', 'action' => 'index']],
+    ['title' => 'Add', 'url' => null]
+];
 ?>
 
-<!-- Back Link -->
-<?= $this->Html->link(
-    '<i class="bi bi-arrow-left"></i> Back to Users',
-    ['action' => 'index'],
-    ['class' => 'back-link', 'escape' => false]
-) ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <div class="form-container">
     <!-- Form Header -->

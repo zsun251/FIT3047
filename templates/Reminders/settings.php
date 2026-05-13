@@ -16,24 +16,17 @@ $this->Html->script('reminders-settings', ['block' => true]);
 ?>
 
 <div class="reminders-settings">
-    <!-- Header -->
-    <div class="dash-header mb-4">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="dash-title mb-1">Reminder Settings</h1>
-                <p class="text-muted mb-0">Configure when you want to receive vital data reminders</p>
-            </div>
-            <div>
-                <?= $this->Html->link(
-                    '<i class="bi bi-arrow-left"></i> Back to Reminders',
-                    ['action' => 'index'],
-                    [
-                        'class' => 'btn btn-outline-secondary',
-                        'escape' => false
-                    ]
-                ) ?>
-            </div>
-        </div>
+    <!-- Header Section -->
+    <div class="mb-5 pb-3">
+        <?= $this->element('page_header', [
+            'title' => 'Reminder Settings',
+            'subtitle' => 'Configure when you want to receive vital data reminders',
+            'breadcrumbs' => [
+                ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+                ['title' => 'Reminders', 'url' => ['controller' => 'Reminders', 'action' => 'index']],
+                ['title' => 'Settings', 'url' => null] // Current page
+            ]
+        ]) ?>
     </div>
 
     <?= $this->Form->create($settings, ['class' => 'settings-form']) ?>

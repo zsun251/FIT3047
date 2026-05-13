@@ -21,15 +21,30 @@ $isStaff
     ? ['controller' => 'VitalData', 'action' => 'index']
     : '/'
 );
+
+// Build breadcrumbs based on user type
+$breadcrumbs = [];
+
+if ($isStaff) {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+        ['title' => 'Health Records', 'url' => ['controller' => 'VitalData', 'action' => 'index']],
+        ['title' => 'Add', 'url' => null]
+    ];
+} else {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'My Health Records', 'url' => ['controller' => 'VitalData', 'action' => 'patient-history']],
+        ['title' => 'Add', 'url' => null]
+    ];
+}
 ?>
 
-<div class="back-link">
-    <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i><span>' . $backText . '</span>',
-        $backUrl,
-        ['escape' => false]
-    ) ?>
-</div>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
+
 
 <div class="container-fluid px-4">
 

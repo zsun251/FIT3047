@@ -30,7 +30,17 @@ $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('patients-index', ['block' => 'script']);
 
 $identity = $this->request->getAttribute('identity');
+
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Patients', 'url' => null]
+];
 ?>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <!-- Header Section -->
 <div class="dash-header d-flex justify-content-between align-items-center mb-4">

@@ -3,6 +3,9 @@
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\VitalData> $vitalData
  */
+
+use App\Policy\UserAccess;
+
 $this->assign('title', 'Vital Data Management');
 // CSS
 $this->start('datatables_css');
@@ -22,12 +25,24 @@ $this->end();
 // Page-specific JS
 $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('vital-data-index', ['block' => 'script']);
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);
+
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Health Records', 'url' => null]
+];
 ?>
+
 <!-- Header Section -->
 <div class="dash-header d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="dash-title mb-1">Patient Health Records</h1>
-        <p class="text-muted mb-0">Monitor patient health metrics</p>
+        <?= $this->element('page_header', [
+            'breadcrumbs' => $breadcrumbs,
+            'title' => 'Patient Health Records',
+            'subtitle' => 'Monitor patient health metrics'
+        ]) ?>
     </div>
     <div>
         <?= $this->Html->link(

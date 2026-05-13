@@ -76,13 +76,18 @@ if (!empty($scheduledAtErrors)) {
         $scheduledAtErrorMessage = 'Please enter a valid appointment date and time.';
     }
 }
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Appointments', 'url' => ['controller' => 'Appointments', 'action' => 'index']],
+    ['title' => 'Add', 'url' => null]
+];
 ?>
 
-<?= $this->Html->link(
-    '<i class="bi bi-arrow-left"></i> Back to Appointments',
-    ['action' => 'index'],
-    ['class' => 'back-link', 'escape' => false]
-) ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
+
 
 <div class="form-container">
     <div class="form-header">

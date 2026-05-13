@@ -6,6 +6,8 @@ declare(strict_types=1);
  * @var iterable<\App\Model\Entity\Appointment> $appointments
  */
 
+use App\Policy\UserAccess;
+
 $this->assign('title', 'My Appointments');
 
 echo $this->Html->css(['form-shared', 'appointments',], ['block' => true]);
@@ -99,13 +101,28 @@ foreach ($appointmentList as $appointment) {
         $upcomingAppointments[] = $appointment;
     }
 }
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);
+
+// Build breadcrumbs based on user type
+$breadcrumbs = [];
+
+if ($isStaff) {
+    $breadcrumbs = [
+    ];
+} else {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'Upcoming Appointments', 'url' => null]
+    ];
+}
 ?>
 
-<?= $this->Html->link(
-    '<i class="bi bi-arrow-left"></i> Back to Dashboard',
-    ['controller' => 'Dashboard', 'action' => 'patient'],
-    ['class' => 'back-link', 'escape' => false]
-) ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <div class="form-container appointments-page">
     <div class="form-header appointments-page-header">
