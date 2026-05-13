@@ -291,3 +291,45 @@ header.navbar .nav-link.active {
         display: none !important;
     }
 }
+
+/* Desktop Topbar: Logout/Login Button */
+@media (min-width: 768px) {
+    .topbar-always-show .nav-link.auth-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 8px;
+        background-color: transparent;
+        transition: all 0.2s ease;
+    }
+
+    .topbar-always-show .nav-link.auth-button:hover {
+        background-color: #f1f5f9;
+        color: #3b5bdb;
+    }
+
+    .topbar-always-show .nav-link.auth-button i {
+        font-size: 1.25rem;
+    }
+
+    .navbar-nav {
+        align-items: center;
+    }
+}
+
+/* Mobile: Show text with icon */
+@media (max-width: 767.98px) {
+    .topbar-always-show .nav-link.auth-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 14px 16px;
+    }
+
+    .topbar-always-show .nav-link.auth-button i {
+        font-size: 1.25rem;
+    }
+}
