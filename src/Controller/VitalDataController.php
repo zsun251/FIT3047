@@ -58,6 +58,7 @@ class VitalDataController extends AppController
 
         $this->set(compact('vitalDataEntity'));
     }
+
     /**
      * Add method
      *
@@ -76,6 +77,9 @@ class VitalDataController extends AppController
 
         $patientId = UserAccess::getPatientId($identity);
         $isStaff = UserAccess::isStaff($identity);
+
+        // Get reminder_id from query parameters if present
+        $reminderId = $this->request->getQuery('reminder_id');
 
         if ($this->request->is('post')) {
             $data = $this->request->getData();
@@ -145,15 +149,28 @@ class VitalDataController extends AppController
 
             if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
+
+                // Complete reminder for patient users
+                if (!$isStaff && $patientId) {
+                    $remindersTable = $this->fetchTable('Reminders');
+
+                    // Pass reminder_id if it was provided in the URL, otherwise null
+                    // If reminder_id is provided: completes that specific reminder
+                    // If null: completes the most recent active reminder
+                    $remindersTable->completeReminderForVitalData(
+                        $patientId,
+                        $vitalDataEntity->id,
+                        $reminderId ? (int)$reminderId : null
+                    );
+                }
+
                 if ($isStaff) {
                     return $this->redirect(['action' => 'index']);
                 }
-                if ($patientId) {
-                    $remindersTable = $this->fetchTable('Reminders');
-                    $remindersTable->completeReminderForVitalData($patientId, $vitalDataEntity->id);
-                }
+
                 return $this->redirect($this->getRedirectUrl());
             }
+
             //dd($vitalDataEntity->getErrors());
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
         }
@@ -174,6 +191,7 @@ class VitalDataController extends AppController
 
         $this->set(compact('vitalDataEntity', 'patients', 'symptoms', 'patientId', 'isStaff'));
     }
+
     /**
      * Edit method
      *

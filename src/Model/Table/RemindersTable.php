@@ -131,18 +131,59 @@ class RemindersTable extends Table
         return $this->save($reminder);
     }
 
+
+
     /**
-     * Mark reminder as completed (linked to vital data submission)
+     * Mark a specific reminder as completed
      *
+     * @param int $reminderId
      * @param int $patientId
      * @param int $vitalDataId
      * @return bool
      */
-    public function completeReminderForVitalData($patientId, $vitalDataId)
+    public function completeSpecificReminder($reminderId, $patientId, $vitalDataId)
     {
+        $reminder = $this->find()
+            ->innerJoinWith('VitalsReminders', function (Query $q) use ($patientId) {
+                return $q->where(['VitalsReminders.patient_id' => $patientId]);
+            })
+            ->where([
+                'Reminders.id' => $reminderId,
+                'Reminders.interaction_type IS' => null
+            ])
+            ->first();
+
+        if (!$reminder) {
+            return false;
+        }
+
+        $reminder->interaction_type = 'completed';
+        $reminder->interacted_at = FrozenTime::now();
+        $reminder->vital_data_id = $vitalDataId;
+
+        return $this->save($reminder);
+    }
+
+    
+    /**
+     * Mark reminder as completed (linked to vital data submission)
+     * If no specific reminder ID provided, completes the most recent active reminder
+     *
+     * @param int $patientId
+     * @param int $vitalDataId
+     * @param int|null $reminderId Optional specific reminder to complete
+     * @return bool
+     */
+    public function completeReminderForVitalData($patientId, $vitalDataId, $reminderId = null)
+    {
+        // If specific reminder ID provided, complete that one
+        if ($reminderId !== null) {
+            return $this->completeSpecificReminder($reminderId, $patientId, $vitalDataId);
+        }
+
+        // Otherwise, find the most recent active reminder
         $now = FrozenTime::now();
 
-        // Find the most recent active reminder for this patient
         $reminder = $this->find()
             ->innerJoinWith('VitalsReminders', function (Query $q) use ($patientId) {
                 return $q->where(['VitalsReminders.patient_id' => $patientId]);
@@ -151,7 +192,7 @@ class RemindersTable extends Table
                 'Reminders.scheduled_at <=' => $now,
                 'Reminders.interaction_type IS' => null
             ])
-            ->order(['Reminders.scheduled_at' => 'DESC'])
+            ->orderBy(['Reminders.scheduled_at' => 'DESC'])
             ->first();
 
         if (!$reminder) {
