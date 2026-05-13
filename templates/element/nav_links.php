@@ -186,6 +186,13 @@ if ($isStaff) {
                 <?= $this->Html->link($linkLabel('Health Records', 'bi-heart-pulse'), ['controller' => 'VitalData', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'VitalData' ? ' active' : ''), 'escape' => false]) ?>
             </li>
         <?php endif; ?>
+
+        <?php if ($isAdmin): ?>
+            <li class="<?= $itemClass ?>">
+                <?= $this->Html->link($linkLabel('Edit Site Content', 'bi-heart-pulse'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'ContentBlocks' ? ' active' : ''), 'escape' => false]) ?>
+            </li>
+        <?php endif; ?>
+
     <?php endif; ?>
 
     <?php if ($isPatient): ?>

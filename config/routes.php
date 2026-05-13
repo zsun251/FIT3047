@@ -111,6 +111,13 @@ return function (RouteBuilder $routes): void {
         $builder->connect('/reminders/dismiss/:id', ['controller' => 'Reminders', 'action' => 'dismiss'], ['id' => '\d+', 'pass' => ['id'], '_ext' => 'json']);
         $builder->connect('/reminders/count', ['controller' => 'Reminders', 'action' => 'count', '_ext' => 'json']);
 
+        /* Setup content block routes */
+        $builder->connect('/content-blocks', ['controller' => 'ContentBlocks', 'action' => 'index']);
+        $builder->connect('/content-blocks/index', ['controller' => 'ContentBlocks', 'action' => 'index']);
+        $builder->connect('/content-blocks/edit/{id}', ['controller' => 'ContentBlocks', 'action' => 'edit'])->setPatterns(['id' => '\d+'])->setPass(['id']);
+        $builder->connect('/content-blocks/restore/{id}', ['controller' => 'ContentBlocks', 'action' => 'restore'])->setPatterns(['id' => '\d+'])->setPass(['id']);
+        $builder->connect('/content-blocks/upload', ['controller' => 'ContentBlocks', 'action' => 'upload']);
+
         /*
          * Connect catchall routes for all controllers.
          *
