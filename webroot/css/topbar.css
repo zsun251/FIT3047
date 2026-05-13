@@ -222,3 +222,20 @@
         margin-bottom: 0;
     }
 }
+/* ============================================================================
+   REMINDERS DROPDOWN - DESKTOP TOPBAR ONLY
+   ============================================================================ */
+
+/* Desktop: Show in topbar */
+@media (min-width: 768px) {
+    #mainNavbar .nav-item.dropdown.topbar-always-show {
+        display: list-item !important;
+    }
+}
+
+/* Mobile: Hide completely (both topbar and hamburger menu) */
+@media (max-width: 767.98px) {
+    #mainNavbar .nav-item.dropdown#remindersDropdownItem {
+        display: none !important;
+    }
+}

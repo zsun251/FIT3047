@@ -14,7 +14,7 @@ $this->assign('title', 'My Reminders');
 $this->Html->css('reminders-index', ['block' => true]);
 
 // JS
-$this->Html->script('reminders-index', ['block' => true]);
+//$this->Html->script('reminders-index', ['block' => true]);
 ?>
 
     <!-- Header Section -->

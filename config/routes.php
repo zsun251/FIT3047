@@ -53,6 +53,8 @@ return function (RouteBuilder $routes): void {
     });
 
     $routes->scope('/', function (RouteBuilder $builder): void {
+        // Enable extension parsing for JSON
+        $builder->setExtensions(['json']);
         /*
          * Here, we are connecting '/' (base path) to a controller called 'Pages',
          * its action called 'display', and we pass a param to select the view file
@@ -107,12 +109,14 @@ return function (RouteBuilder $routes): void {
             ->setPass(['clinician_id']);
         $builder->connect('/assign', ['action' => 'assign']);
 
-        $builder->connect('/reminders', ['controller' => 'Reminders', 'action' => 'index']);
-        $builder->connect('/reminders/dismiss/:id', ['controller' => 'Reminders', 'action' => 'dismiss'])
-            ->setPass(['id'])
-            ->setMethods(['POST']);
-        $builder->connect('/reminders/settings', ['controller' => 'Reminders', 'action' => 'settings']);
-        $builder->connect('/reminders/count', ['controller' => 'Reminders', 'action' => 'count']);
+            // Reminders routes
+            $builder->connect('/reminders', ['controller' => 'Reminders', 'action' => 'index']);
+            $builder->connect('/reminders/settings', ['controller' => 'Reminders', 'action' => 'settings']);
+            $builder->connect('/reminders/count', ['controller' => 'Reminders', 'action' => 'count']);
+            $builder->connect('/reminders/dropdown', ['controller' => 'Reminders', 'action' => 'dropdown']);
+            $builder->connect('/reminders/dismiss/:id', ['controller' => 'Reminders', 'action' => 'dismiss'])
+                ->setPass(['id'])
+                ->setMethods(['POST']);
 
         /*
          * Connect catchall routes for all controllers.

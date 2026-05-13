@@ -1,0 +1,247 @@
+/* Reminders Dropdown Styles */
+
+/* ============================================================================
+   MOBILE BELL ICON (Left of Hamburger)
+   ============================================================================ */
+@media (max-width: 767.98px) {
+    .mobile-reminder-bell {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        position: relative;
+        color: #1f2937;
+        text-decoration: none;
+        background-color: transparent;
+    }
+
+    /* Hover/Active state */
+    .mobile-reminder-bell:hover,
+    .mobile-reminder-bell:active {
+        background-color: #f1f5f9;
+        color: #3b5bdb;
+        text-decoration: none;
+    }
+
+    /* Bell icon */
+    .mobile-reminder-bell .bi-bell-fill {
+        font-size: 1.5rem;
+        transition: transform 0.2s ease;
+    }
+
+    /* Bell animation on tap */
+    .mobile-reminder-bell:active .bi-bell-fill {
+        transform: scale(0.95);
+    }
+
+    /* Badge positioning */
+    .mobile-reminder-badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.4rem;
+        min-width: 18px;
+        top: 6px !important;
+        right: 6px !important;
+    }
+}
+
+/* Hide mobile bell on desktop */
+@media (min-width: 768px) {
+    .mobile-reminder-bell {
+        display: none !important;
+    }
+}
+
+/* ============================================================================
+   DESKTOP DROPDOWN BUTTON STYLING
+   ============================================================================ */
+@media (min-width: 768px) {
+    /* Give the nav-item more space */
+    #remindersDropdownItem {
+        margin: 0 0.25rem;
+    }
+
+    #remindersDropdown {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0 !important;
+        margin: 0;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        position: relative;
+        background-color: transparent;
+    }
+
+    /* Hover state */
+    #remindersDropdown:hover {
+        background-color: #f1f5f9;
+        color: #3b5bdb !important;
+    }
+
+    /* When dropdown is open */
+    #remindersDropdown[aria-expanded="true"] {
+        background-color: #e8f0ff;
+        color: #3b5bdb !important;
+    }
+
+    /* Bell icon - use filled version like mobile */
+    #remindersDropdown .bi-bell-fill {
+        font-size: 1.5rem;
+        transition: transform 0.2s ease;
+    }
+
+    /* Bell icon animation on hover */
+    #remindersDropdown:hover .bi-bell-fill {
+        transform: scale(1.05);
+    }
+
+    /* Badge positioning */
+    #remindersDropdown .reminder-badge {
+        top: 6px !important;
+        right: 6px !important;
+        font-size: 0.65rem;
+        padding: 0.25rem 0.4rem;
+        min-width: 18px;
+    }
+}
+
+/* ============================================================================
+   DROPDOWN MENU
+   ============================================================================ */
+.reminders-dropdown {
+    min-width: 350px;
+    max-width: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: none;
+    border-radius: 8px;
+}
+
+.reminders-dropdown .dropdown-header {
+    padding: 1rem 1.25rem;
+    background-color: #f8f9fa;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* ============================================================================
+   REMINDER ITEMS
+   ============================================================================ */
+.reminder-items-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.reminder-item {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+}
+
+.reminder-item:hover {
+    background-color: #f8f9fa;
+}
+
+.reminder-item:last-child {
+    border-bottom: none;
+}
+
+.reminder-item-message {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 0.25rem;
+}
+
+.reminder-item-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reminder-item-overdue {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+.reminder-empty {
+    padding: 2rem 1.25rem;
+    text-align: center;
+    color: #6c757d;
+}
+
+.reminder-empty i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #dee2e6;
+}
+
+/* ============================================================================
+   BADGE
+   ============================================================================ */
+.reminder-badge {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.4rem;
+    min-width: 18px;
+}
+
+/* Badge animation */
+.reminder-badge.pulse,
+.mobile-reminder-badge.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+/* ============================================================================
+   SCROLLBAR STYLING
+   ============================================================================ */
+.reminder-items-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.reminder-items-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.reminder-items-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.reminder-items-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* ============================================================================
+   LOADING STATE
+   ============================================================================ */
+.reminder-loading {
+    padding: 2rem 1.25rem;
+    text-align: center;
+}

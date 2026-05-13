@@ -175,6 +175,10 @@ $showSections = ($context ?? 'topbar') === 'sidebar' || ($context === 'topbar');
 <?php endif; ?>
 
 <?php if ($context === 'topbar'): ?>
+    <!-- PATIENT REMINDERS NOTIFICATION DROPDOWN -->
+    <?php if ($isPatient): ?>
+        <?= $this->element('reminders_dropdown') ?>
+    <?php endif; ?>
     <!-- ====================================================================
          AUTHENTICATION LINK (Login/Logout)
          Always visible in topbar on both desktop and mobile
