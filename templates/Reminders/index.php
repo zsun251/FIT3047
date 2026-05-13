@@ -81,7 +81,7 @@ $this->Html->css('reminders-index', ['block' => true]);
                         <div class="reminder-actions">
                             <?= $this->Html->link(
                                 '<i class="bi bi-plus-circle"></i> Log Vitals',
-                                ['controller' => 'VitalData', 'action' => 'add'],
+                                ['controller' => 'VitalData', 'action' => 'add', '?' => ['reminder_id' => $reminder->id]],
                                 ['class' => 'btn btn-sm btn-primary', 'escape' => false]
                             ) ?>
                             <?= $this->Form->postLink(
