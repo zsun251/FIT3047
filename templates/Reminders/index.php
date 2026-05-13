@@ -23,16 +23,6 @@ $this->Html->script('reminders-index', ['block' => true]);
             <h1 class="dash-title mb-1">My Reminders</h1>
             <p class="text-muted mb-0">Manage your vital data entry reminders</p>
         </div>
-        <div>
-            <?= $this->Html->link(
-                '<i class="bi bi-gear"></i> Settings',
-                ['action' => 'settings'],
-                [
-                    'class' => 'btn btn-outline-primary',
-                    'escape' => false
-                ]
-            ) ?>
-        </div>
     </div>
 
     <!-- Stats Cards -->
@@ -52,56 +42,6 @@ $this->Html->script('reminders-index', ['block' => true]);
             </div>
         </div>
     </div>
-
-<!-- Upcoming Reminders Section -->
-<?php if (!empty($upcomingReminders)): ?>
-    <div class="section-card mb-4">
-        <div class="section-header">
-            <h3><i class="bi bi-clock-history"></i> Upcoming Today</h3>
-            <small class="text-muted">Reminders scheduled for later today</small>
-        </div>
-
-        <div class="reminders-list">
-            <?php foreach ($upcomingReminders as $reminder): ?>
-                <div class="reminder-card upcoming">
-                    <div class="reminder-icon">
-                        <i class="bi bi-hourglass-split"></i>
-                    </div>
-                    <div class="reminder-content">
-                        <div class="reminder-message"><?= h($reminder->message) ?></div>
-                        <div class="reminder-time">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar3"></i>
-                                Scheduled: <?= $reminder->scheduled_at->format('g:i A') ?>
-                            </small>
-                            <br>
-                            <small class="text-info">
-                                <i class="bi bi-info-circle"></i>
-                                <strong>
-                                    <?php if ($reminder->minutes_until === 0): ?>
-                                        Less than a minute
-                                    <?php elseif ($reminder->hours_until > 0): ?>
-                                        In <?= $reminder->hours_until ?> hour<?= $reminder->hours_until != 1 ? 's' : '' ?>
-                                        <?php if ($reminder->remaining_minutes > 0): ?>
-                                            <?= $reminder->remaining_minutes ?> min<?= $reminder->remaining_minutes != 1 ? 's' : '' ?>
-                                        <?php endif; ?>
-                                    <?php else: ?>
-                                        In <?= $reminder->minutes_until ?> minute<?= $reminder->minutes_until != 1 ? 's' : '' ?>
-                                    <?php endif; ?>
-                                </strong>
-                            </small>
-                        </div>
-                    </div>
-                    <div class="reminder-actions">
-                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                            <i class="bi bi-clock"></i> Not Yet
-                        </button>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    </div>
-<?php endif; ?>
 
     <!-- Active Reminders Section -->
     <div class="section-card mb-4">
@@ -160,6 +100,56 @@ $this->Html->script('reminders-index', ['block' => true]);
         <?php endif; ?>
     </div>
 
+    <!-- Upcoming Reminders Section -->
+    <?php if (!empty($upcomingReminders)): ?>
+        <div class="section-card mb-4">
+            <div class="section-header">
+                <h3><i class="bi bi-clock-history"></i> Upcoming Today</h3>
+                <small class="text-muted">Reminders scheduled for later today</small>
+            </div>
+
+            <div class="reminders-list">
+                <?php foreach ($upcomingReminders as $reminder): ?>
+                    <div class="reminder-card upcoming">
+                        <div class="reminder-icon">
+                            <i class="bi bi-hourglass-split"></i>
+                        </div>
+                        <div class="reminder-content">
+                            <div class="reminder-message"><?= h($reminder->message) ?></div>
+                            <div class="reminder-time">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar3"></i>
+                                    Scheduled: <?= $reminder->scheduled_at->format('g:i A') ?>
+                                </small>
+                                <br>
+                                <small class="text-info">
+                                    <i class="bi bi-info-circle"></i>
+                                    <strong>
+                                        <?php if ($reminder->minutes_until === 0): ?>
+                                            Less than a minute
+                                        <?php elseif ($reminder->hours_until > 0): ?>
+                                            In <?= $reminder->hours_until ?> hour<?= $reminder->hours_until != 1 ? 's' : '' ?>
+                                            <?php if ($reminder->remaining_minutes > 0): ?>
+                                                <?= $reminder->remaining_minutes ?> min<?= $reminder->remaining_minutes != 1 ? 's' : '' ?>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            In <?= $reminder->minutes_until ?> minute<?= $reminder->minutes_until != 1 ? 's' : '' ?>
+                                        <?php endif; ?>
+                                    </strong>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="reminder-actions">
+                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                <i class="bi bi-clock"></i> Not Yet
+                            </button>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <!-- Completed Reminders Section -->
     <div class="section-card mb-4">
         <div class="section-header">
@@ -206,65 +196,95 @@ $this->Html->script('reminders-index', ['block' => true]);
             </div>
         <?php endif; ?>
     </div>
+
     <!-- Reminder Schedule Info -->
-<?php if ($settings && $settings->is_active): ?>
-    <div class="section-card">
-        <div class="section-header">
-            <h3><i class="bi bi-calendar-week"></i> Your Schedule</h3>
-        </div>
-        <div class="schedule-info">
-            <p class="mb-3">You will receive reminders at:</p>
-            <div class="row g-2">
-                <?php if ($settings->time_slot_1): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= $settings->time_slot_1->format('g:i A') ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <?php if ($settings->time_slot_2): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= $settings->time_slot_2->format('g:i A') ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <?php if ($settings->time_slot_3): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= $settings->time_slot_3->format('g:i A') ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <?php if ($settings->time_slot_4): ?>
-                    <div class="col-6 col-md-3">
-                        <div class="time-slot-badge">
-                            <i class="bi bi-clock"></i> <?= $settings->time_slot_4->format('g:i A') ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
+    <?php if ($settings && $settings->is_active): ?>
+        <div class="section-card">
+            <div class="section-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h3><i class="bi bi-calendar-week"></i> Your Schedule</h3>
+                </div>
+                <div>
+                    <?= $this->Html->link(
+                        '<i class="bi bi-gear"></i> Settings',
+                        ['action' => 'settings'],
+                        [
+                            'class' => 'btn btn-sm btn-outline-primary',
+                            'escape' => false
+                        ]
+                    ) ?>
+                </div>
             </div>
-            <div class="mt-3">
-                <small class="text-muted">
-                    <i class="bi bi-envelope"></i>
-                    Email notifications: <?= $settings->email_enabled ? '<span class="text-success">Enabled</span>' : '<span class="text-muted">Disabled</span>' ?>
-                </small>
-                <?php if ($settings->sms_enabled): ?>
-                    <br>
+            <div class="schedule-info">
+                <p class="mb-3">You will receive reminders at:</p>
+                <div class="row g-2">
+                    <?php if ($settings->time_slot_1): ?>
+                        <div class="col-6 col-md-3">
+                            <div class="time-slot-badge">
+                                <i class="bi bi-clock"></i> <?= $settings->time_slot_1->format('g:i A') ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($settings->time_slot_2): ?>
+                        <div class="col-6 col-md-3">
+                            <div class="time-slot-badge">
+                                <i class="bi bi-clock"></i> <?= $settings->time_slot_2->format('g:i A') ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($settings->time_slot_3): ?>
+                        <div class="col-6 col-md-3">
+                            <div class="time-slot-badge">
+                                <i class="bi bi-clock"></i> <?= $settings->time_slot_3->format('g:i A') ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($settings->time_slot_4): ?>
+                        <div class="col-6 col-md-3">
+                            <div class="time-slot-badge">
+                                <i class="bi bi-clock"></i> <?= $settings->time_slot_4->format('g:i A') ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="mt-3">
                     <small class="text-muted">
-                        <i class="bi bi-phone"></i>
-                        SMS notifications: <span class="text-success">Enabled</span>
+                        <i class="bi bi-envelope"></i>
+                        Email notifications: <?= $settings->email_enabled ? '<span class="text-success">Enabled</span>' : '<span class="text-muted">Disabled</span>' ?>
                     </small>
-                <?php endif; ?>
+                    <?php if ($settings->sms_enabled): ?>
+                        <br>
+                        <small class="text-muted">
+                            <i class="bi bi-phone"></i>
+                            SMS notifications: <span class="text-success">Enabled</span>
+                        </small>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
-    </div>
-<?php elseif ($settings && !$settings->is_active): ?>
-    <div class="section-card">
-        <div class="alert alert-info mb-0">
-            <i class="bi bi-info-circle"></i>
-            Reminders are currently disabled.
-            <?= $this->Html->link('Enable them in settings', ['action' => 'settings'], ['class' => 'alert-link']) ?>
+    <?php elseif ($settings && !$settings->is_active): ?>
+        <div class="section-card">
+            <div class="section-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h3><i class="bi bi-calendar-week"></i> Your Schedule</h3>
+                </div>
+                <div>
+                    <?= $this->Html->link(
+                        '<i class="bi bi-gear"></i> Settings',
+                        ['action' => 'settings'],
+                        [
+                            'class' => 'btn btn-sm btn-outline-primary',
+                            'escape' => false
+                        ]
+                    ) ?>
+                </div>
+            </div>
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle"></i>
+                    Reminders are currently disabled.
+                    <?= $this->Html->link('Enable them in settings', ['action' => 'settings'], ['class' => 'alert-link']) ?>
+                </div>
+            </div>
         </div>
-    </div>
-<?php endif; ?>
+    <?php endif; ?>
