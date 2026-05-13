@@ -30,7 +30,7 @@
 }
 
 body {
-    background: var(--c-bg);
+    background: var(--rc-page-bg, var(--c-bg)) fixed;
     color: var(--c-ink);
 }
 
