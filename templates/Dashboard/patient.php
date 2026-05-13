@@ -9,6 +9,8 @@ declare(strict_types=1);
  * @var mixed $latestResource
  */
 
+use App\Policy\UserAccess;
+
 $this->assign('title', 'Dashboard');
 
 // CSS
@@ -31,7 +33,19 @@ $patientName = trim(
 if ($patientName === '') {
     $patientName = (string)($currentUser->username ?? 'Patient');
 }
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);
+
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => null]
+];
 ?>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <div class="form-container patient-dashboard">
     <div class="form-header patient-dashboard-header">
