@@ -1,10 +1,10 @@
 <nav id="topbar" class="navbar navbar-expand-md navbar-dark py-3 w-100">
     <div class="container-fluid px-4">
         <?= $this->Html->link(
-            $this->Html->image('logo.png', [
-                'alt' => 'RespiraCare logo',
+            $this->ContentBlock->image('global-logo', [
+                'alt' => $this->ContentBlock->text('global-logo-alt'),
                 'class' => 'navbar-logo'
-            ]) . '<span class="navbar-wordmark">RespiraCare</span>',
+            ]) . '<span class="navbar-wordmark">' . $this->ContentBlock->text('global-site-name') . '</span>',
             ['controller' => 'Pages', 'action' => 'display', 'home'],
             ['class' => 'navbar-brand', 'escape' => false]
         ) ?>

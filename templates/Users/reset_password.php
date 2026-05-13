@@ -13,14 +13,14 @@ echo $this->Html->css('login', ['block' => true]);
         <!-- Logo/Brand -->
         <div class="login-brand">
             <i class="bi bi-heart-pulse-fill"></i>
-            <h1>RespiraCare</h1>
+            <h1><?= $this->ContentBlock->text('global-site-name') ?></h1>
             <p>Respiratory Health Management</p>
         </div>
 
         <!-- Form -->
         <div class="login-form">
-            <h2>Reset Password</h2>
-            <p class="login-subtitle">Enter your new password below.</p>
+            <h2><?= $this->ContentBlock->text('auth-reset-password-heading') ?></h2>
+            <p class="login-subtitle"><?= $this->ContentBlock->text('auth-reset-password-intro-text') ?></p>
 
             <?= $this->Form->create(null, ['class' => 'needs-validation']) ?>
 

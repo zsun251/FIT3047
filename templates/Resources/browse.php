@@ -3,15 +3,15 @@
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Resource> $resources
  */
-$this->assign('title', 'Resource Library');
+$this->assign('title', $this->ContentBlock->text('resources-library-title'));
 // CSS
 echo $this->Html->css('resources-browse', ['block' => true]);
 ?>
 <div class="resources-browse">
     <!-- Header -->
     <div class="page-header">
-        <h1>Resource Library</h1>
-        <p>Educational materials and insights about respiratory health</p>
+        <h1><?= $this->ContentBlock->text('resources-library-title') ?></h1>
+        <p><?= $this->ContentBlock->text('resources-library-intro-text') ?></p>
     </div>
 
     <!-- Filters -->
@@ -106,7 +106,7 @@ echo $this->Html->css('resources-browse', ['block' => true]);
         </div>
     <?php else: ?>
         <div class="empty-state">
-            <p>No resources found. Check back soon for new content.</p>
+            <p><?= $this->ContentBlock->text('resources-empty-text') ?></p>
         </div>
     <?php endif; ?>
 </div>

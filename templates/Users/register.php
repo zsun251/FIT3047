@@ -11,18 +11,18 @@ $this->Html->css('auth', ['block' => true]);
 <div class="auth-page">
     <div class="auth-card auth-card-wide">
         <div class="auth-brand-panel">
-            <?= $this->Html->image('logo.png', [
-                'alt' => 'RespiraCare logo',
+            <?= $this->ContentBlock->image('global-logo', [
+                'alt' => $this->ContentBlock->text('global-logo-alt'),
                 'class' => 'auth-logo-img'
             ]) ?>
 
-            <h1 class="auth-brand-name">RespiraCare</h1>
+            <h1 class="auth-brand-name"><?= $this->ContentBlock->text('global-site-name') ?></h1>
         </div>
 
         <div class="auth-form-panel">
             <div class="auth-heading">
-                <h2>Create Patient Account</h2>
-                <p>Set up your account to start using RespiraCare</p>
+                <h2><?= $this->ContentBlock->text('auth-register-heading') ?></h2>
+                <p><?= $this->ContentBlock->text('auth-register-intro-text') ?></p>
             </div>
 
             <?= $this->Flash->render() ?>

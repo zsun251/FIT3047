@@ -10,18 +10,18 @@ $this->Html->css('auth', ['block' => true]);
 <div class="auth-page">
     <div class="auth-card">
         <div class="auth-brand-panel">
-            <?= $this->Html->image('logo.png', [
-                'alt' => 'RespiraCare logo',
+            <?= $this->ContentBlock->image('global-logo', [
+                'alt' => $this->ContentBlock->text('global-logo-alt'),
                 'class' => 'auth-logo-img'
             ]) ?>
 
-            <h1 class="auth-brand-name">RespiraCare</h1>
+            <h1 class="auth-brand-name"><?= $this->ContentBlock->text('global-site-name') ?></h1>
         </div>
 
         <div class="auth-form-panel">
             <div class="auth-heading">
-                <h2>Welcome Back</h2>
-                <p>Sign in to access your account</p>
+                <h2><?= $this->ContentBlock->text('auth-login-heading') ?></h2>
+                <p><?= $this->ContentBlock->text('auth-login-intro-text') ?></p>
             </div>
 
             <?= $this->Flash->render() ?>

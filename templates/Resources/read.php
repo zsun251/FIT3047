@@ -127,8 +127,8 @@ echo $this->Html->css('resource-read', ['block' => true]);
                     <i class="bi bi-box-arrow-up-right"></i>
                 </div>
                 <div class="external-link-content">
-                    <h3>Visit External Resource</h3>
-                    <p>This resource is hosted on an external website.</p>
+                    <h3><?= $this->ContentBlock->text('resources-external-heading') ?></h3>
+                    <p><?= $this->ContentBlock->text('resources-external-text') ?></p>
                     <?= $this->Html->link(
                         'Continue to Resource <i class="bi bi-arrow-right"></i>',
                         $resource->url,
@@ -180,5 +180,3 @@ echo $this->Html->css('resource-read', ['block' => true]);
         </div>
     </footer>
 </article>
-
-

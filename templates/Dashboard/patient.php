@@ -59,7 +59,7 @@ if ($patientName === '') {
     <div class="form-info-alert">
         <i class="bi bi-info-circle"></i>
         <p>
-            <?= __('Use your dashboard to quickly review your latest health information, check upcoming appointments, and access helpful resources.') ?>
+            <?= $this->ContentBlock->text('dashboard-patient-help-text') ?>
         </p>
     </div>
 
