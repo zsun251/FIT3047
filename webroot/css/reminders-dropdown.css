@@ -58,7 +58,6 @@
    DESKTOP DROPDOWN BUTTON STYLING
    ============================================================================ */
 @media (min-width: 768px) {
-    /* Give the nav-item more space */
     #remindersDropdownItem {
         margin: 0 0.25rem;
     }
@@ -67,11 +66,11 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         padding: 0 !important;
         margin: 0;
-        border-radius: 10px;
+        border-radius: 8px;
         transition: all 0.2s ease;
         position: relative;
         background-color: transparent;
@@ -89,9 +88,9 @@
         color: #3b5bdb !important;
     }
 
-    /* Bell icon - use filled version like mobile */
+    /* Bell icon  */
     #remindersDropdown .bi-bell-fill {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         transition: transform 0.2s ease;
     }
 
@@ -102,8 +101,8 @@
 
     /* Badge positioning */
     #remindersDropdown .reminder-badge {
-        top: 6px !important;
-        right: 6px !important;
+        top: 4px !important;
+        right: 4px !important;
         font-size: 0.65rem;
         padding: 0.25rem 0.4rem;
         min-width: 18px;
