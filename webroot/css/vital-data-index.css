@@ -1,10 +1,331 @@
-/* Vital Data Specific Styles */
+/* ==========================================================================
+   Vital Data Index
+   ========================================================================== */
 
-/* Vitals summary */
+.vital-list-card {
+    background: #ffffff;
+    border: 1px solid #e7eaf4;
+    border-radius: 0.9rem;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+    overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Stat cards
+   -------------------------------------------------------------------------- */
+
+.stat-card {
+    border-radius: 0.95rem;
+    border: 1px solid #e6eaf2;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
+    padding: 1.25rem 1.25rem 1.05rem;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+}
+
+.stat-card-total {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border-color: #dbeafe;
+}
+
+.stat-card-symptoms {
+    background: linear-gradient(180deg, #ffffff 0%, #faf6ff 100%);
+    border-color: #e9d5ff;
+}
+
+.stat-card-today {
+    background: linear-gradient(180deg, #ffffff 0%, #f2f7ff 100%);
+    border-color: #c7d2fe;
+}
+
+.stat-card-week {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-color: #dbe4ee;
+}
+
+.stat-label {
+    color: #7b8099;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    line-height: 1.15;
+    font-weight: 700;
+    color: #172554;
+}
+
+.stat-card-total .stat-value {
+    color: #172554;
+}
+
+.stat-card-symptoms .stat-value {
+    color: #6f42c1;
+}
+
+.stat-card-today .stat-value {
+    color: #2563eb;
+}
+
+.stat-card-week .stat-value {
+    color: #475569;
+}
+
+/* --------------------------------------------------------------------------
+   Toolbar / integrated filters
+   -------------------------------------------------------------------------- */
+
+.vital-list-toolbar {
+    padding: 1.25rem;
+    border-bottom: 1px solid #eceff7;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+}
+
+.filter-toolbar-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.filter-toolbar-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr) max-content auto;
+    gap: 0.9rem;
+    align-items: start;
+}
+
+.filter-field .form-label,
+.filter-field label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #334155;
+    margin-bottom: 0.4rem;
+}
+
+.filter-field .form-control,
+.filter-field .form-select {
+    min-height: 42px;
+    border-radius: 0.65rem;
+    border-color: #d7ddea;
+    box-shadow: none;
+    background: #ffffff;
+}
+
+.filter-field .form-control:focus,
+.filter-field .form-select:focus {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.12);
+}
+
+.filter-field-date {
+    min-width: 0;
+}
+
+.filter-field-date .form-label,
+#dateFromGroup .form-label,
+#dateToGroup .form-label {
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.date-chip-group,
+.symptom-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 42px;
+    align-items: center;
+}
+
+.date-chip,
+.symptom-chip {
+    appearance: none;
+    border: 1px solid #d7dcef;
+    background: #ffffff;
+    color: #475569;
+    border-radius: 999px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.84rem;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.date-chip:hover,
+.symptom-chip:hover {
+    border-color: #c6c9ef;
+    background: #faf8ff;
+    color: #312e81;
+}
+
+.date-chip.is-active,
+.symptom-chip.is-active {
+    background: #f1edff;
+    border-color: #8b5cf6;
+    color: #4c1d95;
+    box-shadow: inset 0 0 0 1px rgba(139, 92, 246, 0.15);
+}
+
+.filter-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.7rem;
+    padding-top: 1.8rem;
+}
+
+.filter-actions .btn {
+    min-width: 110px;
+    height: 42px;
+    border-radius: 0.65rem;
+}
+
+.symptom-severity-row {
+    display: none;
+    grid-template-columns: minmax(240px, 320px);
+    gap: 0.9rem;
+    align-items: start;
+}
+
+.symptom-severity-row.is-visible {
+    display: grid;
+}
+
+.custom-date-row {
+    display: none;
+    grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+    gap: 0.9rem;
+    align-items: start;
+}
+
+.custom-date-row.is-visible {
+    display: grid;
+}
+
+.custom-date-row .filter-field .form-control {
+    min-height: 42px;
+}
+
+.custom-date-help {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid #d6dcff;
+    border-radius: 0.8rem;
+    background: linear-gradient(180deg, #f7f8ff 0%, #eef4ff 100%);
+}
+
+.custom-date-help-title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: #4338ca;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.custom-date-help-title i {
+    color: #4f46e5;
+    font-size: 0.95rem;
+}
+
+.custom-date-help-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+}
+
+.custom-date-help-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    font-weight: 500;
+}
+
+.custom-date-help-pill strong {
+    font-weight: 700;
+}
+
+.help-pill-end {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.help-pill-start {
+    background: #f5f3ff;
+    border-color: #ddd6fe;
+    color: #6d28d9;
+}
+
+.help-pill-range {
+    background: #ecfdf5;
+    border-color: #bbf7d0;
+    color: #047857;
+}
+
+/* --------------------------------------------------------------------------
+   Table / body shell
+   -------------------------------------------------------------------------- */
+
+.records-card-body {
+    padding-bottom: 1rem;
+}
+
+.vital-list-card .table-responsive {
+    border: 0;
+    border-radius: 0;
+}
+
+.vital-list-card .dataTables_wrapper {
+    padding: 1rem 1rem 0;
+}
+
+.vital-list-card .dataTables_wrapper .dataTables_length,
+.vital-list-card .dataTables_wrapper .dataTables_filter {
+    margin-bottom: 0.75rem;
+}
+
+.vital-list-card table.dataTable thead th,
+.vital-list-card table.dataTable thead td,
+.vital-list-card .table thead th {
+    background: #faf8ff;
+    color: #334155;
+    border-bottom: 1px solid #e7eaf4 !important;
+}
+
+.vital-list-card .table tbody tr {
+    transition: background-color 0.18s ease;
+}
+
+.vital-list-card .table tbody tr:hover {
+    background-color: #fafbff !important;
+}
+
+/* --------------------------------------------------------------------------
+   Vitals / symptoms
+   -------------------------------------------------------------------------- */
+
 .vitals-summary {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.28rem;
 }
 
 .vital-item {
@@ -18,59 +339,92 @@
     font-size: 1rem;
 }
 
-/* Symptoms container - compact grid */
 .symptoms-container {
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
-    max-width: 250px;
+    max-width: 280px;
 }
 
-/* Symptom card - small, clean design */
-.symptom-card {
+.symptom-card,
+.symptom-badge {
     display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
+    padding: 0.28rem 0.55rem;
+    border-radius: 0.4rem;
+    font-size: 0.76rem;
     font-weight: 500;
     line-height: 1.3;
     white-space: nowrap;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
-/* Severity colors - solid, no gradients for cleaner look */
 .severity-mild {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: #dff4e4;
+    color: #166534;
+    border: 1px solid #c4e8cc;
 }
 
 .severity-moderate {
-    background-color: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
+    background-color: #fff4cf;
+    color: #8a6500;
+    border: 1px solid #ffe59d;
 }
 
 .severity-severe {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background-color: #fde1e3;
+    color: #991b1b;
+    border: 1px solid #f7c8cd;
 }
 
-/* "+X more" badge */
 .more-badge {
-    background-color: #e9ecef;
-    color: #495057;
-    border: 1px solid #dee2e6;
+    background-color: #eef2f7;
+    color: #475569;
+    border: 1px solid #dbe2ea;
 }
 
-/* Mobile symptoms list */
+.no-symptoms {
+    font-style: italic;
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* --------------------------------------------------------------------------
+   Utility
+   -------------------------------------------------------------------------- */
+
+.nowrap {
+    white-space: nowrap;
+}
+
+small.text-muted {
+    font-size: 0.875em;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile
+   -------------------------------------------------------------------------- */
+
+.mobile-search-wrap {
+    padding: 1rem 1rem 0;
+}
+
+.records-mobile-body {
+    padding: 0 1rem 0.25rem;
+}
+
+.mobile-pagination-wrap {
+    margin: 0 1rem 1rem;
+    background: linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecf5;
+}
+
 .card-field .symptoms-container {
     max-width: 100%;
     margin-top: 0.5rem;
 }
 
-/* Mobile card styles */
 .card-field {
     margin-bottom: 0.75rem;
 }
@@ -82,13 +436,98 @@
     font-size: 0.9rem;
 }
 
-/* No wrap */
-.nowrap {
-    white-space: nowrap;
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1439.98px) {
+    .filter-toolbar-grid {
+        grid-template-columns: minmax(240px, 1fr) minmax(240px, 1fr);
+    }
+
+    .filter-field-date {
+        grid-column: 1 / 2;
+    }
+
+    .filter-actions {
+        grid-column: 2 / 3;
+        justify-content: flex-end;
+        padding-top: 1.8rem;
+    }
 }
 
-/* "No symptoms" text */
-.text-muted.small {
-    font-style: italic;
-    color: #6c757d;
+@media (max-width: 1199.98px) {
+    .filter-toolbar-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .filter-field-date {
+        grid-column: 1 / -1;
+    }
+
+    .filter-actions {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+        padding-top: 0;
+    }
+
+    .symptom-severity-row,
+    .custom-date-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .vital-list-toolbar {
+        padding: 1rem;
+    }
+
+    .filter-toolbar-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-field-date,
+    .filter-actions {
+        grid-column: auto;
+    }
+
+    .symptom-severity-row,
+    .custom-date-row {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions {
+        width: 100%;
+        justify-content: stretch;
+        flex-wrap: wrap;
+        padding-top: 0;
+    }
+
+    .filter-actions .btn {
+        width: 100%;
+    }
+
+    .date-chip-group,
+    .symptom-chip-group {
+        gap: 0.45rem;
+    }
+
+    .date-chip,
+    .symptom-chip {
+        font-size: 0.8rem;
+        padding: 0.48rem 0.75rem;
+    }
+
+    .custom-date-help {
+        padding: 0.8rem 0.85rem;
+    }
+
+    .custom-date-help-items {
+        flex-direction: column;
+    }
+
+    .custom-date-help-pill {
+        width: 100%;
+        border-radius: 0.7rem;
+    }
 }

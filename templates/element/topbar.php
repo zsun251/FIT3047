@@ -8,13 +8,12 @@ $identity = $this->request->getAttribute('identity');
     <div class="container-fluid px-4">
         <!-- Logo -->
         <?= $this->Html->link(
-            '<img src="/img/logo.png" alt="RespiraCare Logo" style="height:50px; width:auto;" class="align-middle me-2">' .
-            '<span class="d-flex flex-column align-items-start">' .
-            '<span class="navbar-logo-top">Respira</span>' .
-            '<span class="navbar-logo-bottom">Care</span>' .
-            '</span>',
+            $this->Html->image('logo.png', [
+                'alt' => 'RespiraCare logo',
+                'class' => 'navbar-logo'
+            ]) . '<span class="navbar-wordmark">RespiraCare</span>',
             ['controller' => 'Pages', 'action' => 'display', 'home'],
-            ['class' => 'navbar-brand d-flex align-items-center', 'escape' => false]
+            ['class' => 'navbar-brand', 'escape' => false]
         ) ?>
 
         <!-- Mobile: Reminders Bell + Hamburger Menu -->
@@ -38,7 +37,7 @@ $identity = $this->request->getAttribute('identity');
 
         <!-- Desktop Navigation -->
         <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold">
+            <ul class="navbar-nav ms-auto mb-2 mb-md-0 fw-semibold">
                 <?= $this->element('nav_links', ['context' => 'topbar']) ?>
             </ul>
         </div>
