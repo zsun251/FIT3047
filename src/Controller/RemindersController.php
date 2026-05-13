@@ -165,41 +165,46 @@ class RemindersController extends AppController
     public function settings()
     {
         $identity = $this->request->getAttribute('identity');
-
-        // Redirect staff users
-        if ($identity && UserAccess::isStaff($identity)) {
-            $this->Authorization->skipAuthorization();
-            $this->Flash->error(__('Only patients can access reminders.'));
-            return $this->redirect(['controller' => 'Dashboard', 'action' => 'staff']);
-        }
-
         $reminder = $this->Reminders->newEmptyEntity();
-        $this->Authorization->authorize($reminder, 'settings');
 
-        if (!$identity || !UserAccess::isPatient($identity)) {
-            $this->Flash->error(__('You do not have permission to access this page.'));
-            return $this->redirect(['controller' => 'Users', 'action' => 'login']);
+        // Check authorization
+        if (!$this->Authorization->can($reminder, 'settings')) {
+            $this->Flash->error(__('You do not have permission to access reminder settings.'));
+            return $this->redirect($this->getRedirectUrl());
         }
 
         $patientId = UserAccess::getPatientId($identity);
         $reminderSettingsTable = $this->fetchTable('ReminderSettings');
         $settings = $reminderSettingsTable->getPatientSettings($patientId);
 
+        // If no settings exist, create default ones
+        if (!$settings) {
+            $settings = $reminderSettingsTable->newEntity([
+                'patient_id' => $patientId,
+                'recurrence_pattern' => 'daily',
+                'time_slot_1' => '08:00:00',
+                'time_slot_2' => '12:00:00',
+                'time_slot_3' => '16:00:00',
+                'time_slot_4' => '20:00:00',
+                'is_active' => true,
+                'email_enabled' => false,
+                'sms_enabled' => false,
+            ]);
+        }
+
         if ($this->request->is(['post', 'put'])) {
             $data = $this->request->getData();
 
-            if ($settings) {
-                $settings = $reminderSettingsTable->patchEntity($settings, $data);
-            } else {
-                $data['patient_id'] = $patientId;
-                $settings = $reminderSettingsTable->newEntity($data);
-            }
+            // Ensure patient_id is set
+            $data['patient_id'] = $patientId;
+
+            $settings = $reminderSettingsTable->patchEntity($settings, $data);
 
             if ($reminderSettingsTable->save($settings)) {
                 $this->Flash->success(__('Your reminder settings have been saved.'));
                 return $this->redirect(['action' => 'index']);
             } else {
-                $this->Flash->error(__('The reminder settings could not be saved. Please, try again.'));
+                $this->Flash->error(__('The reminder settings could not be saved. Please try again.'));
             }
         }
 
