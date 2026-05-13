@@ -88,18 +88,17 @@ class RemindersTable extends Table
     /**
      * Get count of pending reminders for a patient
      *
-     * @param int $patientId
-     * @return int
+     * @param int $patientId Patient ID
+     * @return int Count of active reminders
      */
-    public function getPendingCount($patientId)
+    public function getPendingCount(int $patientId): int
     {
         $now = FrozenTime::now();
 
         return $this->find()
-            ->innerJoinWith('VitalsReminders', function (Query $q) use ($patientId) {
-                return $q->where(['VitalsReminders.patient_id' => $patientId]);
-            })
+            ->innerJoinWith('VitalsReminders')
             ->where([
+                'VitalsReminders.patient_id' => $patientId,
                 'Reminders.scheduled_at <=' => $now,
                 'Reminders.interaction_type IS' => null
             ])

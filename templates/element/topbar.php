@@ -1,7 +1,12 @@
 <?php
+
+use App\Policy\UserAccess;
+
+$identity = $this->request->getAttribute('identity');
 ?>
-    <nav id="topbar" class="navbar navbar-expand-md navbar-light bg-white py-3 shadow-sm w-100">
+<nav id="topbar" class="navbar navbar-expand-md navbar-light bg-white py-3 shadow-sm w-100">
     <div class="container-fluid px-4">
+        <!-- Logo -->
         <?= $this->Html->link(
             '<img src="/img/logo.png" alt="RespiraCare Logo" style="height:50px; width:auto;" class="align-middle me-2">' .
             '<span class="d-flex flex-column align-items-start">' .
@@ -11,16 +16,31 @@
             ['controller' => 'Pages', 'action' => 'display', 'home'],
             ['class' => 'navbar-brand d-flex align-items-center', 'escape' => false]
         ) ?>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
 
+        <!-- Mobile: Reminders Bell + Hamburger Menu -->
+        <div class="d-flex align-items-center gap-3 d-md-none">
+            <!-- Reminders Bell Icon (Mobile Only) -->
+            <?php if ($identity && UserAccess::isPatient($identity)): ?>
+                <?= $this->element('reminders_bell_mobile') ?>
+            <?php endif; ?>
+
+            <!-- Hamburger Toggle -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <!-- Desktop Navigation -->
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold">
                 <?= $this->element('nav_links', ['context' => 'topbar']) ?>
             </ul>
-
         </div>
     </div>
-</nav><?php
+</nav>

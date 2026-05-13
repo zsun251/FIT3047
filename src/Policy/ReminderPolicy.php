@@ -80,6 +80,15 @@ class ReminderPolicy
     }
 
     /**
+     * Check if user can access dropdown endpoint
+     */
+    public function canDropdown(IdentityInterface $user, Reminder $reminder)
+    {
+        // Only patients can get reminder dropdown
+        return UserAccess::isPatient($user);
+    }
+
+    /**
      * Check if a reminder belongs to the patient through vitals_reminders junction
      *
      * @param IdentityInterface $user

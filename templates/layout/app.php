@@ -31,7 +31,8 @@
         'styles',
         'app',
         'topbar',
-        'sidebar'
+        'sidebar',
+        'reminders-dropdown'
     ]) ?>
 
     <!-- DataTables CSS -->
