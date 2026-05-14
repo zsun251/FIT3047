@@ -183,29 +183,29 @@ class ContentBlocksSeed extends BaseSeed
             ],
 
             // -----------------------------------------------------------------
-            // Homepage: team image section
+            // Homepage: motivational banner
             // -----------------------------------------------------------------
             [
-                'parent' => 'home_team',
-                'label' => 'Team Section Heading',
-                'description' => 'Heading shown over the team image section.',
-                'slug' => 'home-team-heading',
+                'parent' => 'home_motivational_banner',
+                'label' => 'Banner Heading',
+                'description' => 'Heading shown over the homepage motivational banner.',
+                'slug' => 'home-motivational-banner-heading',
                 'type' => 'text',
                 'value' => 'Better Care, Together.',
             ],
             [
-                'parent' => 'home_team',
-                'label' => 'Team Section Text',
-                'description' => 'Short text shown over the team image section.',
-                'slug' => 'home-team-text',
+                'parent' => 'home_motivational_banner',
+                'label' => 'Banner Text',
+                'description' => 'Short text shown over the homepage motivational banner.',
+                'slug' => 'home-motivational-banner-text',
                 'type' => 'text',
                 'value' => 'RespiraCare connects you with your care team for smarter, easier respiratory health management.',
             ],
             [
-                'parent' => 'home_team',
-                'label' => 'Team Section Image',
-                'description' => 'Background image used in the Better Care, Together section.',
-                'slug' => 'home-team-image',
+                'parent' => 'home_motivational_banner',
+                'label' => 'Banner Image',
+                'description' => 'Background image used in the Better Care, Together motivational banner.',
+                'slug' => 'home-motivational-banner-image',
                 'type' => 'image',
                 'value' => 'homepage.png',
             ],
