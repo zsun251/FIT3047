@@ -3,9 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/png" href="/img/logo.png">
+    <link rel="icon" type="image/png" href="<?= h($this->Url->image($this->ContentBlock->imagePath('global-logo'))) ?>">
 
-    <title><?= $this->fetch('title') ?> - RespiraCare</title>
+    <title><?= $this->fetch('title') ?> - <?= $this->ContentBlock->text('global-site-name') ?></title>
 
     <?= $this->fetch('meta') ?>
 

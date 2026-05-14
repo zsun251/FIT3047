@@ -10,8 +10,12 @@ $this->Html->css('auth', ['block' => true]);
 <div class="auth-page">
     <div class="auth-card">
         <div class="auth-brand-panel">
-            <?= $this->Html->image('login image.png', [
-                'alt' => 'RespiraCare logo',
+<!--            --><?php //= $this->Html->image('login image.png', [
+//                'alt' => 'RespiraCare logo',
+//                'class' => 'auth-logo-img'
+//            ]) ?>
+            <?= $this->ContentBlock->image('global-logo', [
+                'alt' => $this->ContentBlock->text('global-logo-alt'),
                 'class' => 'auth-logo-img'
             ]) ?>
 
@@ -20,8 +24,8 @@ $this->Html->css('auth', ['block' => true]);
 
         <div class="auth-form-panel">
             <div class="auth-heading">
-                <h2>Welcome Back</h2>
-                <p>Sign in to access your account</p>
+                <h2><?= $this->ContentBlock->text('auth-login-heading') ?></h2>
+                <p><?= $this->ContentBlock->text('auth-login-intro-text') ?></p>
             </div>
 
             <?= $this->Flash->render() ?>

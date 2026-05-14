@@ -118,6 +118,13 @@ return function (RouteBuilder $routes): void {
                 ->setPass(['id'])
                 ->setMethods(['POST']);
 
+        /* Setup content block routes */
+        $builder->connect('/content-blocks', ['controller' => 'ContentBlocks', 'action' => 'index']);
+        $builder->connect('/content-blocks/index', ['controller' => 'ContentBlocks', 'action' => 'index']);
+        $builder->connect('/content-blocks/edit/{id}', ['controller' => 'ContentBlocks', 'action' => 'edit'])->setPatterns(['id' => '\d+'])->setPass(['id']);
+        $builder->connect('/content-blocks/restore/{id}', ['controller' => 'ContentBlocks', 'action' => 'restore'])->setPatterns(['id' => '\d+'])->setPass(['id']);
+        $builder->connect('/content-blocks/upload', ['controller' => 'ContentBlocks', 'action' => 'upload']);
+
         /*
          * Connect catchall routes for all controllers.
          *

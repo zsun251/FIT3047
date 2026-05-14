@@ -9,6 +9,7 @@ declare(strict_types=1);
 use App\Policy\UserAccess;
 
 $this->assign('title', 'My Appointments');
+$this->assign('title', $this->ContentBlock->text('appointments-patient-heading'));
 
 echo $this->Html->css(['form-shared', 'appointments',], ['block' => true]);
 
@@ -128,8 +129,7 @@ if ($isStaff) {
     <div class="form-header appointments-page-header">
 
         <div class="appointments-page-heading">
-            <h1><?= __('My Appointments') ?></h1>
-
+            <h1><?= $this->ContentBlock->text('appointments-patient-heading') ?></h1>
             <p class="appointments-page-subtitle">
                 <?= __('Review your upcoming appointments and your recent appointment history in one place.') ?>
             </p>
@@ -151,7 +151,7 @@ if ($isStaff) {
     <div class="form-info-alert">
         <i class="bi bi-info-circle"></i>
         <p>
-            <?= __('If you need help with an appointment, use the contact button below to send a message to the clinic.') ?>
+            <?= $this->ContentBlock->text('appointments-patient-help-text') ?>
         </p>
     </div>
 
@@ -220,11 +220,9 @@ if ($isStaff) {
                     <i class="bi bi-calendar2-x"></i>
                 </div>
 
-                <h3><?= __('No upcoming appointments') ?></h3>
+                <h3><?= $this->ContentBlock->text('appointments-empty-upcoming-heading') ?></h3>
 
-                <p>
-                    <?= __('You do not currently have any upcoming appointments scheduled.') ?>
-                </p>
+                <p><?= $this->ContentBlock->text('appointments-empty-upcoming-text') ?></p>
 
                 <div class="modern-empty-action">
                     <?= $this->Html->link(
