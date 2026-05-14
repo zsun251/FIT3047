@@ -47,6 +47,15 @@ class ResourcesTable extends Table
             'foreignKey' => 'clinician_id',
             'joinType' => 'INNER',
         ]);
+
+        $this->addBehavior('Timestamp', [
+            'events' => [
+                'Model.beforeSave' => [
+                    'created_at' => 'new',
+                    'updated_at' => 'always',
+                ],
+            ],
+        ]);
     }
 
     /**
@@ -96,11 +105,11 @@ class ResourcesTable extends Table
 
         $validator
             ->dateTime('created_at')
-            ->notEmptyDateTime('created_at');
+            ->allowEmptyDateTime('created_at');
 
         $validator
             ->dateTime('updated_at')
-            ->notEmptyDateTime('updated_at');
+            ->allowEmptyDateTime('updated_at');
 
         return $validator;
     }
