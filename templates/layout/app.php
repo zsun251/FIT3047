@@ -20,7 +20,8 @@
         'styles',
         'app',
         'topbar',
-        'sidebar'
+        'sidebar',
+        'reminders-dropdown'
     ]) ?>
 
     <?= $this->fetch('datatables_css') ?>

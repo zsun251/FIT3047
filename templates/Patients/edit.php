@@ -13,14 +13,19 @@ $this->assign('title', 'Edit Patient');
 // CSS
 echo $this->Html->css('form-shared', ['block' => true]);
 $identity = $this->request->getAttribute('identity');
+
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Patients', 'url' => ['controller' => 'Patients', 'action' => 'index']],
+    ['title' => 'Edit', 'url' => null]
+];
 ?>
 
-<!-- Back Link -->
-<?= $this->Html->link(
-    '<i class="bi bi-arrow-left"></i> Back to Patients',
-    ['action' => 'index'],
-    ['class' => 'back-link', 'escape' => false]
-) ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
+
 
 <div class="form-container">
     <!-- Form Header -->

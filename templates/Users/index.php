@@ -25,7 +25,17 @@ $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('users-index', ['block' => 'script']);
 
 $identity = $this->Identity->get();
+
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Users', 'url' => null]
+];
 ?>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
     <!-- Header Section -->
     <div class="dash-header d-flex justify-content-between align-items-center mb-4">
         <div>

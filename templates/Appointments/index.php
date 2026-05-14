@@ -128,7 +128,17 @@ foreach ($appointmentList as $appointment) {
         $stats[$normalizedStatus]++;
     }
 }
+// Build breadcrumbs based on user type
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Appointments', 'url' => null]
+];
 ?>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
     <div class="dash-header d-flex justify-content-between align-items-center mb-4">
         <div>

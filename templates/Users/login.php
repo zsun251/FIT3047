@@ -10,12 +10,16 @@ $this->Html->css('auth', ['block' => true]);
 <div class="auth-page">
     <div class="auth-card">
         <div class="auth-brand-panel">
+<!--            --><?php //= $this->Html->image('login image.png', [
+//                'alt' => 'RespiraCare logo',
+//                'class' => 'auth-logo-img'
+//            ]) ?>
             <?= $this->ContentBlock->image('global-logo', [
                 'alt' => $this->ContentBlock->text('global-logo-alt'),
                 'class' => 'auth-logo-img'
             ]) ?>
 
-            <h1 class="auth-brand-name"><?= $this->ContentBlock->text('global-site-name') ?></h1>
+            <h1 class="auth-brand-name">RespiraCare</h1>
         </div>
 
         <div class="auth-form-panel">

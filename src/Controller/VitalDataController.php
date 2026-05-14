@@ -192,6 +192,7 @@ class VitalDataController extends AppController
     {
         $vitalDataEntity = $this->VitalData->get($id, contain: ['Patients', 'Symptoms']);
 
+        // Check authorization
         if (!$this->Authorization->can($vitalDataEntity, 'view')) {
             $this->Flash->error(__('You do not have permission to view this vital data.'));
             return $this->redirect($this->getRedirectUrl());
@@ -219,12 +220,18 @@ class VitalDataController extends AppController
         $patientId = UserAccess::getPatientId($identity);
         $isStaff = UserAccess::isStaff($identity);
 
+        // Get reminder_id from query parameters if present
+        $reminderId = $this->request->getQuery('reminder_id');
+
         if ($this->request->is('post')) {
             $data = $this->request->getData();
 
+            // Handle patient_id based on user type
             if (!$isStaff) {
+                // Patient user - use their own patient ID
                 $data['patient_id'] = $patientId;
             } else {
+                // Staff user - validate they selected a patient
                 if (empty($data['patient_id'])) {
                     $this->Flash->error(__('Please select a patient.'));
                     $patients = $this->VitalData->Patients->find('list', [
@@ -284,12 +291,23 @@ class VitalDataController extends AppController
 
             if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
+
+                // Complete reminder for patient users
+                if (!$isStaff && $patientId) {
+                    $remindersTable = $this->fetchTable('Reminders');
+
+                    // Pass reminder_id if it was provided in the URL, otherwise null
+                    // If reminder_id is provided: completes that specific reminder
+                    // If null: completes the most recent active reminder
+                    $remindersTable->completeReminderForVitalData(
+                        $patientId,
+                        $vitalDataEntity->id,
+                        $reminderId ? (int)$reminderId : null
+                    );
+                }
+
                 if ($isStaff) {
                     return $this->redirect(['action' => 'index']);
-                }
-                if ($patientId) {
-                    $remindersTable = $this->fetchTable('Reminders');
-                    $remindersTable->completeReminderForVitalData($patientId, $vitalDataEntity->id);
                 }
                 return $this->redirect($this->getRedirectUrl());
             }
@@ -325,6 +343,7 @@ class VitalDataController extends AppController
     {
         $vitalDataEntity = $this->VitalData->get($id, contain: ['Symptoms']);
 
+        // Check authorization
         if (!$this->Authorization->can($vitalDataEntity, 'edit')) {
             $this->Flash->error(__('You do not have permission to edit this vital data.'));
             return $this->redirect($this->getRedirectUrl());
@@ -396,6 +415,7 @@ class VitalDataController extends AppController
         $this->request->allowMethod(['post', 'delete']);
         $vitalDataEntity = $this->VitalData->get($id);
 
+        // Check authorization
         if (!$this->Authorization->can($vitalDataEntity, 'delete')) {
             $this->Flash->error(__('You do not have permission to delete this vital data.'));
             return $this->redirect($this->getRedirectUrl());
@@ -421,6 +441,7 @@ class VitalDataController extends AppController
         $identity = $this->request->getAttribute('identity');
         $vitalDataEntity = $this->VitalData->newEmptyEntity();
 
+        // Check authorization
         if (!$this->Authorization->can($vitalDataEntity, 'viewHistory')) {
             $this->Flash->error(__('You do not have permission to access this page.'));
             return $this->redirect($this->getRedirectUrl());
@@ -441,6 +462,7 @@ class VitalDataController extends AppController
             ->contain(['Patients'])
             ->orderBy(['VitalData.recorded_at' => 'DESC']);
 
+        // Apply scope
         $query = $this->Authorization->applyScope($query, 'patientHistory');
 
         $vitalHistory = $this->paginate($query);

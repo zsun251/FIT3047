@@ -22,15 +22,19 @@ $itemClass = $context === 'sidebar' ? '' : 'nav-item';
 // Sidebar uses one section heading
 $showSections = $context === 'sidebar';
 
-// Sidebar and mobile links include icons
-$linkLabel = function (string $label, string $icon) use ($context): string {
+// Add icons to sidebar links, and mobile topbar links
+$linkLabel = function (string $label, string $icon, bool $showText = true) use ($context): string {
     if ($context === 'sidebar') {
         return '<i class="bi ' . h($icon) . '"></i><span>' . h($label) . '</span>';
     }
 
+    if ($context === 'topbar' && !$showText) {
+        return '<i class="bi ' . h($icon) . '"></i><span class="visually-hidden">' . h($label) . '</span>';
+    }
+
+    // Mobile or with text
     return '<i class="bi ' . h($icon) . ' topbar-mobile-icon"></i><span>' . h($label) . '</span>';
 };
-
 // Patients browse resources, staff manage resources
 $resourcesRoute = ['controller' => 'Resources', 'action' => 'browse'];
 if ($isStaff || $isClinician || $isAdmin) {
@@ -63,7 +67,7 @@ if ($isStaff) {
         </li>
     <?php endif; ?>
 
-    <?php if ($isLoggedIn): ?>
+    <?php if ($isPatient): ?>
         <li class="<?= $itemClass ?> topbar-always-show">
             <?= $this->Html->link($linkLabel('Resources', 'bi-journal-medical'), $resourcesRoute, ['class' => $linkClass . ($currentController === 'Resources' ? ' active' : ''), 'escape' => false]) ?>
         </li>
@@ -216,17 +220,33 @@ if ($isStaff) {
     <?php endif; ?>
 <?php endif; ?>
 
+<?php if ($context === 'topbar'): ?>
+    <!-- PATIENT REMINDERS NOTIFICATION DROPDOWN -->
+    <?php if ($isPatient): ?>
+        <?= $this->element('reminders_dropdown') ?>
+    <?php endif; ?>
+<?php endif; ?>
 
-
+<!-- ====================================================================
+     AUTHENTICATION LINK (Login/Logout)
+     Always visible in topbar on both desktop and mobile
+     Shows "Logout" for logged-in users, "Login" for guests
+     ==================================================================== -->
 <?php if ($context === 'topbar' || $context === 'mobile'): ?>
-
-
     <!-- Login or logout link -->
     <li class="<?= $itemClass ?> topbar-always-show">
         <?php if ($isLoggedIn): ?>
-            <?= $this->Html->link($linkLabel('Logout', 'bi-box-arrow-right'), ['controller' => 'Users', 'action' => 'logout'], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'logout' ? ' active' : ''), 'escape' => false]) ?>
+            <?= $this->Html->link(
+                $linkLabel('Logout', 'bi-box-arrow-right', $context === 'mobile'),
+                ['controller' => 'Users', 'action' => 'logout'],
+                ['class' => $linkClass . ' auth-button' . ($currentController === 'Users' && $currentAction === 'logout' ? ' active' : ''), 'escape' => false]
+            ) ?>
         <?php else: ?>
-            <?= $this->Html->link($linkLabel('Login', 'bi-box-arrow-in-right'), ['controller' => 'Users', 'action' => 'login'], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'login' ? ' active' : ''), 'escape' => false])?>
+            <?= $this->Html->link(
+                $linkLabel('Login', 'bi-box-arrow-in-right', $context === 'mobile'),
+                ['controller' => 'Users', 'action' => 'login'],
+                ['class' => $linkClass . ' auth-button' . ($currentController === 'Users' && $currentAction === 'login' ? ' active' : ''), 'escape' => false]
+            )?>
         <?php endif; ?>
     </li>
 <?php endif; ?>
