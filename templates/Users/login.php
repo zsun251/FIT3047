@@ -10,7 +10,7 @@ $this->Html->css('auth', ['block' => true]);
 <div class="auth-page">
     <div class="auth-card">
         <div class="auth-brand-panel">
-            <?= $this->Html->image('logo.png', [
+            <?= $this->Html->image('login image.png', [
                 'alt' => 'RespiraCare logo',
                 'class' => 'auth-logo-img'
             ]) ?>
