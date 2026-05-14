@@ -21,7 +21,7 @@ class TestEmailCommand extends Command
             // Basic email config
             $mailer
                 ->setEmailFormat('both')
-                ->setTo('noreply@u26s1187.iedev.org') // Your test email
+                ->setTo('msto0012@student.monash.edu')
                 ->setSubject('Test: Reset your account password');
 
             // Select email template
