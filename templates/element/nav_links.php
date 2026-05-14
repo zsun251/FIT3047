@@ -56,6 +56,11 @@ if ($isStaff) {
 
 
 <?php if ($context === 'topbar'): ?>
+    <!-- PATIENT REMINDERS NOTIFICATION DROPDOWN -->
+    <?php if ($isPatient): ?>
+        <?= $this->element('reminders_dropdown') ?>
+    <?php endif; ?>
+
     <!-- Desktop topbar links -->
     <li class="<?= $itemClass ?> topbar-always-show">
         <?= $this->Html->link($linkLabel('Home', 'bi-house'), ['controller' => 'Pages', 'action' => 'display', 'home'], ['class' => $linkClass . ($currentController === 'Pages' && $currentPage === 'home' ? ' active' : ''), 'escape' => false]) ?>
@@ -223,13 +228,6 @@ if ($isStaff) {
         <li class="<?= $itemClass ?>">
             <?= $this->Html->link($linkLabel('Profile', 'bi-person'), ['controller' => 'Users', 'action' => 'edit', $identity ? $identity->getIdentifier() : null], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : ''), 'escape' => false]) ?>
         </li>
-    <?php endif; ?>
-<?php endif; ?>
-
-<?php if ($context === 'topbar'): ?>
-    <!-- PATIENT REMINDERS NOTIFICATION DROPDOWN -->
-    <?php if ($isPatient): ?>
-        <?= $this->element('reminders_dropdown') ?>
     <?php endif; ?>
 <?php endif; ?>
 
