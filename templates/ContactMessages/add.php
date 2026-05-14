@@ -93,8 +93,9 @@
                     <!-- Hidden default status -->
                     <?= $this->Form->hidden('status', ['value' => 'unread']) ?>
 
-                    <!-- reCAPTCHA hidden field -->
-                    <?= $this->Recaptcha->hiddenField() ?>
+                    <!-- Cloudflare Turnstile widget -->
+                    <?= $this->Turnstile->hiddenField() ?>
+                    <?= $this->Turnstile->widget() ?>
 
                     <!-- Submit button -->
                     <?= $this->Form->button($this->ContentBlock->text('contact-submit-button-text'), [
@@ -109,6 +110,6 @@
     </div>
 
 <?php
-// Load reCAPTCHA scripts
-$this->Recaptcha->script('.recaptcha-form', 'contact');
-?>
+// Load Turnstile scripts
+$this->Turnstile->script();
+?>?>

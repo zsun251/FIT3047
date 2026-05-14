@@ -964,3 +964,11 @@ footer div {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Turnstile Recaptcha */
+.cf-turnstile {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
