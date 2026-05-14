@@ -8,17 +8,30 @@ use Authorization\IdentityInterface;
 
 class ResourcePolicy
 {
+    private function isOwner(IdentityInterface $user, Resource $resource): bool
+    {
+        return UserAccess::isClinician($user) &&
+               $resource->clinician_id === UserAccess::getClinicianId($user);
+    }
 
     /**
-     * View resource
+     * Staff index — all staff can see the full list
      */
-    public function canView(IdentityInterface $user, Resource $resource): bool
+    public function canIndex(IdentityInterface $user, Resource $resource): bool
     {
         return UserAccess::isStaff($user);
     }
 
     /**
-     * Add resource
+     * Staff detail view — admin sees all; clinician sees only their own
+     */
+    public function canView(IdentityInterface $user, Resource $resource): bool
+    {
+        return UserAccess::isAdmin($user) || $this->isOwner($user, $resource);
+    }
+
+    /**
+     * Add — admin (selects author) or clinician (auto-assigned)
      */
     public function canAdd(IdentityInterface $user, Resource $resource): bool
     {
@@ -26,32 +39,23 @@ class ResourcePolicy
     }
 
     /**
-     * Edit resource
+     * Edit — admin can edit any; clinician only their own
      */
     public function canEdit(IdentityInterface $user, Resource $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user) || $this->isOwner($user, $resource);
     }
 
     /**
-     * Delete resource
+     * Delete — admin can delete any; clinician only their own
      */
     public function canDelete(IdentityInterface $user, Resource $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user) || $this->isOwner($user, $resource);
     }
 
     /**
-     * List resources
-     */
-    public function canIndex(IdentityInterface $user, Resource $resource): bool
-    {
-        return UserAccess::isStaff($user);
-    }
-
-
-    /**
-     * Read resource
+     * Patient-facing read — staff and patients
      */
     public function canRead(IdentityInterface $user, Resource $resource): bool
     {

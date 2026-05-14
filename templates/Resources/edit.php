@@ -2,41 +2,375 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Resource $resource
- * @var string[]|\Cake\Collection\CollectionInterface $clinicians
  */
+
+$this->assign('title', 'Edit Resource');
+echo $this->Html->css('form-shared', ['block' => true]);
+echo $this->Html->css('resources-staff', ['block' => true]);
+
+$statusClass = $resource->status === 'published' ? 'bg-success' : 'bg-secondary';
+
+$breadcrumbs = [
+    ['title' => 'Dashboard',  'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Resources',  'url' => ['controller' => 'Resources',  'action' => 'index']],
+    ['title' => h($resource->title), 'url' => ['controller' => 'Resources', 'action' => 'view', $resource->id]],
+    ['title' => 'Edit', 'url' => null],
+];
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $resource->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $resource->id), 'class' => 'side-nav-item']
-            ) ?>
-            <?= $this->Html->link(__('List Resources'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
+
+<?= $this->element('page_header', ['breadcrumbs' => $breadcrumbs]) ?>
+
+<div class="form-container">
+
+    <!-- Form Header -->
+    <div class="form-header">
+        <div>
+            <h1><i class="bi bi-pencil-square" style="color:#0d6efd;margin-right:.5rem;"></i>Edit Resource</h1>
+            <small class="text-muted">ID #<?= $resource->id ?> &mdash; Last updated: <?= $resource->updated_at->format('M d, Y H:i') ?></small>
         </div>
-    </aside>
-    <div class="column column-80">
-        <div class="resources form content">
-            <?= $this->Form->create($resource) ?>
-            <fieldset>
-                <legend><?= __('Edit Resource') ?></legend>
-                <?php
-                    echo $this->Form->control('clinician_id', ['options' => $clinicians]);
-                    echo $this->Form->control('title');
-                    echo $this->Form->control('type');
-                    echo $this->Form->control('body');
-                    echo $this->Form->control('url');
-                    echo $this->Form->control('thumbnail_url');
-                    echo $this->Form->control('status');
-                    echo $this->Form->control('published_at', ['empty' => true]);
-                    echo $this->Form->control('created_at');
-                    echo $this->Form->control('updated_at');
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
+        <span class="badge <?= $statusClass ?>"><?= h(ucfirst($resource->status)) ?></span>
+    </div>
+
+    <!-- Read-only author info -->
+    <?php if (isset($resource->clinician->user)): ?>
+        <div class="resource-form-info">
+            <i class="bi bi-person-circle"></i>
+            <span>
+                Author: <strong><?= h($resource->clinician->user->first_name . ' ' . $resource->clinician->user->last_name) ?></strong>
+                <?php if ($resource->published_at): ?>
+                    &mdash; Published <?= $resource->published_at->format('F j, Y') ?>
+                <?php endif; ?>
+            </span>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($resource->getErrors()): ?>
+        <div class="alert alert-danger mb-4" role="alert">
+            <strong><i class="bi bi-exclamation-triangle-fill"></i> Could not save — please fix the following:</strong>
+            <ul class="mb-0 mt-2">
+                <?php foreach ($resource->getErrors() as $field => $errors): ?>
+                    <?php foreach ((array)$errors as $msg): ?>
+                        <li><strong><?= h(ucwords(str_replace('_', ' ', $field))) ?>:</strong> <?= h($msg) ?></li>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+    <?= $this->Form->create($resource) ?>
+
+    <!-- Basic Information -->
+    <div class="form-section">
+        <h2 class="form-section-title">
+            <i class="bi bi-card-text"></i> Basic Information
+        </h2>
+        <div class="form-grid">
+
+            <div class="form-group form-grid-full">
+                <?= $this->Form->control('title', [
+                    'label'     => 'Title',
+                    'required'  => true,
+                    'maxlength' => 255,
+                    'class'     => 'form-control',
+                    'id'        => 'resource-title',
+                ]) ?>
+            </div>
+
+            <div class="form-group">
+                <?= $this->Form->control('type', [
+                    'label'    => 'Resource Type',
+                    'type'     => 'select',
+                    'required' => true,
+                    'class'    => 'form-select',
+                    'options'  => [
+                        'article' => 'Article',
+                        'video'   => 'Video',
+                        'blog'    => 'Blog Post',
+                        'link'    => 'External Link',
+                        'news'    => 'News',
+                    ],
+                    'id' => 'resource-type',
+                ]) ?>
+            </div>
+
+            <div class="form-group">
+                <?= $this->Form->control('status', [
+                    'label'   => 'Status',
+                    'type'    => 'select',
+                    'class'   => 'form-select',
+                    'options' => [
+                        'published' => 'Published — visible to patients',
+                        'draft'     => 'Draft — hidden from patients',
+                    ],
+                ]) ?>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="form-section">
+        <h2 class="form-section-title">
+            <i class="bi bi-text-paragraph"></i> Content
+        </h2>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <?= $this->Form->control('body', [
+                'label'       => 'Body / Description',
+                'type'        => 'textarea',
+                'rows'        => 10,
+                'class'       => 'form-control',
+                'placeholder' => 'Write the main content of this resource here.',
+                'id'          => 'resource-body',
+            ]) ?>
+            <div class="char-counter" id="body-counter">0 characters</div>
+        </div>
+
+    </div>
+
+    <!-- Media & Links -->
+    <div class="form-section">
+        <h2 class="form-section-title">
+            <i class="bi bi-link-45deg"></i> Media &amp; Links
+        </h2>
+        <div class="form-grid">
+
+            <div class="form-group form-grid-full">
+                <?= $this->Form->control('url', [
+                    'label'       => 'External URL',
+                    'type'        => 'text',
+                    'class'       => 'form-control',
+                    'placeholder' => 'https://example.com/resource',
+                    'id'          => 'resource-url',
+                ]) ?>
+                <div class="form-text">
+                    <i class="bi bi-info-circle"></i>
+                    For <strong>Video</strong>: paste a YouTube URL to embed automatically.
+                    For <strong>Link</strong>: the URL patients will visit.
+                </div>
+            </div>
+
+            <div class="form-group form-grid-full">
+                <?= $this->Form->control('thumbnail_url', [
+                    'label'       => 'Thumbnail Image URL',
+                    'type'        => 'text',
+                    'class'       => 'form-control',
+                    'placeholder' => 'https://example.com/image.jpg',
+                    'id'          => 'resource-thumbnail',
+                ]) ?>
+                <div class="form-text"><i class="bi bi-image"></i> Optional cover image. Must start with https://</div>
+
+                <!-- Live image preview -->
+                <div id="thumbnail-preview-wrap" style="display:none; margin-top:.75rem;">
+                    <p style="font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:#868e96;margin-bottom:.5rem;">Preview</p>
+                    <img id="thumbnail-preview-img"
+                         src=""
+                         alt="Thumbnail preview"
+                         style="max-height:180px; max-width:100%; border-radius:.375rem; border:1px solid #e9ecef; object-fit:cover;"
+                         onerror="this.parentElement.style.display='none'">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Save Changes
+        </button>
+        <button type="button" class="btn btn-outline-info" onclick="openPreview()">
+            <i class="bi bi-eye"></i> Preview
+        </button>
+        <?= $this->Html->link(
+            '<i class="bi bi-arrow-left"></i> Back to Resource',
+            ['action' => 'view', $resource->id],
+            ['class' => 'btn btn-outline-secondary', 'escape' => false]
+        ) ?>
+        <?= $this->Html->link(
+            '<i class="bi bi-list-ul"></i> All Resources',
+            ['action' => 'index'],
+            ['class' => 'btn btn-outline-secondary', 'escape' => false]
+        ) ?>
+        <?= $this->Form->postLink(
+            '<i class="bi bi-trash"></i> Delete',
+            ['action' => 'delete', $resource->id],
+            [
+                'method'  => 'delete',
+                'confirm' => __('Delete "{0}"? This cannot be undone.', $resource->title),
+                'class'   => 'btn btn-outline-danger ms-auto',
+                'escape'  => false,
+                'block'   => true,
+            ]
+        ) ?>
+    </div>
+
+    <?= $this->Form->end() ?>
+    <?= $this->fetch('postLink') ?>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#f8f9fa;border-bottom:1px solid #e9ecef;">
+                <div>
+                    <h5 class="modal-title" id="previewModalLabel">
+                        <i class="bi bi-eye" style="color:#0d6efd;"></i> Patient Preview
+                    </h5>
+                    <small class="text-muted">This is how patients will see this resource. Unsaved changes are shown but not yet saved.</small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="preview-modal-body" style="padding:2rem;min-height:300px;">
+            </div>
+            <div class="modal-footer" style="background:#f8f9fa;justify-content:space-between;">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left"></i> Back to Edit
+                </button>
+                <button type="button" class="btn btn-success" onclick="publishFromPreview()">
+                    <i class="bi bi-check-circle"></i> Publish &amp; Save
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+<?= $this->Html->scriptBlock(<<<'JS'
+    // Character counter for body
+    const bodyEl = document.getElementById('resource-body');
+    const counter = document.getElementById('body-counter');
+    if (bodyEl && counter) {
+        const update = () => {
+            const n = bodyEl.value.length;
+            counter.textContent = n.toLocaleString() + ' character' + (n !== 1 ? 's' : '');
+        };
+        bodyEl.addEventListener('input', update);
+        update();
+    }
+
+    // Live image preview for thumbnail URL
+    const thumbEl  = document.getElementById('resource-thumbnail');
+    const prevWrap = document.getElementById('thumbnail-preview-wrap');
+    const prevImg  = document.getElementById('thumbnail-preview-img');
+
+    function updateThumbPreview() {
+        const val = thumbEl ? thumbEl.value.trim() : '';
+        if (val && prevWrap && prevImg) {
+            prevImg.src = val;
+            prevWrap.style.display = 'block';
+        } else if (prevWrap) {
+            prevWrap.style.display = 'none';
+        }
+    }
+
+    if (thumbEl) {
+        thumbEl.addEventListener('input', updateThumbPreview);
+        updateThumbPreview(); // show existing value on page load
+    }
+
+    // ── Preview modal ────────────────────────────────────────────────────────
+    function esc(s) {
+        const d = document.createElement('div');
+        d.appendChild(document.createTextNode(s));
+        return d.innerHTML;
+    }
+
+    function openPreview() {
+        const title = document.getElementById('resource-title')?.value.trim() || '';
+        const type  = document.getElementById('resource-type')?.value || 'article';
+        const body  = document.getElementById('resource-body')?.value.trim() || '';
+        const url   = document.getElementById('resource-url')?.value.trim() || '';
+        const thumb = document.getElementById('resource-thumbnail')?.value.trim() || '';
+
+        const typeConfig = {
+            article: { icon: 'bi-file-text',       label: 'Article',           color: 'type-article' },
+            video:   { icon: 'bi-play-circle-fill', label: 'Video',             color: 'type-video'   },
+            blog:    { icon: 'bi-journal-text',     label: 'Blog Post',         color: 'type-blog'    },
+            news:    { icon: 'bi-newspaper',        label: 'News',              color: 'type-news'    },
+            link:    { icon: 'bi-link-45deg',       label: 'External Resource', color: 'type-link'    },
+        };
+        const cfg = typeConfig[type] || typeConfig.article;
+
+        // Thumbnail
+        const thumbHtml = thumb
+            ? `<div style="margin:0 auto 2rem;">
+                   <img src="${esc(thumb)}" alt="${esc(title)}"
+                        style="width:100%;max-height:400px;object-fit:cover;border-radius:.5rem;border:1px solid #e9ecef;">
+               </div>`
+            : '';
+
+        // Media (video embed or external link box)
+        let mediaHtml = '';
+        if (type === 'video' && url) {
+            const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\&\?\/]+)/);
+            mediaHtml = yt
+                ? `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:.5rem;margin-bottom:1.5rem;">
+                       <iframe src="https://www.youtube.com/embed/${esc(yt[1])}"
+                               style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+                               allowfullscreen></iframe>
+                   </div>`
+                : `<a href="${esc(url)}" target="_blank" style="color:#0d6efd;">
+                       <i class="bi bi-box-arrow-up-right"></i> ${esc(url)}
+                   </a>`;
+        } else if (type === 'link' && url) {
+            mediaHtml = `<div style="border:1px solid #e9ecef;border-radius:.5rem;padding:1.25rem;display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;background:#f8f9fa;">
+                <i class="bi bi-box-arrow-up-right" style="font-size:1.5rem;color:#0d6efd;flex-shrink:0;"></i>
+                <div>
+                    <div style="font-weight:600;margin-bottom:.25rem;">Visit External Resource</div>
+                    <div style="font-size:.875rem;color:#6c757d;margin-bottom:.75rem;">This resource is hosted on an external website.</div>
+                    <a href="${esc(url)}" target="_blank" class="btn btn-sm btn-primary">
+                        Continue to Resource <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>`;
+        }
+
+        // Reading time + body paragraphs
+        let readTimeBadge = '';
+        let bodyHtml = '';
+        if (body) {
+            const words = body.trim().split(/\s+/).filter(Boolean).length;
+            readTimeBadge = `<span><i class="bi bi-clock"></i> ${Math.max(1, Math.ceil(words / 200))} min read</span>`;
+            bodyHtml = body.split(/\n\n+/).filter(p => p.trim())
+                .map(p => `<p style="margin-bottom:1rem;">${esc(p).replace(/\n/g, '<br>')}</p>`)
+                .join('');
+        }
+
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        document.getElementById('preview-modal-body').innerHTML = `
+            <div style="max-width:800px;margin:0 auto;font-family:inherit;">
+                <div style="margin-bottom:1rem;">
+                    <span class="type-badge ${cfg.color}"
+                          style="position:static;display:inline-flex;align-items:center;gap:.35rem;
+                                 padding:.3rem .75rem;border-radius:2rem;font-size:.75rem;font-weight:600;">
+                        <i class="bi ${cfg.icon}"></i> ${cfg.label}
+                    </span>
+                    <span class="badge bg-warning text-dark ms-2" style="font-size:.7rem;vertical-align:middle;">Preview</span>
+                </div>
+                <h1 style="font-size:2rem;font-weight:700;margin:0 0 1rem;line-height:1.3;color:#1f2937;">
+                    ${title ? esc(title) : '<em style="color:#9ca3af;font-weight:400;">No title entered</em>'}
+                </h1>
+                <div style="display:flex;gap:1.25rem;flex-wrap:wrap;font-size:.875rem;color:#6c757d;margin-bottom:1.5rem;">
+                    <span><i class="bi bi-calendar3"></i> ${today}</span>
+                    ${readTimeBadge}
+                </div>
+                ${thumbHtml}
+                ${mediaHtml}
+                ${bodyHtml
+                    ? `<div style="line-height:1.8;font-size:1rem;color:#374151;">${bodyHtml}</div>`
+                    : '<p style="color:#9ca3af;font-style:italic;">No content added yet.</p>'}
+            </div>`;
+
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('previewModal')).show();
+    }
+
+    function publishFromPreview() {
+        // Ensure status is set to published before saving
+        const statusEl = document.querySelector('[name="status"]');
+        if (statusEl) statusEl.value = 'published';
+        bootstrap.Modal.getInstance(document.getElementById('previewModal'))?.hide();
+        document.querySelector('form').submit();
+    }
+JS, ['block' => 'script']) ?>
