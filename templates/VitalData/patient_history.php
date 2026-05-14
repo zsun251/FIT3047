@@ -7,7 +7,7 @@
 
 use App\Policy\UserAccess;
 
-$this->assign('title', 'My Health Records');
+$this->assign('title', $this->ContentBlock->text('health-records-patient-heading'));
 
 // CSS
 echo $this->Html->css('patient-health-records', ['block' => true]);
@@ -87,8 +87,8 @@ if ($isStaff) {
     <!-- Page Header -->
     <div class="page-header">
         <div class="header-content">
-            <h1><i class="bi bi-heart-pulse"></i> My Health Records</h1>
-            <p class="subtitle">Track your vital signs and health trends over time</p>
+            <h1><i class="bi bi-heart-pulse"></i> <?= $this->ContentBlock->text('health-records-patient-heading') ?></h1>
+            <p class="subtitle"><?= $this->ContentBlock->text('health-records-patient-intro-text') ?></p>
         </div>
         <div class="header-actions">
             <?= $this->Html->link(
@@ -122,8 +122,8 @@ if ($isStaff) {
             <div class="empty-icon">
                 <i class="bi bi-clipboard2-pulse"></i>
             </div>
-            <h2>No Health Records Yet</h2>
-            <p>Start tracking your vital signs by adding your first health data entry.</p>
+            <h2><?= $this->ContentBlock->text('health-records-empty-heading') ?></h2>
+            <p><?= $this->ContentBlock->text('health-records-empty-text') ?></p>
             <?= $this->Html->link(
                 '<i class="bi bi-plus-circle"></i> Add Your First Entry',
                 ['controller' => 'VitalData', 'action' => 'add'],
@@ -198,7 +198,7 @@ if ($isStaff) {
         <?php else: ?>
             <div class="chart-notice">
                 <i class="bi bi-info-circle"></i>
-                <p>Add at least 2 health records to see trend charts.</p>
+                <p><?= $this->ContentBlock->text('health-records-insufficient-chart-data-text') ?></p>
             </div>
         <?php endif; ?>
 

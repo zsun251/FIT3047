@@ -41,6 +41,7 @@ class AppView extends View
 
         // Load the Authentication Identity helper
         $this->loadHelper('Authentication.Identity');
+        $this->loadHelper('ContentBlocks.ContentBlock');
 
         // Set Bootstrap Form modifications
         $this->Form->setTemplates([
