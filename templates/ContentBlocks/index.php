@@ -11,6 +11,9 @@ $this->Html->css('content-blocks', ['block' => true]);
 
 $this->Html->script('content-blocks-index', ['block' => true]);
 
+$fallbackBackUrl = $this->Url->build(['controller' => 'Dashboard', 'action' => 'staff']);
+$backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
+
 $contentBlocksGrouped = $contentBlocksGrouped ?? [];
 
 $homeParents = [
@@ -229,20 +232,27 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
 
 <div class="content-blocks-page">
     <div class="content-blocks-page-header">
-        <div>
-            <h1><?= __('Site Content') ?></h1>
-            <p><?= __('Edit the text, images, and icons used across the public website and patient-facing pages.') ?></p>
+        <?= $this->Html->link(
+            '<i class="bi bi-arrow-left"></i>',
+            $backUrl,
+            [
+                'class' => 'content-blocks-back-button',
+                'escape' => false,
+                'aria-label' => __('Return to previous page'),
+            ]
+        ) ?>
+
+        <div class="content-blocks-breadcrumb">
+            <?= $this->Html->link(__('Dashboard'), ['controller' => 'Dashboard', 'action' => 'staff']) ?>
+            <span>/</span>
+            <span><?= __('Site Content') ?></span>
         </div>
+
+        <h1><?= __('Site Content') ?></h1>
+        <p><p><?= __('Edit the text, images, and icons used across the public website.') ?></p></p>
     </div>
 
     <div class="content-blocks-admin-card">
-        <div class="content-blocks-card-header">
-            <div>
-                <h2><?= __('Editable Content Sections') ?></h2>
-                <p><?= __('Open a section below, choose the content item you want to change, then use Edit to update the saved value.') ?></p>
-            </div>
-        </div>
-
         <div class="content-block-filter-panel">
             <div class="content-block-filter-group">
                 <div class="content-block-filter-label">
