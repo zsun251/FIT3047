@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Service\RecaptchaService;
+use App\Service\TurnstileService;
 
 /**
  * ContactMessages Controller
@@ -93,14 +93,15 @@ class ContactMessagesController extends AppController
         }
 
         if ($this->request->is('post')) {
-            $recaptcha = new RecaptchaService();
-            $token = $this->request->getData('g_recaptcha_response');
-            if (!$recaptcha->verify($token, 'contact')) {
-                $this->Flash->error('reCAPTCHA verification failed. Please try again.');
+            $turnstile = new TurnstileService();
+            $token = $this->request->getData('cf_turnstile_response');
+            $remoteIp = $this->request->clientIp();
+
+            if (!$turnstile->verify($token, $remoteIp)) {
+                $this->Flash->error('Security verification failed. Please try again.');
                 $this->set(compact('contactMessage'));
                 return;
-            }
-            // Process form
+            }            // Process form
             $contactMessage = $this->ContactMessages->patchEntity(
                 $contactMessage,
                 $this->request->getData()
