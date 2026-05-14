@@ -5,15 +5,18 @@
  * @var string[]|\Cake\Collection\CollectionInterface $patients
  * @var string[]|\Cake\Collection\CollectionInterface $symptoms
  */
+
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Health Records', 'url' => ['controller' => 'VitalData', 'action' => 'index']],
+    ['title' => 'Edit', 'url' => null]
+];
 ?>
 
-<div class="back-link">
-    <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i><span>Back to Health Records</span>',
-        ['controller' => 'VitalData', 'action' => 'index'],
-        ['escape' => false]
-    ) ?>
-</div>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <div class="row">
 

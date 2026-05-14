@@ -15,6 +15,49 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  *
  * Generates daily vital data reminder records for all active patients based on their reminder settings.
  * Should be run daily via cron (e.g., at midnight).
+ *
+ * ## Usage Examples:
+ *
+ * ### Basic Generation:
+ * ```bash
+ * # Generate reminders for today
+ * bin/cake generate_patient_vital_data_reminders
+ *
+ * # Generate reminders for specific date
+ * bin/cake generate_patient_vital_data_reminders --date 2026-05-15
+ * bin/cake generate_patient_vital_data_reminders -d 2026-05-15
+ *
+ * # Generate reminders for specific patient
+ * bin/cake generate_patient_vital_data_reminders --patient-id 1
+ * bin/cake generate_patient_vital_data_reminders -p 1
+ *
+ * # Combine options with verbose output
+ * bin/cake generate_patient_vital_data_reminders --date 2026-05-15 --patient-id 1 -v
+ * ```
+ *
+ * ### Cleanup Operations:
+ * ```bash
+ * # Clean up reminders older than 30 days
+ * bin/cake generate_patient_vital_data_reminders --clean 30
+ * bin/cake generate_patient_vital_data_reminders -c 30
+ *
+ * # Clean up reminders older than 60 days
+ * bin/cake generate_patient_vital_data_reminders --clean 60
+ *
+ * # Delete ALL reminders (requires confirmation)
+ * bin/cake generate_patient_vital_data_reminders --clean-all
+ * ```
+ *
+ * ### Cron Setup:
+ * ```bash
+ * # Generate reminders daily at 12:01 AM
+ * 1 0 * * * /usr/bin/php /path/to/bin/cake.php generate_patient_vital_data_reminders
+ *
+ * # Clean up old reminders weekly (Sundays at 2 AM)
+ * 0 2 * * 0 /usr/bin/php /path/to/bin/cake.php generate_patient_vital_data_reminders --clean 30
+ * ```
+ *
+ * @see https://book.cakephp.org/4/en/console-commands.html
  */
 class GeneratePatientVitalDataRemindersCommand extends Command
 {
@@ -43,6 +86,47 @@ class GeneratePatientVitalDataRemindersCommand extends Command
             'default' => null
         ]);
 
+        $parser->addOption('clean', [
+            'short' => 'c',
+            'help' => 'Clean up old reminders (older than specified days)',
+            'boolean' => false,
+            'default' => null
+        ]);
+
+        $parser->addOption('clean-all', [
+            'help' => 'Delete ALL reminders (use with caution!)',
+            'boolean' => true,
+            'default' => false
+        ]);
+
+        $parser->setEpilog([
+            '<info>Quick Examples:</info>',
+            '',
+            '  <comment># Generate for today</comment>',
+            '  bin/cake generate_patient_vital_data_reminders',
+            '',
+            '  <comment># Generate for specific date</comment>',
+            '  bin/cake generate_patient_vital_data_reminders --date 2026-05-15',
+            '',
+            '  <comment># Generate for specific patient with verbose output</comment>',
+            '  bin/cake generate_patient_vital_data_reminders --patient-id 1 -v',
+            '',
+            '  <comment># Clean up reminders older than 30 days</comment>',
+            '  bin/cake generate_patient_vital_data_reminders --clean 30',
+            '',
+            '  <comment># Delete ALL reminders (requires confirmation)</comment>',
+            '  bin/cake generate_patient_vital_data_reminders --clean-all',
+            '',
+            '<info>Options:</info>',
+            '  -d, --date        Date to generate for (YYYY-MM-DD)',
+            '  -p, --patient-id  Generate for specific patient only',
+            '  -c, --clean       Clean reminders older than N days',
+            '  --clean-all       Delete ALL reminders (dangerous!)',
+            '  -v, --verbose     Show detailed output',
+            '  -h, --help        Display this help message',
+            '',
+        ]);
+
         return $parser;
     }
 
@@ -54,6 +138,29 @@ class GeneratePatientVitalDataRemindersCommand extends Command
      * @return int|null The exit code or null for success
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
+    {
+        // Check if cleanup is requested
+        if ($args->getOption('clean-all')) {
+            return $this->cleanAllReminders($io);
+        }
+
+        if ($args->getOption('clean')) {
+            $days = (int)$args->getOption('clean');
+            return $this->cleanOldReminders($io, $days);
+        }
+
+        // Otherwise, generate reminders
+        return $this->generateReminders($args, $io);
+    }
+
+    /**
+     * Generate reminders for patients
+     *
+     * @param \Cake\Console\Arguments $args The command arguments
+     * @param \Cake\Console\ConsoleIo $io The console IO
+     * @return int Exit code
+     */
+    protected function generateReminders(Arguments $args, ConsoleIo $io): int
     {
         $date = $args->getOption('date');
         $specificPatientId = $args->getOption('patient-id');
@@ -200,6 +307,76 @@ class GeneratePatientVitalDataRemindersCommand extends Command
             $io->out("Errors encountered: <error>{$errors}</error>");
         }
 
+        $io->out("");
+
+        return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Clean up old reminders
+     *
+     * @param \Cake\Console\ConsoleIo $io The console IO
+     * @param int $days Number of days to keep
+     * @return int Exit code
+     */
+    protected function cleanOldReminders(ConsoleIo $io, int $days): int
+    {
+        $io->out("<info>===================================</info>");
+        $io->out("<info>Reminder Cleanup</info>");
+        $io->out("<info>===================================</info>");
+        $io->out("Deleting reminders older than <question>{$days} days</question>");
+        $io->out("");
+
+        $remindersTable = $this->fetchTable('Reminders');
+        $cutoffDate = FrozenTime::now()->subDays($days);
+
+        // Only delete completed or dismissed reminders
+        $deleted = $remindersTable->deleteAll([
+            'scheduled_at <' => $cutoffDate,
+            'interaction_type IS NOT' => null
+        ]);
+
+        $io->success("✓ Deleted {$deleted} old reminder(s)");
+        $io->out("");
+
+        return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Delete ALL reminders (dangerous!)
+     *
+     * @param \Cake\Console\ConsoleIo $io The console IO
+     * @return int Exit code
+     */
+    protected function cleanAllReminders(ConsoleIo $io): int
+    {
+        $io->out("<error>===================================</error>");
+        $io->out("<error>WARNING: DELETE ALL REMINDERS</error>");
+        $io->out("<error>===================================</error>");
+        $io->out("");
+
+        if (!$io->askChoice('Are you sure you want to delete ALL reminders?', ['y', 'n'], 'n') === 'y') {
+            $io->warning('Operation cancelled.');
+            return static::CODE_SUCCESS;
+        }
+
+        $io->out("");
+        $io->out("Type 'DELETE ALL' to confirm:");
+        $confirmation = $io->ask('Confirmation');
+
+        if ($confirmation !== 'DELETE ALL') {
+            $io->warning('Operation cancelled. Confirmation did not match.');
+            return static::CODE_SUCCESS;
+        }
+
+        $remindersTable = $this->fetchTable('Reminders');
+
+        $totalCount = $remindersTable->find()->count();
+        $io->out("Deleting <error>{$totalCount}</error> reminders...");
+
+        $deleted = $remindersTable->deleteAll(['id IS NOT' => null]);
+
+        $io->success("✓ Deleted {$deleted} reminder(s)");
         $io->out("");
 
         return static::CODE_SUCCESS;

@@ -17,14 +17,17 @@ $initials = strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name
 
 // Type badge class
 $typeBadgeClass = 'badge-' . strtolower($user->type);
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Users', 'url' => ['controller' => 'Users', 'action' => 'index']],
+    ['title' => 'View', 'url' => null]
+];
 ?>
 
-<!-- Back Link -->
-<?= $this->Html->link(
-    '<i class="bi bi-arrow-left"></i> Back to Users',
-    ['action' => 'index'],
-    ['class' => 'back-link', 'escape' => false]
-) ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <div class="view-container">
     <!-- Header -->

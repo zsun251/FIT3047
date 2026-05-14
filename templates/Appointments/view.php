@@ -72,13 +72,30 @@ $getClinicianName = function ($appointment): string {
 
     return 'Clinician #' . (int)$appointment->clinician_id;
 };
+
+
+// Build breadcrumbs based on user type
+$breadcrumbs = [];
+
+if ($isStaff) {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+        ['title' => 'Appointments', 'url' => ['controller' => 'Appointments', 'action' => 'index']],
+        ['title' => 'View', 'url' => null]
+    ];
+} else {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'Upcoming Appointments', 'url' => ['controller' => 'Appointments', 'action' => 'upcoming-appointments']],
+        ['title' => 'View', 'url' => null]
+    ];
+}
 ?>
 
-<?= $this->Html->link(
-    '<i class="bi bi-arrow-left"></i> Back to Appointments',
-    ['action' => 'index'],
-    ['class' => 'back-link', 'escape' => false]
-) ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <div class="form-container appointments-page appointments-detail-page">
     <div class="form-header appointments-page-header">

@@ -15,7 +15,18 @@ echo $this->Html->css([
     'form-shared',
     'appointments',
 ], ['block' => true]);
+
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+        ['title' => 'Appointments', 'url' => ['controller' => 'Appointments', 'action' => 'index']],
+        ['title' => 'Edit', 'url' => null]
+    ];
 ?>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <?= $this->Html->link(
     '<i class="bi bi-arrow-left"></i> Back to Appointments',

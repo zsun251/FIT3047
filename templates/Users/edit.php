@@ -7,6 +7,9 @@
  * @var int|null $clinicianId
  * @var int|null $patientId
  */
+
+use App\Policy\UserAccess;
+
 $this->assign('title', $isPatientSelfEdit ? 'My Profile' : 'Edit User');
 
 // CSS
@@ -14,22 +17,32 @@ echo $this->Html->css('form-shared', ['block' => true]);
 
 // Type badge class
 $typeBadgeClass = 'badge-' . strtolower($user->type);
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);
+
+// Build breadcrumbs based on user type
+$breadcrumbs = [];
+
+if ($isStaff) {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+        ['title' => 'Users', 'url' => ['controller' => 'Users', 'action' => 'index']],
+        ['title' => 'Edit User', 'url' => null]
+    ];
+} else {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'Edit Profile', 'url' => null]
+    ];
+}
 ?>
 
-<!-- Back Link -->
-<?php if (!$isPatientSelfEdit): ?>
-    <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i> Back to Users',
-        ['action' => 'index'],
-        ['class' => 'back-link', 'escape' => false]
-    ) ?>
-<?php else: ?>
-    <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i> Back to Dashboard',
-        ['controller' => 'Dashboard', 'action' => 'patient'],
-        ['class' => 'back-link', 'escape' => false]
-    ) ?>
-<?php endif; ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
+
 
 <div class="form-container">
     <!-- Form Header -->

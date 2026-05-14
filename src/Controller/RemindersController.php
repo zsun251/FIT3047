@@ -1,5 +1,5 @@
 <?php
-// src/Controller/RemindersController.php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -19,91 +19,87 @@ class RemindersController extends AppController
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
+
+        $action = $this->request->getParam('action');
+
+        // Set JSON view for API endpoints
+        if (in_array($action, ['count', 'dropdown'])) {
+            $this->viewBuilder()->setClassName('Json');
+        }
     }
 
     /**
      * Index method - Display all reminders for logged-in patient
      */
-public function index()
-{
-    $identity = $this->request->getAttribute('identity');
-    $reminder = $this->Reminders->newEmptyEntity();
+    public function index()
+    {
+        $identity = $this->request->getAttribute('identity');
+        $reminder = $this->Reminders->newEmptyEntity();
 
-    // Check authorization
-    if (!$this->Authorization->can($reminder, 'index')) {
-        $this->Flash->error(__('You do not have permission to access reminders.'));
-        return $this->redirect($this->getRedirectUrl());
-    }
+        // Check authorization
+        if (!$this->Authorization->can($reminder, 'index')) {
+            $this->Flash->error(__('You do not have permission to access reminders.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
-    $patientId = UserAccess::getPatientId($identity);
+        $patientId = UserAccess::getPatientId($identity);
 
-    $now = FrozenTime::now();
-    $endOfDay = $now->endOfDay();
+        $now = FrozenTime::now();
+        $endOfDay = $now->endOfDay();
 
-    // Build query with scope applied
-    $query = $this->Reminders->find()
-        ->contain(['VitalsReminders', 'VitalData']);
+        // Build query with scope applied
+        $query = $this->Reminders->find()
+            ->contain(['VitalsReminders', 'VitalData']);
 
-    $query = $this->Authorization->applyScope($query, 'index')
-        ->where([
-            'Reminders.scheduled_at <=' => $endOfDay, // Show all reminders up to end of today
-            'DATE(Reminders.scheduled_at)' => $now->format('Y-m-d') // Only today's reminders
-        ])
-        ->order(['Reminders.scheduled_at' => 'ASC']); // Show earliest first
+        $query = $this->Authorization->applyScope($query, 'index')
+            ->where([
+                'Reminders.scheduled_at <=' => $endOfDay,
+                'DATE(Reminders.scheduled_at)' => $now->format('Y-m-d')
+            ])
+            ->order(['Reminders.scheduled_at' => 'ASC']);
 
-    $reminders = $query->all();
+        $reminders = $query->all();
 
-    // Get patient's reminder settings
-    $settings = $this->fetchTable('ReminderSettings')->getPatientSettings($patientId);
+        // Get patient's reminder settings
+        $settings = $this->fetchTable('ReminderSettings')->getPatientSettings($patientId);
 
-    // Separate reminders by status
-    $activeReminders = [];
-    $upcomingReminders = [];
-    $completedReminders = [];
-    $dismissedReminders = [];
+        // Separate reminders by status
+        $activeReminders = [];
+        $upcomingReminders = [];
+        $completedReminders = [];
+        $dismissedReminders = [];
 
-    foreach ($reminders as $reminder) {
-        if ($reminder->interaction_type === 'completed') {
-            $completedReminders[] = $reminder;
-        } elseif ($reminder->interaction_type === 'dismissed') {
-            $dismissedReminders[] = $reminder;
-        } else {
-            // Check if it's upcoming or active
-            if ($reminder->scheduled_at > $now) {
-                // Calculate minutes until reminder time
-                $minutesUntil = (int) $reminder->scheduled_at->diffInMinutes($now, false);
-                $reminder->minutes_until = $minutesUntil;
-
-                // Also calculate hours for display
-                $hoursUntil = floor($minutesUntil / 60);
-                $remainingMinutes = $minutesUntil % 60;
-                $reminder->hours_until = $hoursUntil;
-                $reminder->remaining_minutes = $remainingMinutes;
-
-                $upcomingReminders[] = $reminder;
+        foreach ($reminders as $reminder) {
+            if ($reminder->interaction_type === 'completed') {
+                $completedReminders[] = $reminder;
+            } elseif ($reminder->interaction_type === 'dismissed') {
+                $dismissedReminders[] = $reminder;
             } else {
-                // Time has passed - it's active now
-                $activeReminders[] = $reminder;
+                if ($reminder->scheduled_at > $now) {
+                    // Calculate time until reminder
+                    $minutesUntil = abs((int) $reminder->scheduled_at->diffInMinutes($now, false));
+                    $reminder->minutes_until = $minutesUntil;
+
+                    // Calculate hours (floor division) and remaining minutes
+                    $hoursUntil = (int) floor($minutesUntil / 60);
+                    $remainingMinutes = $minutesUntil % 60;
+                    $reminder->hours_until = $hoursUntil;
+                    $reminder->remaining_minutes = $remainingMinutes;
+
+                    $upcomingReminders[] = $reminder;
+                } else {
+                    $activeReminders[] = $reminder;
+                }
             }
         }
-    }
 
-    // Filter completed reminders to only today
-    $today = $now->format('Y-m-d');
-    $completedTodayReminders = array_filter($completedReminders, function($r) use ($today) {
-        return $r->interacted_at && $r->interacted_at->format('Y-m-d') === $today;
-    });
+        // Filter completed reminders to only today
+        $today = $now->format('Y-m-d');
+        $completedTodayReminders = array_filter($completedReminders, function($r) use ($today) {
+            return $r->interacted_at && $r->interacted_at->format('Y-m-d') === $today;
+        });
 
-    $this->set(compact('activeReminders', 'upcomingReminders', 'completedReminders', 'completedTodayReminders', 'dismissedReminders', 'settings'));
-}
-
-
-    /**
-     * Get active reminders for logged-in patient
-     */
-    public function active()
-    {
-
+        $this->set(compact('activeReminders', 'upcomingReminders', 'completedReminders', 'completedTodayReminders', 'dismissedReminders', 'settings'));
     }
 
     /**
@@ -111,15 +107,28 @@ public function index()
      */
     public function dismiss($id = null)
     {
+        $this->request->allowMethod(['post', 'delete']);
 
-    }
+        // Get the actual reminder entity
+        $reminder = $this->Reminders->get($id);
 
-    /**
-     * Get reminder count for badge
-     */
-    public function count()
-    {
+        // Check authorization
+        if (!$this->Authorization->can($reminder, 'dismiss')) {
+            $this->Flash->error(__('You do not have permission to dismiss this reminder.'));
+            return $this->redirect(['action' => 'index']);
+        }
 
+        $identity = $this->request->getAttribute('identity');
+        $patientId = UserAccess::getPatientId($identity);
+
+        // Dismiss the reminder
+        if ($this->Reminders->dismissReminder($id, $patientId)) {
+            $this->Flash->success(__('The reminder has been dismissed.'));
+        } else {
+            $this->Flash->error(__('The reminder could not be dismissed. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
     }
 
     /**
@@ -127,6 +136,164 @@ public function index()
      */
     public function settings()
     {
+        $identity = $this->request->getAttribute('identity');
+        $reminder = $this->Reminders->newEmptyEntity();
 
+        // Check authorization
+        if (!$this->Authorization->can($reminder, 'settings')) {
+            $this->Flash->error(__('You do not have permission to access reminder settings.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $patientId = UserAccess::getPatientId($identity);
+        $reminderSettingsTable = $this->fetchTable('ReminderSettings');
+        $settings = $reminderSettingsTable->getPatientSettings($patientId);
+
+        // If no settings exist, create default ones
+        if (!$settings) {
+            $settings = $reminderSettingsTable->newEntity([
+                'patient_id' => $patientId,
+                'recurrence_pattern' => 'daily',
+                'time_slot_1' => '08:00:00',
+                'time_slot_2' => '12:00:00',
+                'time_slot_3' => '16:00:00',
+                'time_slot_4' => '20:00:00',
+                'is_active' => true,
+                'email_enabled' => false,
+                'sms_enabled' => false,
+            ]);
+        }
+
+        if ($this->request->is(['post', 'put'])) {
+            $data = $this->request->getData();
+
+            // Ensure patient_id is set
+            $data['patient_id'] = $patientId;
+
+            $settings = $reminderSettingsTable->patchEntity($settings, $data);
+
+            if ($reminderSettingsTable->save($settings)) {
+                $this->Flash->success(__('Your reminder settings have been saved.'));
+                return $this->redirect(['action' => 'index']);
+            } else {
+                $this->Flash->error(__('The reminder settings could not be saved. Please try again.'));
+            }
+        }
+
+        $this->set(compact('settings'));
+    }
+
+    /**
+     * Get reminder count for badge (API)
+     */
+    public function count()
+    {
+        $this->request->allowMethod(['get']);
+
+        $identity = $this->request->getAttribute('identity');
+        $reminder = $this->Reminders->newEmptyEntity();
+
+        // Check authorization - will throw exception if not allowed
+        if (!$this->Authorization->can($reminder, 'count')) {
+            $this->Flash->error(__('You do not have permission to access reminders.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $patientId = UserAccess::getPatientId($identity);
+        $count = $this->Reminders->getPendingCount($patientId);
+
+        $this->set('count', $count);
+        $this->viewBuilder()->setOption('serialize', ['count']);
+    }
+
+    /**
+     * Get recent active reminders for dropdown (API)
+     */
+    public function dropdown()
+    {
+        $this->request->allowMethod(['get']);
+
+        $identity = $this->request->getAttribute('identity');
+        $reminder = $this->Reminders->newEmptyEntity();
+
+        // Check authorization - will throw exception if not allowed
+        if (!$this->Authorization->can($reminder, 'dropdown')) {
+            $this->Flash->error(__('You do not have permission to access reminders.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $patientId = UserAccess::getPatientId($identity);
+        $now = FrozenTime::now();
+
+        // Get only the most recent 5 active reminders
+        $query = $this->Reminders->find()
+            ->contain(['VitalsReminders']);
+
+        $query = $this->Authorization->applyScope($query, 'index')
+            ->where([
+                'Reminders.scheduled_at <=' => $now,
+                'Reminders.interaction_type IS' => null
+            ])
+            ->orderBy(['Reminders.scheduled_at' => 'DESC'])
+            ->limit(5);
+
+        $reminders = $query->all();
+
+        // Get total count
+        $totalCount = $this->Reminders->getPendingCount($patientId);
+
+        // Format reminders for JSON response
+        $formattedReminders = [];
+        foreach ($reminders as $reminder) {
+            $formattedReminders[] = [
+                'id' => $reminder->id,
+                'message' => $reminder->message,
+                'scheduled_at' => $reminder->scheduled_at->format('g:i A'),
+                'is_overdue' => $reminder->isOverdue(),
+                'time_ago' => $this->getTimeAgo($reminder->scheduled_at)
+            ];
+        }
+
+        $this->set([
+            'success' => true,
+            'reminders' => $formattedReminders,
+            'count' => $totalCount
+        ]);
+        $this->viewBuilder()->setOption('serialize', ['success', 'reminders', 'count']);
+    }
+
+    /**
+     * Helper to get human-readable time ago
+     */
+    private function getTimeAgo($datetime)
+    {
+        $now = FrozenTime::now();
+        $diff = $now->diff($datetime);
+
+        if ($diff->d > 0) {
+            return $diff->d . ' day' . ($diff->d > 1 ? 's' : '') . ' ago';
+        } elseif ($diff->h > 0) {
+            return $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') . ' ago';
+        } elseif ($diff->i > 0) {
+            return $diff->i . ' minute' . ($diff->i > 1 ? 's' : '') . ' ago';
+        } else {
+            return 'Just now';
+        }
+    }    /**
+     * Helper to get redirect URL based on user type
+     */
+    protected function getRedirectUrl(): array
+    {
+        $identity = $this->request->getAttribute('identity');
+
+        if (!$identity) {
+            return ['controller' => 'Users', 'action' => 'login'];
+        }
+
+        if (UserAccess::isStaff($identity)) {
+            return ['controller' => 'Dashboard', 'action' => 'staff'];
+        }
+
+        return ['controller' => 'Dashboard', 'action' => 'patient'];
     }
 }

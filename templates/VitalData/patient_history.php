@@ -4,6 +4,9 @@
  * @var \App\Model\Entity\Patient $patient
  * @var \App\Model\Entity\VitalData[]|\Cake\Collection\CollectionInterface $vitalHistory
  */
+
+use App\Policy\UserAccess;
+
 $this->assign('title', $this->ContentBlock->text('health-records-patient-heading'));
 
 // CSS
@@ -53,7 +56,32 @@ if ($dataCount > 0) {
         $pulse[] = $vital->pulse_oximetry;
     }
 }
+
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);
+
+// Build breadcrumbs based on user type
+$breadcrumbs = [];
+
+if ($isStaff) {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+        ['title' => 'Health Records', 'url' => ['controller' => 'VitalData', 'action' => 'index']],
+        ['title' => 'Patient Health Records', 'url' => null]
+    ];
+} else {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'My Health Records', 'url' => null]
+    ];
+}
 ?>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
 
 <div class="health-records-container">
     <!-- Page Header -->
