@@ -16,7 +16,6 @@ class ResourcesController extends AppController
     {
         parent::initialize();
         $this->viewBuilder()->setLayout('app');
-        $this->loadComponent('Flash');
     }
     /**
      * Index method
@@ -34,7 +33,15 @@ class ResourcesController extends AppController
         }
 
         $query = $this->Resources->find()
-            ->contain(['Clinicians']);
+            ->contain(['Clinicians' => ['Users']])
+            ->orderBy(['Resources.created_at' => 'DESC']);
+
+        // Optional: Filter by type
+        $type = $this->request->getQuery('type');
+        if ($type && in_array($type, ['article', 'video', 'blog', 'link', 'news'])) {
+            $query->where(['Resources.type' => $type]);
+        }
+
         $resources = $this->paginate($query);
         $this->set(compact('resources'));
     }
@@ -47,7 +54,7 @@ class ResourcesController extends AppController
      */
     public function view($id = null)
     {
-        $resource = $this->Resources->get($id, contain: ['Clinicians']);
+        $resource = $this->Resources->get($id, contain: ['Clinicians' => ['Users']]);
 
         // Check authorization
         if (!$this->Authorization->can($resource, 'view')) {
@@ -62,46 +69,30 @@ class ResourcesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-//    public function add()
-//    {
-//        $resource = $this->Resources->newEmptyEntity();
-//
-//        // Check authorization
-//        if (!$this->Authorization->can($resource, 'add')) {
-//            $this->Flash->error(__('You do not have permission to add resources.'));
-//            return $this->redirect($this->getRedirectUrl());
-//        }
-//
-//        if ($this->request->is('post')) {
-//            $resource = $this->Resources->patchEntity($resource, $this->request->getData());
-//            if ($this->Resources->save($resource)) {
-//                $this->Flash->success(__('The resource has been saved.'));
-//                return $this->redirect(['action' => 'index']);
-//            }
-//            $this->Flash->error(__('The resource could not be saved. Please, try again.'));
-//        }
-//        $clinicians = $this->Resources->Clinicians->find('list', limit: 200)->all();
-//        $this->set(compact('resource', 'clinicians'));
-//    }
-
     public function add()
     {
-
-        // bella: this 1 line below is temporary just for me to test, shld remove later on
-        $this->Authorization->skipAuthorization();
-
         $resource = $this->Resources->newEmptyEntity();
 
-        if ($this->request->is('post')) {
+        // Check authorization
+        if (!$this->Authorization->can($resource, 'add')) {
+            $this->Flash->error(__('You do not have permission to add resources.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
+        $identity = $this->request->getAttribute('identity');
+        $isAdmin = UserAccess::isAdmin($identity);
+
+        if ($this->request->is('post')) {
             $data = $this->request->getData();
 
-            // set system-controlled fields
+            // Set system-controlled fields
             $data['status'] = 'published';
             $data['published_at'] = date('Y-m-d H:i:s');
 
-            $identity = $this->request->getAttribute('identity');
-            $data['clinician_id'] = $identity->get('id');
+            // Admin selects clinician from form; clinicians are auto-assigned
+            if (!$isAdmin) {
+                $data['clinician_id'] = UserAccess::getClinicianId($identity);
+            }
 
             $resource = $this->Resources->patchEntity($resource, $data);
 
@@ -113,7 +104,16 @@ class ResourcesController extends AppController
             $this->Flash->error(__('The resource could not be saved. Please, try again.'));
         }
 
-        $this->set(compact('resource'));
+        // Admin needs the clinician list to select an author
+        $clinicians = null;
+        if ($isAdmin) {
+            $clinicians = $this->Resources->Clinicians->find()
+                ->contain(['Users'])
+                ->orderBy(['Users.first_name' => 'ASC'])
+                ->all();
+        }
+
+        $this->set(compact('resource', 'isAdmin', 'clinicians'));
     }
     /**
      * Edit method
@@ -124,7 +124,7 @@ class ResourcesController extends AppController
      */
     public function edit($id = null)
     {
-        $resource = $this->Resources->get($id, contain: []);
+        $resource = $this->Resources->get($id, contain: ['Clinicians' => ['Users']]);
 
         // Check authorization
         if (!$this->Authorization->can($resource, 'edit')) {
@@ -133,15 +133,18 @@ class ResourcesController extends AppController
         }
 
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $resource = $this->Resources->patchEntity($resource, $this->request->getData());
+            $data = $this->request->getData();
+            unset($data['clinician_id'], $data['created_at'], $data['published_at']);
+
+            $resource = $this->Resources->patchEntity($resource, $data);
             if ($this->Resources->save($resource)) {
-                $this->Flash->success(__('The resource has been saved.'));
-                return $this->redirect(['action' => 'index']);
+                $this->Flash->success(__('The resource has been updated.'));
+                return $this->redirect(['action' => 'view', $resource->id]);
             }
-            $this->Flash->error(__('The resource could not be saved. Please, try again.'));
+            $this->Flash->error(__('The resource could not be saved. Please try again.'));
         }
-        $clinicians = $this->Resources->Clinicians->find('list', limit: 200)->all();
-        $this->set(compact('resource', 'clinicians'));
+
+        $this->set(compact('resource'));
     }
     /**
      * Delete method
@@ -209,7 +212,7 @@ class ResourcesController extends AppController
      */
     public function read($id = null)
     {
-        $resource = $this->Resources->get($id, contain: ['Clinicians']);
+        $resource = $this->Resources->get($id, contain: ['Clinicians' => ['Users']]);
 
         // Check authorization
         if (!$this->Authorization->can($resource, 'read')) {
