@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 
 use App\Policy\UserAccess;
+use Cake\ORM\TableRegistry;
 
 $this->assign('title', 'Dashboard');
 
@@ -40,6 +41,12 @@ $isStaff = UserAccess::isStaff($identity);
 $breadcrumbs = [
     ['title' => 'Dashboard', 'url' => null]
 ];
+
+// Check if reminders are enabled
+$identity = $this->request->getAttribute('identity');
+$patientId = UserAccess::getPatientId($identity);
+$reminderSettingsTable = TableRegistry::getTableLocator()->get('ReminderSettings');
+$settings = $reminderSettingsTable->getPatientSettings($patientId);
 ?>
 
 <!-- Header Section -->
@@ -78,70 +85,72 @@ $breadcrumbs = [
     </div>
 
     <!-- Active Reminders Section -->
-    <div class="form-section patient-dashboard-section">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="form-section-title mb-0">
-                <i class="bi bi-bell"></i>
-                <?= __('Active Reminders') ?>
-                <?php if ($reminderCount > 0): ?>
-                    <span class="badge bg-danger ms-2"><?= $reminderCount ?></span>
-                <?php endif; ?>
-            </h2>
-            <?= $this->Html->link(
-                __('View All'),
-                ['controller' => 'Reminders', 'action' => 'index'],
-                ['class' => 'btn btn-sm btn-outline-primary']
-            ) ?>
-        </div>
+    <?php if ($settings && $settings->is_active): ?>
+        <div class="form-section patient-dashboard-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="form-section-title mb-0">
+                    <i class="bi bi-bell"></i>
+                    <?= __('Active Reminders') ?>
+                    <?php if ($reminderCount > 0): ?>
+                        <span class="badge bg-danger ms-2"><?= $reminderCount ?></span>
+                    <?php endif; ?>
+                </h2>
+                <?= $this->Html->link(
+                    __('View All'),
+                    ['controller' => 'Reminders', 'action' => 'index'],
+                    ['class' => 'btn btn-sm btn-outline-primary']
+                ) ?>
+            </div>
 
-        <?php if ($reminderCount > 0 && !empty($activeReminders)): ?>
-            <div class="reminders-list-compact">
-                <?php foreach ($activeReminders as $reminder): ?>
-                    <div class="reminder-card-compact">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="reminder-icon-compact">
-                                <i class="bi bi-bell-fill text-primary"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <div class="reminder-message-compact">
-                                    <?= h($reminder->message) ?>
+            <?php if ($reminderCount > 0 && !empty($activeReminders)): ?>
+                <div class="reminders-list-compact">
+                    <?php foreach ($activeReminders as $reminder): ?>
+                        <div class="reminder-card-compact">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="reminder-icon-compact">
+                                    <i class="bi bi-bell-fill text-primary"></i>
                                 </div>
-                                <div class="reminder-time-compact">
-                                    <small class="text-muted">
-                                        <i class="bi bi-clock"></i>
-                                        <?= $reminder->scheduled_at->format('g:i A') ?>
-                                    </small>
-                                    <?php if ($reminder->isOverdue()): ?>
-                                        <small class="text-danger ms-2">
-                                            <i class="bi bi-exclamation-circle"></i>
-                                            <strong>Log Health</strong>
+                                <div class="flex-grow-1">
+                                    <div class="reminder-message-compact">
+                                        <?= h($reminder->message) ?>
+                                    </div>
+                                    <div class="reminder-time-compact">
+                                        <small class="text-muted">
+                                            <i class="bi bi-clock"></i>
+                                            <?= $reminder->scheduled_at->format('g:i A') ?>
                                         </small>
-                                    <?php endif; ?>
+                                        <?php if ($reminder->isOverdue()): ?>
+                                            <small class="text-danger ms-2">
+                                                <i class="bi bi-exclamation-circle"></i>
+                                                <strong>Log Health</strong>
+                                            </small>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <?= $this->Html->link(
-                                    '<i class="bi bi-plus-circle"></i>',
-                                    ['controller' => 'VitalData', 'action' => 'add', '?' => ['reminder_id' => $reminder->id]],
-                                    [
-                                        'class' => 'btn btn-sm btn-primary',
-                                        'escape' => false,
-                                        'title' => 'Log Vitals'
-                                    ]
-                                ) ?>
+                                <div>
+                                    <?= $this->Html->link(
+                                        '<i class="bi bi-plus-circle"></i>',
+                                        ['controller' => 'VitalData', 'action' => 'add', '?' => ['reminder_id' => $reminder->id]],
+                                        [
+                                            'class' => 'btn btn-sm btn-primary',
+                                            'escape' => false,
+                                            'title' => 'Log Vitals'
+                                        ]
+                                    ) ?>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <div class="patient-empty-state">
-                <i class="bi bi-check-circle-fill text-success"></i>
-                <p><?= __('No active reminders') ?></p>
-                <small class="text-muted"><?= __("You're all caught up!") ?></small>
-            </div>
-        <?php endif; ?>
-    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="patient-empty-state">
+                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <p><?= __('No active reminders') ?></p>
+                    <small class="text-muted"><?= __("You're all caught up!") ?></small>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
 
     <div class="form-section patient-dashboard-section">
         <h2 class="form-section-title">
