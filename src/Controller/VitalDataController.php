@@ -309,10 +309,6 @@ class VitalDataController extends AppController
                 if ($isStaff) {
                     return $this->redirect(['action' => 'index']);
                 }
-                if ($patientId) {
-                    $remindersTable = $this->fetchTable('Reminders');
-                    $remindersTable->completeReminderForVitalData($patientId, $vitalDataEntity->id);
-                }
                 return $this->redirect($this->getRedirectUrl());
             }
 
