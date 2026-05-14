@@ -145,19 +145,6 @@ echo $this->Html->css('resource-read', ['block' => true]);
 
     <!-- Article Footer -->
     <footer class="article-footer">
-        <div class="footer-content">
-            <div class="helpful-section">
-                <h4>Was this helpful?</h4>
-                <p>Let us know if you found this resource useful</p>
-                <div class="helpful-buttons">
-                    <button class="btn-helpful" onclick="alert('Thank you for your feedback!')">
-                        <i class="bi bi-hand-thumbs-up"></i> Yes, helpful
-                    </button>
-                    <button class="btn-helpful" onclick="alert('Thank you for your feedback!')">
-                        <i class="bi bi-hand-thumbs-down"></i> Not helpful
-                    </button>
-                </div>
-            </div>
 
             <?php if ($resource->url && $resource->type !== 'link'): ?>
                 <div class="source-section">
