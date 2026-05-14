@@ -1,0 +1,64 @@
+/* Content block editor shared styling */
+
+.content-block-feedback-text {
+    margin-top: 0.35rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+#content-block-value.is-invalid,
+#content-block-image.is-invalid,
+.content-block-feedback-text.is-invalid {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.content-block-feedback-error {
+    margin-top: 0.35rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* Content block image previews */
+
+.content-block-image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.content-block-image-preview-card {
+    padding: 1rem;
+    border: 1px solid #dfe5ef;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.78);
+}
+
+.content-block-preview-label {
+    margin-bottom: 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.content-blocks-image-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    background: #ffffff;
+}
+
+.content-block-empty-preview {
+    padding: 2rem;
+    text-align: center;
+    color: #64748b;
+    border: 1px dashed #cbd5e1;
+    border-radius: 0.5rem;
+    background: #ffffff;
+}
