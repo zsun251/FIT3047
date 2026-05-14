@@ -127,6 +127,12 @@ if ($isStaff) {
                 <?= $this->Html->link($linkLabel('Health Records', 'bi-heart-pulse'), ['controller' => 'VitalData', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'VitalData' ? ' active' : ''), 'escape' => false]) ?>
             </li>
         <?php endif; ?>
+
+        <?php if ($isAdmin): ?>
+            <li class="<?= $itemClass ?> topbar-always-show">
+                <?= $this->Html->link($linkLabel('Site Content', 'bi-card-text'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'ContentBlocks' ? ' active' : ''), 'escape' => false]) ?>
+            </li>
+        <?php endif; ?>
     <?php endif; ?>
 
     <?php if ($isPatient): ?>
@@ -156,7 +162,7 @@ if ($isStaff) {
 
 
     <!-- Desktop sidebar links -->
-    <?php if ($showSections): ?><div class="sidebar-section-title">Navigation</div><?php endif; ?>
+    <!-- <?php if ($showSections): ?><div class="sidebar-section-title">Navigation</div><?php endif; ?> -->
 
     <?php if ($dashboardRoute): ?>
         <li class="<?= $itemClass ?>">
@@ -193,7 +199,7 @@ if ($isStaff) {
 
         <?php if ($isAdmin): ?>
             <li class="<?= $itemClass ?>">
-                <?= $this->Html->link($linkLabel('Edit Site Content', 'bi-heart-pulse'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'ContentBlocks' ? ' active' : ''), 'escape' => false]) ?>
+                <?= $this->Html->link($linkLabel('Site Content', 'bi-card-text'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'ContentBlocks' ? ' active' : ''), 'escape' => false]) ?>
             </li>
         <?php endif; ?>
 
