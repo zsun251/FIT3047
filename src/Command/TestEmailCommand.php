@@ -27,7 +27,7 @@ class TestEmailCommand extends Command
             // Select email template
             $mailer
                 ->viewBuilder()
-                ->setTemplate('reset_password');
+                ->setTemplate('default');
 
             // Transfer required view variables to email template
             $mailer
