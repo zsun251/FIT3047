@@ -37,7 +37,6 @@ $recentReminders = $remindersTable->find()
     ->all();
 ?>
 
-<!-- Rest of dropdown HTML remains the same -->
 
 <?php if ($settings && $settings->is_active): ?>
     <li class="nav-item dropdown topbar-always-show" id="remindersDropdownItem">
@@ -47,7 +46,7 @@ $recentReminders = $remindersTable->find()
            role="button"
            data-bs-toggle="dropdown"
            aria-expanded="false">
-            <i class="bi bi-bell-fill"></i>  <!-- Changed from bi-bell to bi-bell-fill -->
+            <i class="bi bi-bell-fill"></i>
             <?php if ($reminderCount > 0): ?>
                 <span class="badge bg-danger rounded-pill position-absolute reminder-badge pulse">
                     <?= $reminderCount ?>
