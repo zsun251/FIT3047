@@ -55,19 +55,12 @@ $settings = $reminderSettingsTable->getPatientSettings($patientId);
 ]) ?>
 
 <div class="form-container patient-dashboard">
-    <div class="patient-hero">
-        <div>
-            <p class="patient-hero-label">Patient Dashboard</p>
-
+    <div class="form-header patient-dashboard-header">
+        <div class="patient-dashboard-heading">
             <h1>
-                Welcome back,
+                <?= __('Welcome, ') ?>
                 <span class="patient-dashboard-name"><?= h($patientName) ?></span>
-            </h1>
-
-            <p class="patient-hero-text">
-                Here’s a quick overview of your latest health updates, appointments, and resources.
-            </p>
-        </div>
+            </h1>        </div>
 
         <div class="patient-dashboard-actions">
             <?= $this->Html->link(
@@ -166,126 +159,46 @@ $settings = $reminderSettingsTable->getPatientSettings($patientId);
         </h2>
 
         <?php if ($latestVital): ?>
-            <div class="patient-stats-grid">
-
-                <div class="patient-stat-card">
-                    <div class="patient-stat-icon purple">
-                        <i class="bi bi-droplet-half"></i>
-                    </div>
-
-                    <div class="patient-stat-content">
-                        <div class="patient-stat-label">Oxygen Saturation</div>
-
-                        <div class="patient-stat-value">
-                            <?= h($latestVital->oxygen_saturation ?? '-') ?>%
-                        </div>
-
-                        <span class="patient-stat-badge">
-                    Latest Reading
-                </span>
+            <div class="patient-summary-grid">
+                <div class="patient-summary-item">
+                    <div class="patient-summary-label"><?= __('Recorded') ?></div>
+                    <div class="patient-summary-value">
+                        <?= h($latestVital->recorded_at?->format('d M Y, h:i A')) ?>
                     </div>
                 </div>
 
-                <div class="patient-stat-card">
-                    <div class="patient-stat-icon green">
-                        <i class="bi bi-wind"></i>
-                    </div>
-
-                    <div class="patient-stat-content">
-                        <div class="patient-stat-label">Respiratory Rate</div>
-
-                        <div class="patient-stat-value">
-                            <?= h($latestVital->respiratory_rate ?? '-') ?>
-                            <span class="patient-stat-unit">breaths/min</span>
-                        </div>
-
-                        <span class="patient-stat-badge">
-                    Latest Reading
-                </span>
+                <div class="patient-summary-item">
+                    <div class="patient-summary-label"><?= __('Oxygen Saturation') ?></div>
+                    <div class="patient-summary-value">
+                        <?= h($latestVital->oxygen_saturation ?? '-') ?>
                     </div>
                 </div>
 
-                <div class="patient-stat-card">
-                    <div class="patient-stat-icon blue">
-                        <i class="bi bi-clipboard2-pulse"></i>
-                    </div>
-
-                    <div class="patient-stat-content">
-                        <div class="patient-stat-label">Weight</div>
-
-                        <div class="patient-stat-value">
-                            <?= h($latestVital->weight ?? '-') ?> kg
-                        </div>
-
-                        <span class="patient-stat-badge">
-                    Latest Reading
-                </span>
+                <div class="patient-summary-item">
+                    <div class="patient-summary-label"><?= __('Respiratory Rate') ?></div>
+                    <div class="patient-summary-value">
+                        <?= h($latestVital->respiratory_rate ?? '-') ?>
                     </div>
                 </div>
 
-                <div class="patient-stat-card">
-                    <div class="patient-stat-icon pink">
-                        <i class="bi bi-heart-pulse"></i>
-                    </div>
-
-                    <div class="patient-stat-content">
-                        <div class="patient-stat-label">Blood Pressure</div>
-
-                        <div class="patient-stat-value">
-                            <?= h($latestVital->blood_pressure ?? '-') ?>
-                            <span class="patient-stat-unit">mmHg</span>
-                        </div>
-
-                        <span class="patient-stat-badge">
-                    Latest Reading
-                </span>
+                <div class="patient-summary-item">
+                    <div class="patient-summary-label"><?= __('Weight') ?></div>
+                    <div class="patient-summary-value">
+                        <?= h($latestVital->weight ?? '-') ?>
                     </div>
                 </div>
 
-                <div class="patient-stat-card">
-                    <div class="patient-stat-icon purple">
-                        <i class="bi bi-activity"></i>
-                    </div>
-
-                    <div class="patient-stat-content">
-                        <div class="patient-stat-label">Pulse Oximetry</div>
-
-                        <div class="patient-stat-value">
-                            <?= h($latestVital->pulse_oximetry ?? '-') ?>%
-                        </div>
-
-                        <span class="patient-stat-badge">
-                    Latest Reading
-                </span>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="patient-symptoms-card">
-                <div class="patient-symptoms-icon">
-                    <i class="bi bi-chat-dots-fill"></i>
-                </div>
-
-                <div class="patient-symptoms-content">
-                    <h2>Symptoms</h2>
-
-                    <p>
+                <div class="patient-summary-item patient-summary-item-full">
+                    <div class="patient-summary-label"><?= __('Symptoms') ?></div>
+                    <div class="patient-summary-value">
                         <?php if (!empty($latestVital->symptoms)): ?>
                             <?= h(implode(', ', collection($latestVital->symptoms)->extract('symptom_name')->toList())) ?>
                         <?php else: ?>
-                            None recorded
+                            <?= __('None recorded') ?>
                         <?php endif; ?>
-                    </p>
+                    </div>
                 </div>
-
-                <?= $this->Html->link(
-                    'View History <i class="bi bi-chevron-right"></i>',
-                    ['controller' => 'VitalData', 'action' => 'patientHistory'],
-                    ['class' => 'patient-history-btn', 'escape' => false]
-                ) ?>
             </div>
-
         <?php else: ?>
             <div class="patient-empty-state">
                 <?= __('No health data has been submitted yet.') ?>
@@ -296,55 +209,65 @@ $settings = $reminderSettingsTable->getPatientSettings($patientId);
 
 
     <div class="patient-dashboard-grid">
+        <div class="form-section patient-dashboard-section">
+            <h2 class="form-section-title">
+                <i class="bi bi-calendar-event"></i>
+                <?= __('Next Appointment') ?>
+            </h2>
 
-        <div class="patient-preview-card">
-            <div class="patient-preview-header">
-                <div class="patient-preview-title-group">
-                    <i class="bi bi-calendar-event"></i>
-                    <h3>Next Appointment</h3>
-                </div>
-            </div>
-
-            <div class="patient-preview-box appointment-box">
-                <div class="patient-preview-icon">
-                    <i class="bi bi-calendar2-week"></i>
-                </div>
-
-                <div class="patient-preview-content">
-                    <div class="patient-preview-main">
-                        No appointments scheduled.
+            <?php if ($nextAppointment): ?>
+                <div class="patient-preview-card">
+                    <div class="patient-preview-title">
+                        <?= h($nextAppointment->scheduled_at?->format('d M Y, h:i A')) ?>
                     </div>
-
-                    <div class="patient-preview-sub">
-                        You're all caught up!
+                    <div class="patient-preview-meta">
+                        <?= __('Status: {0}', h($nextAppointment->status)) ?>
                     </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <div class="patient-empty-state">
+                    <?= __('No appointments scheduled.') ?>
+                </div>
+            <?php endif; ?>
         </div>
 
-        <div class="patient-preview-card">
-            <div class="patient-preview-header">
-                <div class="patient-preview-title-group">
-                    <i class="bi bi-journal-text"></i>
-                    <h3>Latest Resource</h3>
-                </div>
-            </div>
+        <div class="form-section patient-dashboard-section">
+            <h2 class="form-section-title">
+                <i class="bi bi-journal-text"></i>
+                <?= __('Latest Resource') ?>
+            </h2>
 
-            <div class="patient-preview-box resource-box">
-                <div class="patient-preview-icon">
-                    <i class="bi bi-journal-medical"></i>
-                </div>
-
-                <div class="patient-preview-content">
-                    <div class="patient-preview-main">
-                        No resources available right now.
+            <?php if ($latestResource): ?>
+                <div class="patient-preview-card">
+                    <div class="patient-preview-title">
+                        <?= h($latestResource->title) ?>
                     </div>
 
-                    <div class="patient-preview-sub">
-                        Check back later for updates.
+                    <?php if (!empty($latestResource->type)): ?>
+                        <div class="patient-preview-meta">
+                            <?= h($latestResource->type) ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($latestResource->body)): ?>
+                        <div class="patient-preview-text">
+                            <?= h(mb_strimwidth($latestResource->body, 0, 160, '...')) ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="patient-preview-actions">
+                        <?= $this->Html->link(
+                            __('View All Resources'),
+                            ['controller' => 'Resources', 'action' => 'browse'],
+                            ['class' => 'btn btn-outline-primary btn-sm'],
+                        ) ?>
                     </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <div class="patient-empty-state">
+                    <?= __('No resources are available right now.') ?>
+                </div>
+            <?php endif; ?>
         </div>
-
     </div>
+</div>
