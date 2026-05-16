@@ -388,23 +388,25 @@
 .appointment-box.empty-appointment {
     background: #eefbf3;
     border: 2px solid #c7efd6;
-    min-height: 140px;
+
+    min-height: 90px;
 
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
     align-items: center;
 
-    text-align: center;
-    padding: 60px;
-    gap: 16px;
+    text-align: left;
+
+    padding: 1.3rem;
+    gap: 1rem;
 }
 
 .appointment-box.empty-appointment .patient-preview-icon {
     background: #d7f5e2;
-    width: 80px;
-    height: 50px;
-    border-radius: 32px;
+    width: 70px;
+    height: 70px;
+    border-radius: 1rem;
 
     display: flex;
     align-items: center;
@@ -417,15 +419,15 @@
 }
 
 .appointment-box.empty-appointment .patient-preview-main {
-    font-size: 1.0rem;
-    font-weight: 700;
-    color: #1d2b22;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
     line-height: 1.2;
 }
 
 .appointment-box.empty-appointment .patient-preview-sub {
-    font-size: 0.8rem;
-    color: #5f7d69;
+    font-size: 0.75rem;
+    color: #94a3b8;
 }
 
 
