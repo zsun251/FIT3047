@@ -85,33 +85,66 @@ if ($isStaff) {
 
 <div class="health-records-container">
     <!-- Page Header -->
-    <div class="page-header">
-        <div class="header-content">
-            <h1><i class="bi bi-heart-pulse"></i> <?= $this->ContentBlock->text('health-records-patient-heading') ?></h1>
-            <p class="subtitle"><?= $this->ContentBlock->text('health-records-patient-intro-text') ?></p>
+    <div class="health-page-header">
+        <div class="health-title-wrap">
+            <div class="health-title-icon">
+                <i class="bi bi-clipboard2-pulse"></i>
+            </div>
+
+            <div>
+                <h1><?= $this->ContentBlock->text('health-records-patient-heading') ?></h1>
+                <p><?= $this->ContentBlock->text('health-records-patient-intro-text') ?></p>
+            </div>
         </div>
-        <div class="header-actions">
-            <?= $this->Html->link(
-                '<i class="bi bi-plus-circle"></i> Add Health Data',
-                ['controller' => 'VitalData', 'action' => 'add'],
-                ['class' => 'btn btn-primary', 'escape' => false]
-            ) ?>
-        </div>
+
+        <?= $this->Html->link(
+            '<i class="bi bi-plus-circle"></i> Add Health Data',
+            ['controller' => 'VitalData', 'action' => 'add'],
+            ['class' => 'add-health-btn', 'escape' => false]
+        ) ?>
     </div>
 
     <!-- Patient Info Card -->
     <div class="info-card">
-        <div class="info-icon">
-            <i class="bi bi-person-badge"></i>
-        </div>
         <div class="info-content">
-            <h3>Patient ID</h3>
-            <p><?= h($patient->id ?? 'Unknown') ?></p>
+            <div class="info-icon">
+                <i class="bi bi-person"></i>
+            </div>
+
+            <div>
+                <h3>Patient Name</h3>
+                <p>
+                    <?= h($this->Identity->get('first_name') . ' ' . $this->Identity->get('last_name')) ?>
+                </p>
+            </div>
         </div>
-        <div class="info-stats">
-            <div class="stat-item">
-                <span class="stat-label">Total Records</span>
-                <span class="stat-value"><?= $dataCount ?></span>
+
+        <div class="info-content">
+            <div class="info-icon purple-icon">
+                <i class="bi bi-clipboard2-pulse"></i>
+            </div>
+
+            <div>
+                <h3>Total Records</h3>
+                <p><?= $dataCount ?></p>
+            </div>
+        </div>
+
+        <div class="info-content">
+            <div class="info-icon blue-icon">
+                <i class="bi bi-calendar3"></i>
+            </div>
+
+            <div>
+                <h3>Last Updated</h3>
+
+                <p>
+                    <?php if (!empty($vitalHistoryArray) && end($vitalHistoryArray)->recorded_at): ?>
+                        <?= h(end($vitalHistoryArray)->recorded_at->format('d M Y')) ?>
+                    <?php else: ?>
+                        —
+                    <?php endif; ?>
+                </p>
             </div>
         </div>
     </div>
@@ -143,14 +176,9 @@ if ($isStaff) {
                     ['label' => 'Respiratory Rate', 'data' => $resp, 'icon' => 'activity', 'unit' => ' bpm'],
                     ['label' => 'Weight', 'data' => $weight, 'icon' => 'speedometer', 'unit' => ' kg'],
                     ['label' => 'Pulse Oximetry', 'data' => $pulse, 'icon' => 'stopwatch', 'unit' => ''],
-                    ['label' => 'Blood Pressure', 'data' => [], 'icon' => 'droplet', 'unit' => '', 'text_only' => true],
                 ];
 
                 foreach ($trends as $trend):
-                    if (!empty($trend['text_only'])) {
-                        // Blood pressure is text, not numeric
-                        continue;
-                    }
                     $trendInfo = getTrend($trend['data']);
                     $latestValue = end($trend['data']);
                     ?>
@@ -158,13 +186,16 @@ if ($isStaff) {
                         <div class="trend-icon">
                             <i class="bi bi-<?= h($trend['icon']) ?>"></i>
                         </div>
+
                         <div class="trend-info">
                             <h4><?= h($trend['label']) ?></h4>
+
                             <?php if ($latestValue !== null && $latestValue !== ''): ?>
                                 <p class="trend-value"><?= h($latestValue) ?><?= h($trend['unit']) ?></p>
                             <?php else: ?>
                                 <p class="trend-value text-muted">—</p>
                             <?php endif; ?>
+
                             <div class="trend-status trend-<?= h($trendInfo['class']) ?>">
                                 <i class="bi bi-<?= h($trendInfo['icon']) ?>"></i>
                                 <?= h($trendInfo['text']) ?>
@@ -172,8 +203,28 @@ if ($isStaff) {
                         </div>
                     </div>
                 <?php endforeach; ?>
+
+                <div class="trend-card">
+                    <div class="trend-icon">
+                        <i class="bi bi-droplet"></i>
+                    </div>
+
+                    <div class="trend-info">
+                        <h4>Blood Pressure</h4>
+
+                        <p class="trend-value">
+                            <?= h(end($vitalHistoryArray)->blood_pressure ?? '—') ?>
+                        </p>
+
+                        <div class="trend-status trend-neutral">
+                            <i class="bi bi-info-circle-fill"></i>
+                            Latest
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
 
         <?php if ($dataCount >= 2): ?>
             <!-- Chart Section -->
