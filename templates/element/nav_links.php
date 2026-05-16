@@ -231,26 +231,15 @@ if ($isStaff) {
     <?php endif; ?>
 <?php endif; ?>
 
-<!-- ====================================================================
-     AUTHENTICATION LINK (Login/Logout)
-     Always visible in topbar on both desktop and mobile
-     Shows "Logout" for logged-in users, "Login" for guests
-     ==================================================================== -->
+
+
 <?php if ($context === 'topbar' || $context === 'mobile'): ?>
     <!-- Login or logout link -->
     <li class="<?= $itemClass ?> topbar-always-show">
         <?php if ($isLoggedIn): ?>
-            <?= $this->Html->link(
-                $linkLabel('Logout', 'bi-box-arrow-right', $context === 'mobile'),
-                ['controller' => 'Users', 'action' => 'logout'],
-                ['class' => $linkClass . ' auth-button' . ($currentController === 'Users' && $currentAction === 'logout' ? ' active' : ''), 'escape' => false]
-            ) ?>
+            <?= $this->Html->link(__('Logout'), ['controller' => 'Users', 'action' => 'logout'], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'logout' ? ' active' : '')]) ?>
         <?php else: ?>
-            <?= $this->Html->link(
-                $linkLabel('Login', 'bi-box-arrow-in-right', $context === 'mobile'),
-                ['controller' => 'Users', 'action' => 'login'],
-                ['class' => $linkClass . ' auth-button' . ($currentController === 'Users' && $currentAction === 'login' ? ' active' : ''), 'escape' => false]
-            )?>
+            <?= $this->Html->link(__('Login'), ['controller' => 'Users', 'action' => 'login'], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'login' ? ' active' : '')])?>
         <?php endif; ?>
     </li>
 <?php endif; ?>

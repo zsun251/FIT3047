@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = accordion.querySelectorAll('[data-content-block-section]');
     const subsections = accordion.querySelectorAll('[data-content-block-subsection]');
     const contentItems = accordion.querySelectorAll('[data-content-block-item]');
+    const clickableCards = accordion.querySelectorAll('[data-content-block-edit-url]');
 
     let activeFilter = 'all';
 
@@ -170,6 +171,29 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', () => {
             activeFilter = button.dataset.contentBlockFilter || 'all';
             applyFilter();
+        });
+    });
+
+    clickableCards.forEach((card) => {
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a, button, form, input')) {
+                return;
+            }
+
+            window.location.href = card.dataset.contentBlockEditUrl;
+        });
+
+        card.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') {
+                return;
+            }
+
+            if (event.target.closest('a, button, form, input')) {
+                return;
+            }
+
+            event.preventDefault();
+            window.location.href = card.dataset.contentBlockEditUrl;
         });
     });
 
