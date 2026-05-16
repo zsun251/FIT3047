@@ -185,7 +185,6 @@ if ($isStaff) {
                 </div>
 
                 <script>
-                    // Pass data to JavaScript
                     const vitalsChartData = {
                         labels: <?= json_encode($labels) ?>,
                         oxygen: <?= json_encode($oxygen) ?>,

@@ -288,6 +288,8 @@
     text-decoration: none;
     transition: 0.2s ease;
     white-space: nowrap;
+    margin-top: 3px;
+    margin-left: 25px;
 }
 
 .patient-history-btn:hover {
@@ -381,6 +383,49 @@
     display: flex;
     align-items: center;
     min-height: 50px;
+}
+
+.appointment-box.empty-appointment {
+    background: #eefbf3;
+    border: 2px solid #c7efd6;
+    min-height: 140px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    padding: 60px;
+    gap: 16px;
+}
+
+.appointment-box.empty-appointment .patient-preview-icon {
+    background: #d7f5e2;
+    width: 80px;
+    height: 50px;
+    border-radius: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.appointment-box.empty-appointment .patient-preview-icon i {
+    color: #39b56a;
+    font-size: 24px;
+}
+
+.appointment-box.empty-appointment .patient-preview-main {
+    font-size: 1.0rem;
+    font-weight: 700;
+    color: #1d2b22;
+    line-height: 1.2;
+}
+
+.appointment-box.empty-appointment .patient-preview-sub {
+    font-size: 0.8rem;
+    color: #5f7d69;
 }
 
 
@@ -493,6 +538,16 @@
     font-size: 0.875rem;
     color: #6c757d;
     margin-top: 0.25rem;
+}
+
+.patient-preview-card .patient-preview-box + .patient-preview-box {
+    margin-top: 14px;
+}
+
+.patient-preview-footer {
+    margin-top: 18px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 /* Responsive */
