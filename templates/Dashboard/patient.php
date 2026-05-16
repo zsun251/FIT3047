@@ -297,54 +297,98 @@ $settings = $reminderSettingsTable->getPatientSettings($patientId);
 
     <div class="patient-dashboard-grid">
 
+        <!-- Upcoming Appointments Card -->
         <div class="patient-preview-card">
             <div class="patient-preview-header">
                 <div class="patient-preview-title-group">
                     <i class="bi bi-calendar-event"></i>
-                    <h3>Next Appointment</h3>
+                    <h3>Upcoming Appointments</h3>
                 </div>
+
+                <?= $this->Html->link(
+                    'View History <i class="bi bi-chevron-right"></i>',
+                    ['controller' => 'Appointments', 'action' => 'upcomingAppointments'],
+                    ['class' => 'patient-history-btn', 'escape' => false]
+                ) ?>
             </div>
 
-            <div class="patient-preview-box appointment-box">
-                <div class="patient-preview-icon">
-                    <i class="bi bi-calendar2-week"></i>
-                </div>
+            <?php if (!empty($upcomingAppointments) && $upcomingAppointments->count() > 0): ?>
+                <?php foreach ($upcomingAppointments as $appointment): ?>
+                    <div class="patient-preview-box appointment-box empty-appointment">
+                        <div class="patient-preview-icon">
+                            <i class="bi bi-calendar2-week"></i>
+                        </div>
 
-                <div class="patient-preview-content">
-                    <div class="patient-preview-main">
-                        No appointments scheduled.
+                        <div class="patient-preview-content">
+                            <div class="patient-preview-main">
+                                <?= h($appointment->scheduled_at->format('d M Y, g:i A')) ?>
+                            </div>
+
+                            <div class="patient-preview-sub">
+                                <?= h(trim(($appointment->clinician->user->first_name ?? '') . ' ' . ($appointment->clinician->user->last_name ?? ''))) ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="patient-preview-box appointment-box empty-appointment">
+                    <div class="patient-preview-icon">
+                        <i class="bi bi-calendar2-week"></i>
                     </div>
 
-                    <div class="patient-preview-sub">
-                        You're all caught up!
+                    <div class="patient-preview-content">
+                        <div class="patient-preview-main">No appointments scheduled.</div>
+                        <div class="patient-preview-sub">You're all caught up!</div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
+        <!-- Past Appointments Card -->
         <div class="patient-preview-card">
             <div class="patient-preview-header">
                 <div class="patient-preview-title-group">
-                    <i class="bi bi-journal-text"></i>
-                    <h3>Latest Resource</h3>
+                    <i class="bi bi-clock-history"></i>
+                    <h3>Past Appointments</h3>
                 </div>
+
+                <?= $this->Html->link(
+                    'View History <i class="bi bi-chevron-right"></i>',
+                    ['controller' => 'Appointments', 'action' => 'upcomingAppointments'],
+                    ['class' => 'patient-history-btn', 'escape' => false]
+                ) ?>
             </div>
 
-            <div class="patient-preview-box resource-box">
-                <div class="patient-preview-icon">
-                    <i class="bi bi-journal-medical"></i>
-                </div>
+            <?php if (!empty($pastAppointments) && $pastAppointments->count() > 0): ?>
+                <?php foreach ($pastAppointments as $appointment): ?>
+                    <div class="patient-preview-box appointment-box">
+                        <div class="patient-preview-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
 
-                <div class="patient-preview-content">
-                    <div class="patient-preview-main">
-                        No resources available right now.
+                        <div class="patient-preview-content">
+                            <div class="patient-preview-main">
+                                <?= h($appointment->scheduled_at->format('d M Y, g:i A')) ?>
+                            </div>
+
+                            <div class="patient-preview-sub">
+                                <?= h(trim(($appointment->clinician->user->first_name ?? '') . ' ' . ($appointment->clinician->user->last_name ?? ''))) ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="patient-preview-box appointment-box">
+                    <div class="patient-preview-icon">
+                        <i class="bi bi-clock-history"></i>
                     </div>
 
-                    <div class="patient-preview-sub">
-                        Check back later for updates.
+                    <div class="patient-preview-content">
+                        <div class="patient-preview-main">No previous appointments.</div>
+                        <div class="patient-preview-sub">Past appointments will appear here.</div>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
 
     </div>

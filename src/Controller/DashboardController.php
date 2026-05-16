@@ -79,8 +79,9 @@ class DashboardController extends AppController
         $patient = $currentUser->patient ?? null;
         $patientId = $patient?->id;
 
-        $latestVital = null;
         $nextAppointment = null;
+        $upcomingAppointments = [];
+        $pastAppointments = [];
         $latestResource = null;
         $activeReminders = [];
         $reminderCount = 0;
@@ -101,6 +102,28 @@ class DashboardController extends AppController
                 ])
                 ->orderBy(['Appointments.scheduled_at' => 'ASC'])
                 ->first();
+
+            // Fetch the next 2 upcoming appointments for the patient
+            $upcomingAppointments = $this->fetchTable('Appointments')->find()
+                ->contain(['Clinicians.Users'])
+                ->where([
+                    'Appointments.patient_id' => $patientId,
+                    'Appointments.scheduled_at >=' => \Cake\I18n\FrozenTime::now(),
+                ])
+                ->orderBy(['Appointments.scheduled_at' => 'ASC'])
+                ->limit(2)
+                ->all();
+
+            // Fetch the latest 2 past appointments for the patient
+            $pastAppointments = $this->fetchTable('Appointments')->find()
+                ->contain(['Clinicians.Users'])
+                ->where([
+                    'Appointments.patient_id' => $patientId,
+                    'Appointments.scheduled_at <' => \Cake\I18n\FrozenTime::now(),
+                ])
+                ->orderBy(['Appointments.scheduled_at' => 'DESC'])
+                ->limit(2)
+                ->all();
 
             // Fetch active reminders for the patient
             $remindersTable = $this->fetchTable('Reminders');
@@ -131,6 +154,8 @@ class DashboardController extends AppController
             'currentUser',
             'latestVital',
             'nextAppointment',
+            'upcomingAppointments',
+            'pastAppointments',
             'latestResource',
             'activeReminders',
             'reminderCount'
