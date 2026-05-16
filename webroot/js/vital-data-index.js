@@ -13,10 +13,23 @@ $(function () {
                 { orderable: false, targets: [5] }
             ],
             layout: {
-                topStart: 'pageLength',
-                topEnd: 'search',
+                topStart: 'search',
+                topEnd: 'pageLength',
                 bottomStart: 'info',
                 bottomEnd: 'paging'
+            },
+            language: {
+                search: 'Search records',
+                searchPlaceholder: 'Patient, symptom, date, or vital sign...',
+                lengthMenu: '_MENU_ entries per page',
+                info: 'Showing _START_ to _END_ of _TOTAL_ records',
+                infoFiltered: '(filtered from _MAX_ total records)',
+                paginate: {
+                    first: '«',
+                    previous: '‹',
+                    next: '›',
+                    last: '»'
+                }
             }
         });
 

@@ -27,25 +27,20 @@ $isLongTextBlock = $blockType === 'text' && !$isIconBlock && mb_strlen($blockVal
 
 <div class="content-blocks-page">
     <div class="content-blocks-page-header">
-        <?= $this->Html->link(
-            '<i class="bi bi-arrow-left"></i>',
-            $backUrl,
-            [
-                'class' => 'content-blocks-back-button',
-                'escape' => false,
-                'aria-label' => __('Return to previous page'),
-            ]
-        ) ?>
+        <div class="content-blocks-page-title-row">
+            <?= $this->Html->link(
+                '<i class="bi bi-arrow-left"></i>',
+                $backUrl,
+                [
+                    'class' => 'content-blocks-back-button',
+                    'escape' => false,
+                    'aria-label' => __('Return to previous page'),
+                ]
+            ) ?>
 
-        <div class="content-blocks-breadcrumb">
-            <?= $this->Html->link(__('Dashboard'), ['controller' => 'Dashboard', 'action' => 'staff']) ?>
-            <span>/</span>
-            <?= $this->Html->link(__('Site Content'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index']) ?>
-            <span>/</span>
-            <span><?= __('Edit') ?></span>
+            <h1><?= h($contentBlock->label) ?></h1>
         </div>
 
-        <h1><?= h($contentBlock->label) ?></h1>
         <p><?= h($contentBlock->description) ?></p>
     </div>
 

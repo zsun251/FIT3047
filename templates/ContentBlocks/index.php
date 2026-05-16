@@ -109,9 +109,23 @@ $renderBlockList = function (array $contentBlocks) use ($getBlockTypeKey, $getBl
             <?php
             $blockType = $getBlockTypeKey($contentBlock);
             $blockValue = (string)$contentBlock->value;
+            $editUrl = $this->Url->build([
+                'plugin' => false,
+                'controller' => 'ContentBlocks',
+                'action' => 'edit',
+                $contentBlock->id,
+            ]);
             ?>
 
-            <article class="content-block-item" data-content-block-item data-content-block-type="<?= h($blockType) ?>">
+            <article
+                class="content-block-item"
+                data-content-block-item
+                data-content-block-type="<?= h($blockType) ?>"
+                data-content-block-edit-url="<?= h($editUrl) ?>"
+                role="link"
+                tabindex="0"
+                aria-label="<?= h(__('Edit {0}', $contentBlock->label)) ?>"
+            >
                 <div class="content-block-item-preview">
                     <?php if ($blockType === 'image' && !empty($blockValue)): ?>
                         <?= $this->Html->image($blockValue, [
@@ -145,22 +159,8 @@ $renderBlockList = function (array $contentBlocks) use ($getBlockTypeKey, $getBl
                     </p>
                 </div>
 
-                <div class="content-block-item-actions">
-                    <?= $this->Html->link(
-                        '<i class="bi bi-pencil-square"></i><span>Edit</span>',
-                        [
-                            'plugin' => false,
-                            'controller' => 'ContentBlocks',
-                            'action' => 'edit',
-                            $contentBlock->id,
-                        ],
-                        [
-                            'class' => 'content-block-edit-button',
-                            'escape' => false,
-                        ]
-                    ) ?>
-
-                    <?php if (!empty($contentBlock->previous_value)): ?>
+                <?php if (!empty($contentBlock->previous_value)): ?>
+                    <div class="content-block-item-actions">
                         <?= $this->Form->postLink(
                             '<i class="bi bi-arrow-counterclockwise"></i><span>Restore</span>',
                             [
@@ -179,8 +179,8 @@ $renderBlockList = function (array $contentBlocks) use ($getBlockTypeKey, $getBl
                                 ),
                             ]
                         ) ?>
-                    <?php endif; ?>
-                </div>
+                    </div>
+                <?php endif; ?>
             </article>
         <?php endforeach; ?>
     </div>
@@ -230,8 +230,8 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
 }
 ?>
 
-<div class="content-blocks-page">
-    <div class="content-blocks-page-header">
+<div class="content-blocks-page-header">
+    <div class="content-blocks-page-title-row">
         <?= $this->Html->link(
             '<i class="bi bi-arrow-left"></i>',
             $backUrl,
@@ -242,23 +242,15 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
             ]
         ) ?>
 
-        <div class="content-blocks-breadcrumb">
-            <?= $this->Html->link(__('Dashboard'), ['controller' => 'Dashboard', 'action' => 'staff']) ?>
-            <span>/</span>
-            <span><?= __('Site Content') ?></span>
-        </div>
-
         <h1><?= __('Site Content') ?></h1>
-        <p><p><?= __('Edit the text, images, and icons used across the public website.') ?></p></p>
     </div>
+
+    <p><?= __('Edit the text, images, and icons used across the public website.') ?></p>
+</div>
 
     <div class="content-blocks-admin-card">
         <div class="content-block-filter-panel">
             <div class="content-block-filter-group">
-                <div class="content-block-filter-label">
-                    <?= __('Content Type') ?>
-                </div>
-
                 <div class="content-block-filter-controls" aria-label="<?= h(__('Filter content blocks by type')) ?>">
                     <button class="content-block-filter-button active" type="button" data-content-block-filter="all" aria-pressed="true">
                         <?= __('All') ?>

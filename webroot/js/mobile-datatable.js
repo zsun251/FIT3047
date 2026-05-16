@@ -12,6 +12,7 @@ class MobileDataTable {
         this.cardSelector = options.cardSelector || '.sub-card';
         this.filterAttribute = options.filterAttribute || 'data-status';
         this.searchAttribute = options.searchAttribute || 'data-search-text';
+        this.paginationListSelector = options.paginationListSelector || '#mobilePaginationList';
 
         this.init();
     }
@@ -24,7 +25,8 @@ class MobileDataTable {
 
     setupSearch() {
         const self = this;
-        $('#mobileSearch').on('keyup', function() {
+
+        $('#mobileSearch').on('keyup', function () {
             self.searchQuery = $(this).val().toLowerCase();
             self.currentPage = 1;
             self.applyFilters();
@@ -34,16 +36,18 @@ class MobileDataTable {
     setupPagination() {
         const self = this;
 
-        $('#mobilePrevBtn').on('click', function() {
-            if (self.currentPage > 1) {
-                self.currentPage--;
-                self.applyFilters();
-                self.scrollToTop();
+        $(document).on('click', this.paginationListSelector + ' .mobile-page-btn', function () {
+            if ($(this).prop('disabled')) {
+                return;
             }
-        });
 
-        $('#mobileNextBtn').on('click', function() {
-            self.currentPage++;
+            const targetPage = Number($(this).data('page'));
+
+            if (!Number.isInteger(targetPage) || targetPage === self.currentPage) {
+                return;
+            }
+
+            self.currentPage = targetPage;
             self.applyFilters();
             self.scrollToTop();
         });
@@ -59,50 +63,105 @@ class MobileDataTable {
         const $cards = $(this.cardSelector);
         let visibleCards = $cards;
 
-        // Apply status/type filter
         if (this.activeFilter !== 'all') {
             visibleCards = visibleCards.filter('[' + this.filterAttribute + '="' + this.activeFilter + '"]');
         }
 
-        // Apply search filter
         if (this.searchQuery !== '') {
             const self = this;
-            visibleCards = visibleCards.filter(function() {
+
+            visibleCards = visibleCards.filter(function () {
                 const searchText = $(this).attr(self.searchAttribute) || '';
                 return searchText.indexOf(self.searchQuery) !== -1;
             });
         }
 
-        // Hide all cards first
         $cards.hide();
 
-        // Calculate pagination
         const totalItems = visibleCards.length;
-        const totalPages = Math.ceil(totalItems / this.itemsPerPage);
+        const totalPages = Math.max(1, Math.ceil(totalItems / this.itemsPerPage));
+
+        if (this.currentPage > totalPages) {
+            this.currentPage = totalPages;
+        }
+
         const startIndex = (this.currentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
 
-        // Show only the cards for current page
         visibleCards.slice(startIndex, endIndex).show();
-
-        // Update pagination info
         this.updatePaginationUI(totalItems, totalPages);
     }
 
     updatePaginationUI(totalItems, totalPages) {
-        if (totalItems > 0) {
-            $('#mobilePageInfo').text('Page ' + this.currentPage + ' of ' + totalPages + ' (' + totalItems + ' items)');
-        } else {
-            $('#mobilePageInfo').text('No items found');
+        const $paginationList = $(this.paginationListSelector);
+
+        if (!$paginationList.length) {
+            return;
         }
 
-        // Enable/disable pagination buttons
-        $('#mobilePrevBtn').prop('disabled', this.currentPage === 1);
-        $('#mobileNextBtn').prop('disabled', this.currentPage >= totalPages || totalItems === 0);
+        if (totalItems === 0) {
+            $paginationList.html(
+                '<li class="mobile-page-item"><button type="button" class="mobile-page-btn" disabled>No records</button></li>'
+            );
+            return;
+        }
+
+        const pageButtons = this.getPageButtons(totalPages);
+        const isFirstPage = this.currentPage === 1;
+        const isLastPage = this.currentPage >= totalPages;
+        const items = [];
+
+        items.push(this.renderPaginationButton('«', 1, isFirstPage, false, 'First page'));
+        items.push(this.renderPaginationButton('‹', this.currentPage - 1, isFirstPage, false, 'Previous page'));
+
+        pageButtons.forEach((page) => {
+            if (page === 'ellipsis') {
+                items.push('<li class="mobile-page-item"><button type="button" class="mobile-page-btn" disabled>…</button></li>');
+                return;
+            }
+
+            items.push(this.renderPaginationButton(page, page, false, page === this.currentPage, 'Page ' + page));
+        });
+
+        items.push(this.renderPaginationButton('›', this.currentPage + 1, isLastPage, false, 'Next page'));
+        items.push(this.renderPaginationButton('»', totalPages, isLastPage, false, 'Last page'));
+
+        $paginationList.html(items.join(''));
+    }
+
+    getPageButtons(totalPages) {
+        if (totalPages <= 5) {
+            return Array.from({ length: totalPages }, (_, index) => index + 1);
+        }
+
+        if (this.currentPage <= 3) {
+            return [1, 2, 3, 4, 'ellipsis', totalPages];
+        }
+
+        if (this.currentPage >= totalPages - 2) {
+            return [1, 'ellipsis', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+        }
+
+        return [1, 'ellipsis', this.currentPage - 1, this.currentPage, this.currentPage + 1, 'ellipsis', totalPages];
+    }
+
+    renderPaginationButton(label, page, disabled, active, ariaLabel) {
+        return [
+            '<li class="mobile-page-item">',
+            '<button type="button" class="mobile-page-btn', active ? ' is-active' : '', '"',
+            ' data-page="', page, '"',
+            disabled ? ' disabled' : '',
+            active ? ' aria-current="page"' : '',
+            ' aria-label="', ariaLabel, '">',
+            label,
+            '</button>',
+            '</li>'
+        ].join('');
     }
 
     scrollToTop() {
         const container = $(this.cardSelector).first().parent();
+
         if (container.length) {
             $('html, body').animate({
                 scrollTop: container.offset().top - 100
