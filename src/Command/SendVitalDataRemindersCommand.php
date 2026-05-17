@@ -73,7 +73,9 @@ class SendVitalDataRemindersCommand extends Command
                 $mailer = new Mailer('default');
                 $mailer
                     ->setEmailFormat('both')
-                    ->setTo($user->email) // Send to actual user
+                    //->setTo($user->email) // Send to actual user
+                    // DEVELOPMENT: Cannot send outside the domain, sending to host email.
+                    ->setTo('noreply@u26s1187.iedev.org')
                     ->setSubject('Reminder: Log your health data');
 
                 $mailer
