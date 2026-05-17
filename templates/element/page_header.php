@@ -26,14 +26,14 @@ $subtitle = $subtitle ?? null;
                     '<i class="bi bi-arrow-left"></i>',
                     $backUrl,
                     [
-                        'class' => 'btn btn-outline-secondary btn-back',
+                        'class' => 'back-button',
                         'escape' => false,
                         'title' => 'Go back'
                     ]
                 ) ?>
             <?php else: ?>
                 <button onclick="window.history.back()"
-                        class="btn btn-outline-secondary btn-back"
+                        class="back-button"
                         title="Go back">
                     <i class="bi bi-arrow-left"></i>
                 </button>
