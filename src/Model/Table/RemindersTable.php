@@ -47,7 +47,7 @@ class RemindersTable extends Table
             ->notEmptyDateTime('scheduled_at');
 
         $validator
-            ->inList('status', ['pending', 'sent'])
+            ->inList('status', ['unsent', 'sent', 'skipped'])
             ->notEmptyString('status');
 
         $validator
