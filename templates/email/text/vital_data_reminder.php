@@ -26,8 +26,7 @@ Log your measurements at the same time each day for the most accurate tracking. 
 ---
 
 You can manage your reminder schedule in your reminder settings:
-<?= $this->Url->build(['controller' => 'Reminders', 'action' => 'settings'], true) ?>
-
+<?= $this->Url->build(['controller' => 'Reminders', 'action' => 'settings'], ['fullBase' => true]) ?>
 ---
 
 Stay healthy,
