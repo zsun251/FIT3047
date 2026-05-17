@@ -49,9 +49,9 @@ $breadcrumbs = [
         <div class="hero-content">
             <h1 class="hero-title">
                 Welcome back,
-                <span>
-                    Dr <?= h($user->first_name) ?>
-                </span>
+                <span class="hero-name">
+            System Admin
+        </span>
             </h1>
 
             <p class="hero-subtitle">
