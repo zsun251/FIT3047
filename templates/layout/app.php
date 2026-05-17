@@ -35,7 +35,10 @@
 
     <main id="main-content" class="p-4 min-w-0">
         <div class="container-fluid px-3 px-md-4 px-xl-5">
-            <?= $this->Flash->render() ?>
+            <div class="flash-overlay">
+                <?= $this->Flash->render() ?>
+            </div>
+
             <?= $this->fetch('content') ?>
         </div>
     </main>
