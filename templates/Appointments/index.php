@@ -119,8 +119,9 @@ $breadcrumbs = [
     'breadcrumbs' => $breadcrumbs
 ]) ?>
 
-<div class="appointments-page">
-    <div class="appointments-hero">
+<div class="appointments-admin-page">
+
+    <div class="admin-appointments-hero">
         <div>
             <h1><?= $isAdmin ? __('Appointments') : __('Assigned Appointments') ?></h1>
             <p>Manage upcoming and completed patient consultations</p>
@@ -130,17 +131,19 @@ $breadcrumbs = [
             '<i class="bi bi-plus-circle"></i> Create Appointment',
             ['action' => 'add'],
             [
-                'class' => 'appointment-create-btn',
+                'class' => 'admin-appointment-create-btn',
                 'escape' => false,
             ]
         ) ?>
     </div>
 
-    <div class="appointment-stats-grid">
-        <div class="appointment-stat-card total">
-            <div class="appointment-stat-icon">
+    <div class="admin-appointment-stats-grid">
+
+        <div class="admin-appointment-stat-card total">
+            <div class="admin-appointment-stat-icon">
                 <i class="bi bi-calendar2-week"></i>
             </div>
+
             <div>
                 <span>Total Appointments</span>
                 <h2><?= h($stats['total']) ?></h2>
@@ -148,10 +151,11 @@ $breadcrumbs = [
             </div>
         </div>
 
-        <div class="appointment-stat-card upcoming">
-            <div class="appointment-stat-icon">
+        <div class="admin-appointment-stat-card upcoming">
+            <div class="admin-appointment-stat-icon">
                 <i class="bi bi-clock"></i>
             </div>
+
             <div>
                 <span>Upcoming</span>
                 <h2><?= h($stats['upcoming']) ?></h2>
@@ -159,10 +163,11 @@ $breadcrumbs = [
             </div>
         </div>
 
-        <div class="appointment-stat-card completed">
-            <div class="appointment-stat-icon">
+        <div class="admin-appointment-stat-card completed">
+            <div class="admin-appointment-stat-icon">
                 <i class="bi bi-check-circle"></i>
             </div>
+
             <div>
                 <span>Completed</span>
                 <h2><?= h($stats['completed']) ?></h2>
@@ -170,41 +175,51 @@ $breadcrumbs = [
             </div>
         </div>
 
-        <div class="appointment-stat-card cancelled">
-            <div class="appointment-stat-icon">
+        <div class="admin-appointment-stat-card cancelled">
+            <div class="admin-appointment-stat-icon">
                 <i class="bi bi-x-circle"></i>
             </div>
+
             <div>
                 <span>Cancelled</span>
                 <h2><?= h($stats['cancelled']) ?></h2>
                 <p>Missed or cancelled</p>
             </div>
         </div>
+
     </div>
 
-    <div class="appointments-panel">
-        <div class="appointments-toolbar">
-            <div class="appointment-tabs">
-                <button type="button" class="appointment-filter active" data-filter="all">All</button>
-                <button type="button" class="appointment-filter" data-filter="upcoming">Upcoming</button>
-                <button type="button" class="appointment-filter" data-filter="completed">Completed</button>
-                <button type="button" class="appointment-filter" data-filter="cancelled">Cancelled</button>
+    <div class="admin-appointments-panel">
+
+        <div class="admin-appointments-toolbar">
+
+            <div class="admin-appointment-tabs">
+                <button type="button" class="admin-appointment-filter active" data-filter="all">All</button>
+                <button type="button" class="admin-appointment-filter" data-filter="upcoming">Upcoming</button>
+                <button type="button" class="admin-appointment-filter" data-filter="completed">Completed</button>
+                <button type="button" class="admin-appointment-filter" data-filter="cancelled">Cancelled</button>
             </div>
 
-            <div class="appointment-search">
+            <div class="admin-appointment-search">
                 <i class="bi bi-search"></i>
                 <input type="text" id="appointmentSearch" placeholder="Search appointments...">
             </div>
+
         </div>
 
         <?php if (!empty($appointmentList)): ?>
-            <div class="appointment-list" id="appointmentList">
+
+            <div class="admin-appointment-list" id="appointmentList">
+
                 <?php foreach ($appointmentList as $appointment): ?>
+
                     <?php
                     $normalizedStatus = $normalizeStatus($appointment->status ?? null);
                     $statusClass = $normalizedStatus === 'unknown' ? 'default' : $normalizedStatus;
+
                     $patientName = $getPatientLabel($appointment);
                     $clinicianName = $getClinicianLabel($appointment);
+
                     $searchText = strtolower(
                         $patientName . ' ' .
                         $clinicianName . ' ' .
@@ -215,53 +230,62 @@ $breadcrumbs = [
                     );
                     ?>
 
-                    <div class="appointment-card <?= h($statusClass) ?>"
+                    <div class="admin-appointment-card <?= h($statusClass) ?>"
                          data-status="<?= h($statusClass) ?>"
                          data-search="<?= h($searchText) ?>">
-                        <div class="appointment-avatar">
+
+                        <div class="admin-appointment-avatar">
                             <?= h($getInitials($patientName)) ?>
                         </div>
 
-                        <div class="appointment-person">
+                        <div class="admin-appointment-person">
                             <h3><?= h($patientName) ?></h3>
                             <p>Patient #<?= h($appointment->patient_id) ?></p>
                         </div>
 
-                        <div class="appointment-info">
+                        <div class="admin-appointment-info">
                             <i class="bi bi-calendar-event"></i>
+
                             <div>
                                 <strong><?= h($getDateLabel($appointment->scheduled_at ?? null)) ?></strong>
                                 <span><?= h($getTimeLabel($appointment->scheduled_at ?? null)) ?></span>
                             </div>
                         </div>
 
-                        <div class="appointment-info">
+                        <div class="admin-appointment-info">
                             <i class="bi bi-person"></i>
+
                             <div>
                                 <strong><?= h($clinicianName) ?></strong>
                                 <span>Clinician #<?= h($appointment->clinician_id) ?></span>
                             </div>
                         </div>
 
-                        <div class="appointment-info duration">
+                        <div class="admin-appointment-info duration">
                             <i class="bi bi-clock"></i>
+
                             <div>
-                                <strong><?= !empty($appointment->duration) ? h($appointment->duration) . ' min' : '—' ?></strong>
+                                <strong>
+                                    <?= !empty($appointment->duration)
+                                        ? h($appointment->duration) . ' min'
+                                        : '—' ?>
+                                </strong>
                             </div>
                         </div>
 
                         <div>
-                            <span class="appointment-status appointment-status-<?= h($statusClass) ?>">
+                            <span class="admin-appointment-status admin-appointment-status-<?= h($statusClass) ?>">
                                 <?= h($getStatusLabel($appointment->status ?? null)) ?>
                             </span>
                         </div>
 
-                        <div class="appointment-actions">
+                        <div class="admin-appointment-actions">
+
                             <?= $this->Html->link(
                                 '<i class="bi bi-eye"></i>',
                                 ['action' => 'view', $appointment->id],
                                 [
-                                    'class' => 'appointment-action view',
+                                    'class' => 'admin-appointment-action view',
                                     'escape' => false,
                                     'title' => 'View',
                                 ]
@@ -271,7 +295,7 @@ $breadcrumbs = [
                                 '<i class="bi bi-pencil"></i>',
                                 ['action' => 'edit', $appointment->id],
                                 [
-                                    'class' => 'appointment-action edit',
+                                    'class' => 'admin-appointment-action edit',
                                     'escape' => false,
                                     'title' => 'Edit',
                                 ]
@@ -282,64 +306,97 @@ $breadcrumbs = [
                                 ['action' => 'delete', $appointment->id],
                                 [
                                     'method' => 'delete',
-                                    'class' => 'appointment-action delete',
+                                    'class' => 'admin-appointment-action delete',
                                     'escape' => false,
                                     'confirm' => __('Are you sure you want to delete appointment #{0}?', $appointment->id),
                                     'title' => 'Delete',
                                 ]
                             ) ?>
+
                         </div>
+
                     </div>
+
                 <?php endforeach; ?>
+
             </div>
 
-            <div class="appointments-footer">
-                <span>Showing <?= count($appointmentList) ?> appointment<?= count($appointmentList) === 1 ? '' : 's' ?></span>
+            <div class="admin-appointments-footer">
+                <span>
+                    Showing <?= count($appointmentList) ?>
+                    appointment<?= count($appointmentList) === 1 ? '' : 's' ?>
+                </span>
             </div>
+
         <?php else: ?>
-            <div class="appointments-empty-state">
-                <div class="appointments-empty-icon">
+
+            <div class="admin-appointments-empty-state">
+
+                <div class="admin-appointments-empty-icon">
                     <i class="bi bi-calendar-x"></i>
                 </div>
+
                 <h3><?= __('No appointments found') ?></h3>
+
                 <p>
                     <?= $isAdmin
                         ? __('There are currently no appointment records to display.')
                         : __('There are currently no appointment records assigned to you.') ?>
                 </p>
+
             </div>
+
         <?php endif; ?>
+
     </div>
+
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const filters = document.querySelectorAll('.appointment-filter');
-        const cards = document.querySelectorAll('.appointment-card');
+
+        const filters = document.querySelectorAll('.admin-appointment-filter');
+        const cards = document.querySelectorAll('.admin-appointment-card');
         const searchInput = document.getElementById('appointmentSearch');
+
         let activeFilter = 'all';
 
         function applyFilters() {
-            const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+            const searchValue = searchInput
+                ? searchInput.value.toLowerCase().trim()
+                : '';
 
             cards.forEach(function (card) {
+
                 const status = card.dataset.status;
                 const searchText = card.dataset.search || '';
-                const statusMatch = activeFilter === 'all' || status === activeFilter;
-                const searchMatch = searchText.includes(searchValue);
 
-                card.style.display = statusMatch && searchMatch ? 'grid' : 'none';
+                const statusMatch =
+                    activeFilter === 'all' || status === activeFilter;
+
+                const searchMatch =
+                    searchText.includes(searchValue);
+
+                card.style.display =
+                    statusMatch && searchMatch
+                        ? 'grid'
+                        : 'none';
             });
         }
 
         filters.forEach(function (button) {
+
             button.addEventListener('click', function () {
+
                 filters.forEach(function (btn) {
                     btn.classList.remove('active');
                 });
 
                 button.classList.add('active');
+
                 activeFilter = button.dataset.filter;
+
                 applyFilters();
             });
         });
@@ -347,5 +404,6 @@ $breadcrumbs = [
         if (searchInput) {
             searchInput.addEventListener('input', applyFilters);
         }
+
     });
 </script>
