@@ -89,12 +89,12 @@ $this->Html->css('home', ['block' => true]);
         </div>
     </section>
 
-    <!-- Team Image Section -->
-    <section class="team-intro-section" style="background-image: url('<?= h($this->Url->image($this->ContentBlock->imagePath('home-team-image'))) ?>')">
+    <!-- Motivational Banner Section -->
+    <section class="team-intro-section" style="background-image: url('<?= h($this->Url->image($this->ContentBlock->imagePath('home-motivational-banner-image'))) ?>')">
         <div class="team-intro-content">
-            <h2><?= $this->ContentBlock->text('home-team-heading') ?></h2>
+            <h2><?= $this->ContentBlock->text('home-motivational-banner-heading') ?></h2>
             <p>
-                <?= $this->ContentBlock->text('home-team-text') ?>
+                <?= $this->ContentBlock->text('home-motivational-banner-text') ?>
             </p>
         </div>
     </section>

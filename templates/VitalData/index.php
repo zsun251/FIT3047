@@ -32,73 +32,39 @@ $this->Html->script('vital-data-index', ['block' => 'script']);
 $identity = $this->request->getAttribute('identity');
 $isStaff = UserAccess::isStaff($identity);
 
-$breadcrumbs = [
-    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
-    ['title' => 'Health Records', 'url' => null]
-];
+$fallbackBackUrl = $this->Url->build(['controller' => 'Dashboard', 'action' => 'staff']);
+$backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
 ?>
 
 <!-- Header Section -->
-<div class="dash-header d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <?= $this->element('page_header', [
-            'breadcrumbs' => $breadcrumbs,
-            'title' => 'Patient Health Records',
-            'subtitle' => 'Monitor patient health metrics'
-        ]) ?>
-    </div>
-    <div>
+<div class="health-records-page-header">
+    <div class="health-records-header-main">
+        <div class="health-records-header-copy">
+            <div class="health-records-title-row">
+                <?= $this->Html->link(
+                    '<i class="bi bi-arrow-left"></i>',
+                    $backUrl,
+                    [
+                        'class' => 'health-records-back-button',
+                        'escape' => false,
+                        'aria-label' => __('Return to previous page'),
+                    ]
+                ) ?>
+
+                <h1><?= __('Patient Health Records') ?></h1>
+            </div>
+
+            <p><?= __('Monitor patient health metrics') ?></p>
+        </div>
+
         <?= $this->Html->link(
-            '<i class="bi bi-plus-circle"></i> New Record',
+            '<i class="bi bi-plus-circle"></i><span>' . __('New Record') . '</span>',
             ['action' => 'add'],
             [
-                'class' => 'btn btn-primary',
-                'escape' => false
+                'class' => 'health-records-new-record-button',
+                'escape' => false,
             ]
         ) ?>
-    </div>
-</div>
-<!-- Stats Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="stat-card stat-card-total">
-            <div class="stat-label">Total Records</div>
-            <div class="stat-value"><?= count($vitalData) ?></div>
-        </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <div class="stat-card stat-card-symptoms">
-            <div class="stat-label">With Symptoms</div>
-            <div class="stat-value">
-                <?= collection($vitalData)->countBy(fn($v) => !empty($v->symptoms))->toArray()[true] ?? 0 ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <div class="stat-card stat-card-today">
-            <div class="stat-label">Today</div>
-            <div class="stat-value">
-                <?= collection($vitalData)->countBy(fn($v) => $v->recorded_at->isToday())->toArray()[true] ?? 0 ?>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-6 col-md-3">
-        <div class="stat-card stat-card-week">
-            <div class="stat-label">This Week</div>
-            <div class="stat-value">
-                <?php
-                $weekStart = (new \Cake\I18n\DateTime())->startOfWeek();
-                $weekEnd = (new \Cake\I18n\DateTime())->endOfWeek();
-                $thisWeekCount = collection($vitalData)->countBy(function ($v) use ($weekStart, $weekEnd) {
-                    return $v->recorded_at >= $weekStart && $v->recorded_at <= $weekEnd;
-                })->toArray()[true] ?? 0;
-                echo $thisWeekCount;
-                ?>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -152,6 +118,28 @@ $breadcrumbs = [
                         </button>
                     <?php endforeach; ?>
                 </div>
+
+                <div
+                    class="symptom-severity-row <?= (($filters['symptom_filter'] ?? 'any') === 'with') ? 'is-visible' : '' ?>"
+                    id="severityRow"
+                >
+                    <div class="filter-field">
+                        <?= $this->Form->control('severity', [
+                            'type' => 'select',
+                            'options' => [
+                                'mild' => 'Mild',
+                                'moderate' => 'Moderate',
+                                'severe' => 'Severe',
+                            ],
+                            'empty' => 'Any severity',
+                            'label' => 'Severity',
+                            'value' => $filters['severity'] ?? '',
+                            'class' => 'form-select',
+                            'id' => 'severityField',
+                            'disabled' => (($filters['symptom_filter'] ?? 'any') !== 'with')
+                        ]) ?>
+                    </div>
+                </div>
             </div>
 
             <div class="filter-field filter-field-date">
@@ -185,6 +173,52 @@ $breadcrumbs = [
                             <?= h($label) ?>
                         </button>
                     <?php endforeach; ?>
+                </div>
+
+                <div
+                    class="custom-date-row <?= ($filters['date_preset'] ?? '') === 'custom' ? 'is-visible' : '' ?>"
+                    id="customDateRow"
+                >
+                    <div class="filter-field" id="dateFromGroup">
+                        <label for="dateFromField" class="form-label">Start date</label>
+                        <input
+                            type="date"
+                            name="date_from"
+                            id="dateFromField"
+                            class="form-control"
+                            value="<?= h($filters['date_from'] ?? '') ?>"
+                        >
+                    </div>
+
+                    <div class="filter-field" id="dateToGroup">
+                        <label for="dateToField" class="form-label">End date</label>
+                        <input
+                            type="date"
+                            name="date_to"
+                            id="dateToField"
+                            class="form-control"
+                            value="<?= h($filters['date_to'] ?? '') ?>"
+                        >
+                    </div>
+
+                    <div class="custom-date-help">
+                        <div class="custom-date-help-title">
+                            <i class="bi bi-info-circle-fill"></i>
+                            <span>How custom date filtering works</span>
+                        </div>
+
+                        <div class="custom-date-help-items">
+                    <span class="custom-date-help-pill help-pill-end">
+                        Only <strong>end date</strong> → shows everything up to that date
+                    </span>
+                            <span class="custom-date-help-pill help-pill-start">
+                        Only <strong>start date</strong> → shows everything from that date onward
+                    </span>
+                            <span class="custom-date-help-pill help-pill-range">
+                        <strong>Both dates</strong> → filters to the selected date range
+                    </span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -275,11 +309,11 @@ $breadcrumbs = [
     </div>
 
     <div class="records-card-body">
-        <div class="d-md-none mobile-search-wrap">
+        <div class="d-xxl-none mobile-search-wrap">
             <input type="text" id="mobileSearch" class="form-control" placeholder="Search vital data...">
         </div>
 
-        <div class="table-responsive d-none d-md-block">
+        <div class="table-responsive d-none d-xxl-block">
             <table id="vitalDataTable" class="table table-striped table-hover dt-hidden mb-0">
                 <thead>
                 <tr>
@@ -309,11 +343,7 @@ $breadcrumbs = [
 
                     <tr>
                         <td class="align-middle">
-                            <?= $this->Html->link(
-                                '<span class="badge bg-secondary">#' . $this->Number->format($vitalDataEntity->id) . '</span>',
-                                ['action' => 'view', $vitalDataEntity->id],
-                                ['escape' => false, 'class' => 'text-decoration-none']
-                            ) ?>
+                            <span class="badge bg-secondary">#<?= $this->Number->format($vitalDataEntity->id) ?></span>
                         </td>
 
                         <td class="align-middle">
@@ -321,7 +351,7 @@ $breadcrumbs = [
                                 <?= $this->Html->link(
                                     h($patientName),
                                     ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id],
-                                    ['class' => 'fw-bold text-decoration-none']
+                                    ['class' => 'patient-pill-link text-decoration-none']
                                 ) ?>
                             <?php endif; ?>
                         </td>
@@ -343,15 +373,22 @@ $breadcrumbs = [
                                 <?php endif; ?>
 
                                 <?php if ($vitalDataEntity->blood_pressure !== null): ?>
-                                    <div class="vital-item">
+                                    <div class="vital-item vital-item-pressure">
                                         <i class="bi bi-droplet text-info"></i>
                                         <strong>BP:</strong> <?= h($vitalDataEntity->blood_pressure) ?>
                                     </div>
                                 <?php endif; ?>
 
-                                <?php if ($vitalDataEntity->weight !== null): ?>
-                                    <div class="vital-item">
+                                <?php if ($vitalDataEntity->pulse_oximetry !== null): ?>
+                                    <div class="vital-item vital-item-pulse">
                                         <i class="bi bi-speedometer text-success"></i>
+                                        <strong>Pulse Ox:</strong> <?= $this->Number->format($vitalDataEntity->pulse_oximetry) ?>%
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($vitalDataEntity->weight !== null): ?>
+                                    <div class="vital-item vital-item-weight">
+                                        <i class="bi bi-box-seam"></i>
                                         <strong>Weight:</strong> <?= $this->Number->format($vitalDataEntity->weight) ?> kg
                                     </div>
                                 <?php endif; ?>
@@ -433,7 +470,7 @@ $breadcrumbs = [
             </table>
         </div>
 
-        <div class="d-md-none records-mobile-body" id="mobileCardsContainer">
+        <div class="d-xxl-none records-mobile-body" id="mobileCardsContainer">
             <?php foreach ($vitalData as $vitalDataEntity): ?>
                 <?php
                 $patientName = '';
@@ -462,54 +499,84 @@ $breadcrumbs = [
                 ?>
 
                 <div class="sub-card" data-search-text="<?= h(strtolower(implode(' ', $mobileSearchParts))) ?>">
-                    <div class="card-top">
-                        <div>
-                            <?= $this->Html->link(
-                                'Health Record <span class="badge bg-secondary ms-2">#' . h($vitalDataEntity->id) . '</span>',
-                                ['action' => 'view', $vitalDataEntity->id],
-                                ['class' => 'card-name text-decoration-none', 'escape' => false]
-                            ) ?>
+                    <div class="card-top record-card-header">
+                        <div class="record-card-icon" aria-hidden="true">
+                            <i class="bi bi-clipboard2-pulse"></i>
+                        </div>
+
+                        <div class="record-card-heading">
+                            <div class="record-card-title-row">
+                                <span class="record-card-title-text">Health Record</span>
+                                <span class="record-id-pill">#<?= h($vitalDataEntity->id) ?></span>
+                            </div>
 
                             <?php if ($vitalDataEntity->hasValue('patient')): ?>
-                                <div class="card-phone text-muted">
-                                    <?= $this->Html->link(
-                                        h($patientName),
-                                        ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id]
-                                    ) ?>
-                                </div>
+                                <?= $this->Html->link(
+                                    '<i class="bi bi-person"></i><span>' . h($patientName) . '</span>',
+                                    ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id],
+                                    ['class' => 'record-card-patient-pill text-decoration-none', 'escape' => false]
+                                ) ?>
                             <?php endif; ?>
                         </div>
                     </div>
 
                     <div class="card-field">
-                        <strong><i class="bi bi-heart-pulse"></i> Vital Signs:</strong>
-                        <div class="mt-2">
+                        <strong class="card-field-title">
+                            <i class="bi bi-heart-pulse"></i>
+                            Vital Signs:
+                        </strong>
+
+                        <div class="mobile-vitals-grid">
                             <?php if ($vitalDataEntity->oxygen_saturation !== null): ?>
-                                <div>O₂ Saturation: <strong><?= $this->Number->format($vitalDataEntity->oxygen_saturation) ?>%</strong></div>
+                                <div class="mobile-vital-item mobile-vital-oxygen">
+                                    <i class="bi bi-heart-pulse"></i>
+                                    <span>O₂</span>
+                                    <strong><?= $this->Number->format($vitalDataEntity->oxygen_saturation) ?>%</strong>
+                                </div>
                             <?php endif; ?>
 
                             <?php if ($vitalDataEntity->respiratory_rate !== null): ?>
-                                <div>Respiratory Rate: <strong><?= $this->Number->format($vitalDataEntity->respiratory_rate) ?> bpm</strong></div>
+                                <div class="mobile-vital-item mobile-vital-respiratory">
+                                    <i class="bi bi-activity"></i>
+                                    <span>Resp. rate</span>
+                                    <strong><?= $this->Number->format($vitalDataEntity->respiratory_rate) ?> bpm</strong>
+                                </div>
                             <?php endif; ?>
 
                             <?php if ($vitalDataEntity->blood_pressure !== null): ?>
-                                <div>Blood Pressure: <strong><?= h($vitalDataEntity->blood_pressure) ?></strong></div>
+                                <div class="mobile-vital-item mobile-vital-pressure">
+                                    <i class="bi bi-droplet"></i>
+                                    <span>Blood pressure</span>
+                                    <strong><?= h($vitalDataEntity->blood_pressure) ?></strong>
+                                </div>
                             <?php endif; ?>
 
                             <?php if ($vitalDataEntity->pulse_oximetry !== null): ?>
-                                <div>Pulse Oximetry: <strong><?= $this->Number->format($vitalDataEntity->pulse_oximetry) ?></strong></div>
+                                <div class="mobile-vital-item mobile-vital-pulse">
+                                    <i class="bi bi-speedometer"></i>
+                                    <span>Pulse ox.</span>
+                                    <strong><?= $this->Number->format($vitalDataEntity->pulse_oximetry) ?>%</strong>
+                                </div>
                             <?php endif; ?>
 
                             <?php if ($vitalDataEntity->weight !== null): ?>
-                                <div>Weight: <strong><?= $this->Number->format($vitalDataEntity->weight) ?> kg</strong></div>
+                                <div class="mobile-vital-item mobile-vital-weight">
+                                    <i class="bi bi-box-seam"></i>
+                                    <span>Weight</span>
+                                    <strong><?= $this->Number->format($vitalDataEntity->weight) ?> kg</strong>
+                                </div>
                             <?php endif; ?>
                         </div>
                     </div>
 
                     <?php if (!empty($vitalDataEntity->symptoms)): ?>
                         <div class="card-field">
-                            <strong><i class="bi bi-clipboard2-pulse"></i> Symptoms:</strong>
-                            <div class="symptoms-list mt-2">
+                            <strong class="card-field-title card-field-title-symptoms">
+                                <i class="bi bi-clipboard2-pulse"></i>
+                                Symptoms:
+                            </strong>
+
+                            <div class="symptoms-list">
                                 <?php foreach ($vitalDataEntity->symptoms as $symptom): ?>
                                     <span class="symptom-badge severity-<?= h(strtolower($symptom->_joinData->severity ?? 'mild')) ?>">
                                         <?= h($symptom->symptom_name) ?>
@@ -524,7 +591,7 @@ $breadcrumbs = [
                         Recorded: <?= h($vitalDataEntity->recorded_at->format('M d, Y')) ?> at <?= h($vitalDataEntity->recorded_at->format('g:i A')) ?>
                     </div>
 
-                    <div class="mt-3 d-flex gap-2">
+                    <div class="record-card-actions">
                         <?= $this->Html->link(
                             '<i class="bi bi-clock-history"></i> History',
                             ['action' => 'patientHistory', $vitalDataEntity->patient_id],
@@ -557,16 +624,10 @@ $breadcrumbs = [
             <?php endforeach; ?>
         </div>
 
-        <div class="d-md-none mt-3 mobile-pagination-wrap" id="mobilePagination">
-            <div class="d-flex justify-content-between align-items-center">
-                <button id="mobilePrevBtn" class="btn btn-sm btn-outline-secondary" disabled>
-                    <i class="bi bi-chevron-left"></i> Previous
-                </button>
-                <span id="mobilePageInfo" class="text-muted small"></span>
-                <button id="mobileNextBtn" class="btn btn-sm btn-outline-secondary">
-                    Next <i class="bi bi-chevron-right"></i>
-                </button>
-            </div>
+        <div class="d-xxl-none mt-3 mobile-pagination-wrap" id="mobilePagination">
+            <nav aria-label="Health record pagination">
+                <ul class="mobile-pagination-list" id="mobilePaginationList"></ul>
+            </nav>
         </div>
     </div>
 </div>

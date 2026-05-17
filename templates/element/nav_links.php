@@ -132,6 +132,12 @@ if ($isStaff) {
                 <?= $this->Html->link($linkLabel('Health Records', 'bi-heart-pulse'), ['controller' => 'VitalData', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'VitalData' ? ' active' : ''), 'escape' => false]) ?>
             </li>
         <?php endif; ?>
+
+        <?php if ($isAdmin): ?>
+            <li class="<?= $itemClass ?> topbar-always-show">
+                <?= $this->Html->link($linkLabel('Site Content', 'bi-card-text'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'ContentBlocks' ? ' active' : ''), 'escape' => false]) ?>
+            </li>
+        <?php endif; ?>
     <?php endif; ?>
 
     <?php if ($isPatient): ?>
@@ -161,7 +167,7 @@ if ($isStaff) {
 
 
     <!-- Desktop sidebar links -->
-    <?php if ($showSections): ?><div class="sidebar-section-title">Navigation</div><?php endif; ?>
+    <!-- <?php if ($showSections): ?><div class="sidebar-section-title">Navigation</div><?php endif; ?> -->
 
     <?php if ($dashboardRoute): ?>
         <li class="<?= $itemClass ?>">
@@ -198,7 +204,7 @@ if ($isStaff) {
 
         <?php if ($isAdmin): ?>
             <li class="<?= $itemClass ?>">
-                <?= $this->Html->link($linkLabel('Edit Site Content', 'bi-heart-pulse'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'ContentBlocks' ? ' active' : ''), 'escape' => false]) ?>
+                <?= $this->Html->link($linkLabel('Site Content', 'bi-card-text'), ['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'ContentBlocks' ? ' active' : ''), 'escape' => false]) ?>
             </li>
         <?php endif; ?>
 
@@ -225,26 +231,15 @@ if ($isStaff) {
     <?php endif; ?>
 <?php endif; ?>
 
-<!-- ====================================================================
-     AUTHENTICATION LINK (Login/Logout)
-     Always visible in topbar on both desktop and mobile
-     Shows "Logout" for logged-in users, "Login" for guests
-     ==================================================================== -->
+
+
 <?php if ($context === 'topbar' || $context === 'mobile'): ?>
     <!-- Login or logout link -->
     <li class="<?= $itemClass ?> topbar-always-show">
         <?php if ($isLoggedIn): ?>
-            <?= $this->Html->link(
-                $linkLabel('Logout', 'bi-box-arrow-right', $context === 'mobile'),
-                ['controller' => 'Users', 'action' => 'logout'],
-                ['class' => $linkClass . ' auth-button' . ($currentController === 'Users' && $currentAction === 'logout' ? ' active' : ''), 'escape' => false]
-            ) ?>
+            <?= $this->Html->link(__('Logout'), ['controller' => 'Users', 'action' => 'logout'], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'logout' ? ' active' : '')]) ?>
         <?php else: ?>
-            <?= $this->Html->link(
-                $linkLabel('Login', 'bi-box-arrow-in-right', $context === 'mobile'),
-                ['controller' => 'Users', 'action' => 'login'],
-                ['class' => $linkClass . ' auth-button' . ($currentController === 'Users' && $currentAction === 'login' ? ' active' : ''), 'escape' => false]
-            )?>
+            <?= $this->Html->link(__('Login'), ['controller' => 'Users', 'action' => 'login'], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'login' ? ' active' : '')])?>
         <?php endif; ?>
     </li>
 <?php endif; ?>

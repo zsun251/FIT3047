@@ -18,6 +18,7 @@ class ContentBlocksController extends AppController
     public function initialize(): void
     {
         parent::initialize();
+
         $this->viewBuilder()->setLayout('app');
         $this->loadComponent('Flash');
 
@@ -36,15 +37,12 @@ class ContentBlocksController extends AppController
         // Check authorization
         if (!$this->Authorization->can($contentBlock, 'index')) {
             $this->Flash->error(__('You do not have permission to access that page.'));
+
             return $this->redirect($this->getRedirectUrl());
         }
 
         $contentBlocks = $this->ContentBlocks->find()
-            ->orderBy([
-                'ContentBlocks.parent' => 'ASC',
-                'ContentBlocks.label' => 'ASC',
-            ])
-            ->all();
+            ->orderBy(['ContentBlocks.parent' => 'ASC', 'ContentBlocks.label' => 'ASC',])->all();
 
         $contentBlocksGrouped = [];
 
@@ -69,6 +67,7 @@ class ContentBlocksController extends AppController
         // Check authorization
         if (!$this->Authorization->can($contentBlock, 'edit')) {
             $this->Flash->error(__('You do not have permission to edit this content block.'));
+
             return $this->redirect($this->getRedirectUrl());
         }
 
@@ -84,14 +83,17 @@ class ContentBlocksController extends AppController
 
                 if ($this->ContentBlocks->save($contentBlock)) {
                     $this->Flash->success(__('The content block has been saved.'));
-                    return $this->redirect(['plugin' => false, 'controller' => 'ContentBlocks', 'action' => 'index']);
-                }
-            }
 
-            $this->Flash->error(__('The content block could not be saved. Please, try again.'));
+                    return $this->redirect(['action' => 'index']);
+                }
+
+                $this->Flash->error(__('The content block could not be saved. Please, try again.'));
+            }
         }
 
-        $this->set(compact('contentBlock'));
+        $textValueMaxLength = $contentBlock->type === 'text' ? $this->getTextValueLimit($contentBlock) : null;
+
+        $this->set(compact('contentBlock', 'textValueMaxLength'));
     }
 
     /**
@@ -109,6 +111,7 @@ class ContentBlocksController extends AppController
         // Check authorization
         if (!$this->Authorization->can($contentBlock, 'restore')) {
             $this->Flash->error(__('You do not have permission to restore this content block.'));
+
             return $this->redirect($this->getRedirectUrl());
         }
 
@@ -141,21 +144,16 @@ class ContentBlocksController extends AppController
 
         // Check authorization
         if (!$this->Authorization->can($contentBlock, 'upload')) {
-            return $this->jsonResponse([
-                'error' => [
-                    'message' => __('You do not have permission to upload content block images.'),
-                ],
-            ], 403);
+            return $this->jsonResponse(
+                ['error' => ['message' => __('You do not have permission to upload content block images.'),],],
+                403
+            );
         }
 
         $uploadedFile = $this->request->getData('upload');
 
         if (!$uploadedFile instanceof UploadedFileInterface) {
-            return $this->jsonResponse([
-                'error' => [
-                    'message' => __('No upload file was provided.'),
-                ],
-            ], 400);
+            return $this->jsonResponse(['error' => ['message' => __('No upload file was provided.'),],], 400);
         }
 
         $uploadedPath = $this->storeUploadedImage($uploadedFile);
@@ -163,7 +161,7 @@ class ContentBlocksController extends AppController
         if ($uploadedPath === null) {
             return $this->jsonResponse([
                 'error' => [
-                    'message' => __('The uploaded image could not be saved.'),
+                    'message' => __('The uploaded image must be a valid JPG, PNG, GIF, or WebP file under 2MB.'),
                 ],
             ], 400);
         }
@@ -182,25 +180,148 @@ class ContentBlocksController extends AppController
      */
     private function prepareContentBlockData(ContentBlock $contentBlock, array $data): ?array
     {
-        if ($contentBlock->type !== 'image') {
-            return $data;
+        $preparedData = [
+            'value' => $data['value'] ?? null,
+        ];
+
+        if ($contentBlock->type === 'image') {
+            return $this->prepareImageBlockData($preparedData);
         }
 
+        if ($contentBlock->type !== 'text') {
+            $this->Flash->error(__('This content block type is not supported.'));
+
+            return null;
+        }
+
+        $preparedData['value'] = $this->sanitiseTextValue((string)$preparedData['value']);
+        $textLimit = $this->getTextValueLimit($contentBlock);
+
+        if (mb_strlen($preparedData['value']) > $textLimit) {
+            $this->Flash->error(__('This content block must be {0} characters or fewer.', $textLimit));
+
+            return null;
+        }
+
+        if ($this->isIconBlock($contentBlock) && !$this->isValidBootstrapIcon($preparedData['value'])) {
+            $this->Flash->error(__('Icon values must be valid Bootstrap Icons classes, such as bi-heart-pulse.'));
+
+            return null;
+        }
+
+        return $preparedData;
+    }
+
+    /**
+     * Sanitise normal text content.
+     *
+     * @param string $value Text value.
+     * @return string
+     */
+    private function sanitiseTextValue(string $value): string
+    {
+        $value = trim($value);
+        $value = strip_tags($value);
+
+        return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value) ?? '';
+    }
+
+    /**
+     * Get the character limit for a text content block.
+     *
+     * @param \ContentBlocks\Model\Entity\ContentBlock $contentBlock Content block.
+     * @return int
+     */
+    private function getTextValueLimit(ContentBlock $contentBlock): int
+    {
+        $slug = (string)$contentBlock->slug;
+
+        if ($slug === 'global-site-name') {
+            return 40;
+        }
+
+        if ($slug === 'global-footer-copyright') {
+            return 80;
+        }
+
+        if ($this->isIconBlock($contentBlock)) {
+            return 80;
+        }
+
+        if (
+            str_contains($slug, 'button') ||
+            str_contains($slug, 'label')
+        ) {
+            return 60;
+        }
+
+        if (
+            str_contains($slug, 'heading') ||
+            str_contains($slug, 'title')
+        ) {
+            return 90;
+        }
+
+        if (str_contains($slug, 'question')) {
+            return 120;
+        }
+
+        if (str_contains($slug, 'placeholder')) {
+            return 120;
+        }
+
+        return 1000;
+    }
+
+    /**
+     * Check whether a content block stores a Bootstrap icon class.
+     *
+     * @param \ContentBlocks\Model\Entity\ContentBlock $contentBlock Content block.
+     * @return bool
+     */
+    private function isIconBlock(ContentBlock $contentBlock): bool
+    {
+        return str_ends_with((string)$contentBlock->slug, '-icon');
+    }
+
+    /**
+     * Validate Bootstrap Icon class values.
+     *
+     * @param string $value Icon class.
+     * @return bool
+     */
+    private function isValidBootstrapIcon(string $value): bool
+    {
+        return (bool)preg_match('/^bi-[a-z0-9-]{1,80}$/', $value);
+    }
+
+    /**
+     * Prepare image block data before saving.
+     *
+     * @param array $data Request data.
+     * @return array|null
+     */
+    private function prepareImageBlockData(array $data): ?array
+    {
         $uploadedFile = $data['value'] ?? null;
 
         if (!$uploadedFile instanceof UploadedFileInterface) {
             unset($data['value']);
+
             return $data;
         }
 
         if ($uploadedFile->getError() === UPLOAD_ERR_NO_FILE) {
             unset($data['value']);
+
             return $data;
         }
 
         $uploadedPath = $this->storeUploadedImage($uploadedFile);
 
         if ($uploadedPath === null) {
+            $this->Flash->error(__('The uploaded image must be a valid JPG, PNG, GIF, or WebP file under 2MB.'));
+
             return null;
         }
 
@@ -221,12 +342,29 @@ class ContentBlocksController extends AppController
             return null;
         }
 
+        $maxFileSize = 2 * 1024 * 1024;
+
+        if ($uploadedFile->getSize() === null || $uploadedFile->getSize() > $maxFileSize) {
+            return null;
+        }
+
         $originalName = $uploadedFile->getClientFilename() ?: '';
         $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
 
-        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp',];
 
         if (!in_array($extension, $allowedExtensions, true)) {
+            return null;
+        }
+
+        if (!in_array((string)$uploadedFile->getClientMediaType(), $allowedMimeTypes, true)) {
+            return null;
+        }
+
+        $temporaryPath = $uploadedFile->getStream()->getMetadata('uri');
+
+        if (!is_string($temporaryPath) || !@getimagesize($temporaryPath)) {
             return null;
         }
 
@@ -237,6 +375,7 @@ class ContentBlocksController extends AppController
         }
 
         $filename = uniqid('content-block-', true) . '.' . $extension;
+
         $uploadedFile->moveTo($uploadDir . $filename);
 
         return 'content-blocks/' . $filename;
@@ -251,9 +390,6 @@ class ContentBlocksController extends AppController
      */
     private function jsonResponse(array $data, int $status = 200): Response
     {
-        return $this->response
-            ->withType('application/json')
-            ->withStatus($status)
-            ->withStringBody((string)json_encode($data));
+        return $this->response->withType('application/json')->withStatus($status)->withStringBody((string)json_encode($data));
     }
 }
