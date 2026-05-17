@@ -57,10 +57,22 @@ class DashboardController extends AppController
 
                 'records' => $this->fetchTable('VitalData')
                     ->find()
+                    ->matching('Patients.Clinicians', function ($q) use ($clinician) {
+                        return $q->where([
+                            'CliniciansPatients.clinician_id' => $clinician->id,
+                            'CliniciansPatients.status' => 'active'
+                        ]);
+                    })
                     ->count(),
 
                 'alerts' => $this->fetchTable('VitalData')
                     ->find()
+                    ->matching('Patients.Clinicians', function ($q) use ($clinician) {
+                        return $q->where([
+                            'CliniciansPatients.clinician_id' => $clinician->id,
+                            'CliniciansPatients.status' => 'active'
+                        ]);
+                    })
                     ->where([
                         'OR' => [
                             'oxygen_saturation <' => 90,
@@ -70,7 +82,6 @@ class DashboardController extends AppController
                         ]
                     ])
                     ->count()
-
             ];
 
             $appointments = $this->fetchTable('Appointments')
