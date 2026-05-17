@@ -42,7 +42,19 @@ class PatientsController extends AppController
 
         $patients = $this->paginate($query);
 
-        $this->set(compact('patients'));
+        $totalRecords = $this->Patients->VitalData->find()
+            ->where([
+                'patient_id IN' => collection($patients)->extract('id')->toList()
+            ])
+            ->count();
+
+        $criticalPatients = 0;
+
+        $this->set(compact(
+            'patients',
+            'totalRecords',
+            'criticalPatients'
+        ));
     }
 
     /**
