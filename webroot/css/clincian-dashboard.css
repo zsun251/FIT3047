@@ -550,3 +550,102 @@
 .view-all-link:hover i {
     transform: translateX(3px);
 }
+
+/* MOBILE RESPONSIVE FIX - CLINICIAN DASHBOARD */
+@media (max-width: 768px) {
+
+    .clinician-dashboard {
+        padding: 16px 14px 28px !important;
+    }
+
+    .welcome-banner {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        padding: 22px 18px !important;
+        border-radius: 24px !important;
+        gap: 18px !important;
+    }
+
+    .welcome-left {
+        margin-left: 0 !important;
+        width: 100% !important;
+        gap: 12px !important;
+    }
+
+    .welcome-left img {
+        width: 95px !important;
+    }
+
+    .welcome-text h1 {
+        font-size: 22px !important;
+    }
+
+    .welcome-text p {
+        font-size: 13px !important;
+        max-width: 100% !important;
+    }
+
+    .welcome-actions {
+        position: static !important;
+        width: 100% !important;
+        flex-direction: column !important;
+    }
+
+    .action-card {
+        width: 100% !important;
+        height: 46px !important;
+        justify-content: center !important;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+        margin-top: 0 !important;
+    }
+
+    .stat-card {
+        min-height: auto !important;
+        padding: 16px !important;
+        border-radius: 18px !important;
+    }
+
+    .stat-icon {
+        width: 48px !important;
+        height: 48px !important;
+        font-size: 18px !important;
+    }
+
+    .stat-card h2 {
+        font-size: 24px !important;
+    }
+
+    .bottom-grid {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+    }
+
+    .dashboard-card {
+        padding: 18px !important;
+        border-radius: 20px !important;
+    }
+
+    .card-header-custom {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+    }
+
+    .activity-item,
+    .appointment-item {
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    .appointment-item {
+        flex-direction: column !important;
+    }
+
+    .appointment-time {
+        min-width: 0 !important;
+    }
+}
