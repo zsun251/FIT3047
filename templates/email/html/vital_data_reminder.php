@@ -46,7 +46,7 @@
             <p><strong>Stay healthy,</strong><br>The RespiraCare Team</p>
 
             <p style="font-size: 12px; color: #868e96; margin-top: 20px;">
-                You can manage your reminder schedule in your <a href="<?= $this->Url->build(['controller' => 'Reminders', 'action' => 'settings'], true) ?>">reminder settings</a>.<br>
+                You can manage your reminder schedule in your <a href="<?= $this->Url->build(['controller' => 'Reminders', 'action' => 'settings'], ['fullBase' => true]) ?>" style="color: #0d6efd;">reminder settings</a>.<br>
                 This is an automated reminder. Please do not reply to this message.
             </p>
         </div>
