@@ -20,8 +20,13 @@ $patientId = UserAccess::getPatientId($identity);
 $reminderSettingsTable = TableRegistry::getTableLocator()->get('ReminderSettings');
 $settings = $reminderSettingsTable->getPatientSettings($patientId);
 
-// Get pending count
-$reminderCount = $remindersTable->getPendingCount($patientId);
+// Only show count if reminders are active
+if ($settings && $settings->is_active) {
+    // Use countActive to get today's active reminders only
+    $reminderCount = $remindersTable->countActive($patientId);
+} else {
+    $reminderCount = 0;
+}
 ?>
 
 <?php if ($settings && $settings->is_active): ?>
