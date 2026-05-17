@@ -106,6 +106,27 @@ class RemindersTable extends Table
     }
 
     /**
+     * Get count of active reminders for today only
+     *
+     * @param int $patientId Patient ID
+     * @return int Count of active reminders
+     */
+    public function countActive(int $patientId): int
+    {
+        $now = FrozenTime::now();
+        $endOfDay = $now->endOfDay();
+
+        $activeReminders = $this->getActiveReminders($patientId);
+
+        // Filter to only today's reminders
+        $todayReminders = array_filter($activeReminders, function($reminder) use ($now) {
+            return $reminder->scheduled_at->format('Y-m-d') === $now->format('Y-m-d');
+        });
+
+        return count($todayReminders);
+    }
+
+    /**
      * Dismiss a reminder
      *
      * @param int $reminderId
@@ -164,7 +185,7 @@ class RemindersTable extends Table
         return $this->save($reminder);
     }
 
-    
+
     /**
      * Mark reminder as completed (linked to vital data submission)
      * If no specific reminder ID provided, completes the most recent active reminder

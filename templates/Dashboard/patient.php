@@ -10,6 +10,7 @@ declare(strict_types=1);
  */
 
 use App\Policy\UserAccess;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\TableRegistry;
 
 $this->assign('title', 'Dashboard');
@@ -47,6 +48,27 @@ $identity = $this->request->getAttribute('identity');
 $patientId = UserAccess::getPatientId($identity);
 $reminderSettingsTable = TableRegistry::getTableLocator()->get('ReminderSettings');
 $settings = $reminderSettingsTable->getPatientSettings($patientId);
+
+// Get today's active reminders if enabled
+if ($settings && $settings->is_active) {
+    $remindersTable = TableRegistry::getTableLocator()->get('Reminders');
+
+    // Get count of today's active reminders
+    $reminderCount = $remindersTable->countActive($patientId);
+
+    // Get all active reminders for today
+    $allActiveReminders = $remindersTable->getActiveReminders($patientId);
+
+    // Filter to only today's reminders
+    $now = FrozenTime::now();
+    $todayReminders = array_filter($allActiveReminders, function($reminder) use ($now) {
+        return $reminder->scheduled_at->format('Y-m-d') === $now->format('Y-m-d');
+    });
+    $activeReminders = $todayReminders;
+} else {
+    $reminderCount = 0;
+    $activeReminders = [];
+}
 ?>
 
 <!-- Header Section -->
@@ -60,15 +82,14 @@ $settings = $reminderSettingsTable->getPatientSettings($patientId);
             <h1>
                 <?= __('Welcome, ') ?>
                 <span class="patient-dashboard-name"><?= h($patientName) ?></span>
-            </h1>        </div>
-
+            </h1>
+        </div>
         <div class="patient-dashboard-actions">
             <?= $this->Html->link(
                 '<i class="bi bi-heart-pulse"></i><span>Input Health Data</span>',
                 ['controller' => 'VitalData', 'action' => 'add'],
                 ['class' => 'btn btn-primary', 'escape' => false],
             ) ?>
-
             <?= $this->Html->link(
                 '<i class="bi bi-envelope"></i><span>Contact Clinic</span>',
                 ['controller' => 'ContactMessages', 'action' => 'add'],
@@ -119,7 +140,10 @@ $settings = $reminderSettingsTable->getPatientSettings($patientId);
                                             <i class="bi bi-clock"></i>
                                             <?= $reminder->scheduled_at->format('g:i A') ?>
                                         </small>
-                                        <?php if ($reminder->isOverdue()): ?>
+                                        <?php
+                                        $now = FrozenTime::now();
+                                        if ($reminder->scheduled_at <= $now):
+                                            ?>
                                             <small class="text-danger ms-2">
                                                 <i class="bi bi-exclamation-circle"></i>
                                                 <strong>Log Health</strong>

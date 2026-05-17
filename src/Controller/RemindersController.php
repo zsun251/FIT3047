@@ -225,7 +225,7 @@ class RemindersController extends AppController
         $patientId = UserAccess::getPatientId($identity);
         $now = FrozenTime::now();
 
-        // Get only the most recent 5 active reminders
+        // Get only the most recent 4 active reminders
         $query = $this->Reminders->find()
             ->contain(['VitalsReminders']);
 
@@ -235,7 +235,7 @@ class RemindersController extends AppController
                 'Reminders.interaction_type IS' => null
             ])
             ->orderBy(['Reminders.scheduled_at' => 'DESC'])
-            ->limit(5);
+            ->limit(4);
 
         $reminders = $query->all();
 
