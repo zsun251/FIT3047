@@ -17,6 +17,7 @@ class SendVitalDataRemindersCommand extends Command
         $io->out('Checking for reminders to send...');
 
         $remindersTable = $this->fetchTable('Reminders');
+        $reminderSettingsTable = $this->fetchTable('ReminderSettings');
         $now = DateTime::now();
 
         // Get all pending reminders scheduled for this exact minute
@@ -32,7 +33,7 @@ class SendVitalDataRemindersCommand extends Command
                 'Reminders.scheduled_at >=' => $currentMinute,
                 'Reminders.scheduled_at <' => $nextMinute,
                 'Reminders.interaction_type IS' => null,
-                'Reminders.status' => 'pending'
+                'Reminders.status' => 'unsent'
             ])
             ->all();
 
@@ -42,6 +43,7 @@ class SendVitalDataRemindersCommand extends Command
         }
 
         $sent = 0;
+        $skipped = 0;
         $failed = 0;
 
         foreach ($pendingReminders as $reminder) {
@@ -59,6 +61,20 @@ class SendVitalDataRemindersCommand extends Command
             if (!$user || !$user->email) {
                 $io->warning("Skipping reminder {$reminder->id}: No user email found");
                 $failed++;
+                continue;
+            }
+
+            // Check if email is enabled for this patient
+            $settings = $reminderSettingsTable->getPatientSettings($patient->id);
+
+            if (!$settings || !$settings->email_enabled) {
+                $io->verbose("Skipping reminder {$reminder->id}: Email notifications disabled for patient {$patient->id}");
+
+                // Mark as skipped (email disabled)
+                $reminder->status = 'skipped';
+                $remindersTable->save($reminder);
+
+                $skipped++;
                 continue;
             }
 
@@ -104,7 +120,7 @@ class SendVitalDataRemindersCommand extends Command
         }
 
         $io->out('');
-        $io->out("Summary: {$sent} sent, {$failed} failed");
+        $io->out("Summary: {$sent} sent, {$skipped} skipped (email disabled), {$failed} failed");
 
         return static::CODE_SUCCESS;
     }

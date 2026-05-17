@@ -421,7 +421,7 @@ CREATE TABLE reminders (
                            scheduled_at    DATETIME        NOT NULL,
                            sent_at         DATETIME        NULL,
                            created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                           status          VARCHAR(10)     NOT NULL DEFAULT 'pending',
+                           status          VARCHAR(10)     NOT NULL DEFAULT 'unsent',
                            delivery_method VARCHAR(10)     NOT NULL,
 
                            interacted_at   DATETIME        NULL,
@@ -434,7 +434,7 @@ CREATE TABLE reminders (
                            KEY idx_interaction (interaction_type, interacted_at),
 
                            CONSTRAINT chk_reminders_status
-                               CHECK (status IN ('pending','sent')),
+                               CHECK (status IN ('unsent','sent','skipped')),
 
                            CONSTRAINT chk_reminders_delivery
                                CHECK (delivery_method IN ('sms','email','system')),

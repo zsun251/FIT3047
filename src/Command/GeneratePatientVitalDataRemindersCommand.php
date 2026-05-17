@@ -261,7 +261,7 @@ class GeneratePatientVitalDataRemindersCommand extends Command
                 $reminder = $remindersTable->newEntity([
                     'message' => $message,
                     'scheduled_at' => $scheduledAt,
-                    'status' => 'pending',
+                    'status' => 'unsent',
                     'delivery_method' => $deliveryMethod,
                 ]);
 
