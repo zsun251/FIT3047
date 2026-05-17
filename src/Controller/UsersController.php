@@ -175,10 +175,10 @@ class UsersController extends AppController
                         $this->Flash->success('Password reset instructions have been sent to noreply@u26s1187.iedev.org');
 
                         // For development: show the link directly in flash message
-                        $this->Flash->info(
-                            'Development: <a href="' . $resetUrl . '" target="_blank">Click here to reset password</a>',
-                            ['escape' => false]
-                        );
+//                        $this->Flash->info(
+//                            'Development: <a href="' . $resetUrl . '" target="_blank">Click here to reset password</a>',
+//                            ['escape' => false]
+//                        );
                     } catch (\Exception $e) {
                         // Show detailed error in development
                         $this->Flash->error('Email error: ' . $e->getMessage());
