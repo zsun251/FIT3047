@@ -21,22 +21,13 @@ class TestEmailCommand extends Command
             // Basic email config
             $mailer
                 ->setEmailFormat('both')
-                ->setTo('msto0012@student.monash.edu')
+                ->setTo('noreply@u26s1187.iedev.org')
                 ->setSubject('Test: Reset your account password');
 
             // Select email template
             $mailer
                 ->viewBuilder()
                 ->setTemplate('default');
-
-            // Transfer required view variables to email template
-            $mailer
-                ->setViewVars([
-                    'first_name' => 'Mark',
-                    'last_name' => 'Sto',
-                    'nonce' => 'test-nonce-' . bin2hex(random_bytes(16)),
-                    'email' => 'test@example.com',
-                ]);
 
             // Send email
             $result = $mailer->deliver();
