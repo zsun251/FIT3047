@@ -125,7 +125,7 @@ class GenerateTestRemindersCommand extends Command
             $reminder = $remindersTable->newEntity([
                 'message' => "Test reminder - {$test['label']}",
                 'scheduled_at' => $scheduledAt,
-                'status' => 'pending',
+                'status' => 'unsent',
                 'delivery_method' => 'system',
             ]);
 
