@@ -6,7 +6,7 @@ namespace App\Command;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime; // Changed from FrozenTime
 use Cake\Mailer\Mailer;
 use Cake\Routing\Router;
 
@@ -17,12 +17,14 @@ class SendVitalDataRemindersCommand extends Command
         $io->out('Checking for reminders to send...');
 
         $remindersTable = $this->fetchTable('Reminders');
-        $now = FrozenTime::now();
+        $now = DateTime::now();
 
         // Get all pending reminders scheduled for this exact minute
         // Round to the minute to match scheduled times
         $currentMinute = $now->second(0)->microsecond(0);
         $nextMinute = $currentMinute->modify('+1 minute');
+
+        $io->verbose("Looking for reminders between {$currentMinute->i18nFormat('yyyy-MM-dd HH:mm:ss')} and {$nextMinute->i18nFormat('yyyy-MM-dd HH:mm:ss')}");
 
         $pendingReminders = $remindersTable->find()
             ->contain(['VitalsReminders.Patients.Users'])
@@ -85,7 +87,7 @@ class SendVitalDataRemindersCommand extends Command
 
                 $mailer->deliver();
 
-                // Mark as sent (optional - update status)
+                // Mark as sent
                 $reminder->status = 'sent';
                 $remindersTable->save($reminder);
 
