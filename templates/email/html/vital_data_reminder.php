@@ -14,11 +14,6 @@
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
 <div style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
     <div style="background: #0d6efd; color: white; padding: 30px 20px; text-align: center;">
-        <?= $this->Html->image('logo.png', [
-            'alt' => 'RespiraCare Logo',
-            'style' => 'max-width: 200px; height: auto; margin-bottom: 15px;',
-            'fullBase' => true
-        ]) ?>
         <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 16px;">Health Data Reminder</p>
     </div>
 
