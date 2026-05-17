@@ -14,6 +14,9 @@ $breadcrumbs = $breadcrumbs ?? [];
 $backUrl = $backUrl ?? null;
 $title = $title ?? null;
 $subtitle = $subtitle ?? null;
+
+// Load the page header CSS
+echo $this->Html->css('page-header', ['block' => true]);
 ?>
 
 <!-- Desktop Version -->
