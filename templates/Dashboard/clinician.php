@@ -100,7 +100,17 @@
         <!-- Recent Activity -->
         <div class="dashboard-card">
             <div class="card-header-custom">
+
                 <h5>Recent Patient Activity</h5>
+
+                <a href="<?= $this->Url->build([
+                    'controller' => 'VitalData',
+                    'action' => 'index'
+                ]) ?>" class="view-all-link">
+                    View Patient History
+                    <i class="bi bi-arrow-right-short"></i>
+                </a>
+
             </div>
 
             <div class="activity-list">
