@@ -51,7 +51,7 @@
 
             <div>
                 <h6>Assigned Patients</h6>
-                <h2><?= $stats['patients'] ?? 12 ?></h2>
+                <h2><?= $stats['patients'] ?? 0 ?></h2>
                 <p>Currently assigned</p>
             </div>
         </div>
@@ -63,7 +63,7 @@
 
             <div>
                 <h6>Today's Appointments</h6>
-                <h2><?= $stats['appointments'] ?? 3 ?></h2>
+                <h2><?= $stats['appointments'] ?? 0 ?></h2>
                 <p class="blue-text">Scheduled today</p>
             </div>
         </div>
@@ -75,7 +75,7 @@
 
             <div>
                 <h6>Total Health Records</h6>
-                <h2><?= $stats['records'] ?? 84 ?></h2>
+                <h2><?= $stats['records'] ?? 0 ?></h2>
                 <p>Submitted records</p>
             </div>
         </div>
@@ -87,7 +87,7 @@
 
             <div>
                 <h6>Critical Alerts</h6>
-                <h2><?= $stats['alerts'] ?? 1 ?></h2>
+                <h2><?= $stats['alerts'] ?? 0 ?></h2>
                 <p class="red-text">Abnormal readings</p>
             </div>
         </div>
