@@ -536,16 +536,12 @@ if ($isStaff) {
     }
 
     .wizard-content {
-        background: linear-gradient(
-            135deg,
-            #e7f0ff 0%,
-            #efe7ff 100%
-        );
+        background: #ffffff;
 
         backdrop-filter: blur(18px);
         -webkit-backdrop-filter: blur(18px);
 
-        border: 1px solid rgba(255,255,255,0.4);
+        border: 1px solid #f0f0f0;
 
         border-radius: 22px;
         margin-top: 40px;
@@ -576,6 +572,8 @@ if ($isStaff) {
         align-items: center;
         gap: 18px;
         margin-bottom: 24px;
+
+
     }
 
     .vital-icon {
@@ -597,9 +595,6 @@ if ($isStaff) {
         margin-bottom: 0;
     }
 
-    .vital-input {
-        position: relative;
-    }
 
     .vital-input .input {
         margin-bottom: 0;
@@ -611,7 +606,9 @@ if ($isStaff) {
         padding-left: 18px;
         padding-right: 65px;
         font-size: 16px;
-        border: 1px solid #e5e7eb;
+
+        background: #faf7ff;
+        border: 1px solid #e6dcff;
     }
 
     .input-unit {
@@ -685,22 +682,12 @@ if ($isStaff) {
         margin-bottom: 0 !important;
     }
 
-    .wizard-container {
-        padding-bottom: 10px !important;
-        min-height: auto !important;
-    }
 
     .wizard-content {
         margin-bottom: 0 !important;
         padding-bottom: 10px !important;
     }
 
-    .wizard-card {
-        padding: 50px 55px 30px 55px !important;
-        border-radius: 40px;
-        height: auto !important;
-        min-height: unset !important;
-    }
 
     .form-step {
         margin-bottom: 0 !important;
@@ -711,11 +698,6 @@ if ($isStaff) {
         padding-bottom: 20px;
     }
 
-    .back-link {
-        margin-left: 30px;
-        margin-top: 12px;
-        margin-bottom: 0px;
-    }
 
     .back-link a {
         display: inline-flex;
@@ -951,9 +933,6 @@ if ($isStaff) {
         align-items: center;
     }
 
-    .vital-input {
-        position: relative;
-    }
 
     .vital-input .error-message {
         position: absolute;
@@ -996,6 +975,217 @@ if ($isStaff) {
         font-size: 0.9rem;
         margin-top: 8px;
         padding-left: 4px;
+    }
+
+
+    .vital-input {
+        position: relative !important;
+        padding-bottom: 8px !important;
+    }
+
+    .input-unit {
+        position: absolute !important;
+        top: 26px !important;
+        right: 14px !important;
+        transform: translateY(-50%) !important;
+        z-index: 5 !important;
+    }
+
+    .vital-input .error-message {
+        position: absolute !important;
+        top: 52px !important;
+        left: 0 !important;
+        margin-top: 0 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.3 !important;
+    }
+
+    /* FINAL MOBILE RESPONSIVE FIX FOR VITAL DATA FORM */
+    @media (max-width: 768px) {
+
+        .wizard-card {
+            padding: 24px 16px 20px 16px !important;
+            border-radius: 24px !important;
+        }
+
+        .wizard-header {
+            padding: 24px 10px 18px !important;
+        }
+
+        .wizard-steps {
+            gap: 8px !important;
+            justify-content: space-between !important;
+        }
+
+        .wizard-number {
+            width: 38px !important;
+            height: 38px !important;
+            font-size: 16px !important;
+            margin-top: 0 !important;
+        }
+
+        .wizard-step {
+            font-size: 0.75rem !important;
+        }
+
+        .wizard-line {
+            width: 35px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .wizard-content {
+            margin-top: 18px !important;
+            padding: 18px 14px 10px !important;
+            border-radius: 18px !important;
+        }
+
+        .step-icon-box,
+        .section-icon {
+            width: 46px !important;
+            height: 46px !important;
+            min-width: 46px !important;
+            font-size: 20px !important;
+        }
+
+        .step-title {
+            font-size: 1.2rem !important;
+        }
+
+        .step-subtitle {
+            font-size: 0.85rem !important;
+        }
+
+        .step-description {
+            font-size: 0.9rem !important;
+        }
+
+        .vital-row {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+            margin-bottom: 28px !important;
+        }
+
+        .vital-icon {
+            width: 44px !important;
+            height: 44px !important;
+            font-size: 20px !important;
+        }
+
+        .vital-label label {
+            font-size: 0.9rem !important;
+        }
+
+        .vital-input .form-control {
+            width: 100% !important;
+            height: 48px !important;
+            font-size: 0.95rem !important;
+        }
+
+        .input-unit {
+            right: 10px !important;
+            font-size: 0.75rem !important;
+            padding: 4px 8px !important;
+        }
+
+        .section-description {
+            margin-left: 0 !important;
+        }
+
+        .back-link {
+            margin-left: 0 !important;
+            margin-top: 10px !important;
+        }
+
+        .symptom-option {
+            padding: 14px !important;
+            border-radius: 16px !important;
+        }
+
+        .symptom-option .row {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+        }
+
+        .symptom-option label {
+            font-size: 0.95rem !important;
+        }
+
+        .symptom-option .form-select {
+            width: 100% !important;
+        }
+
+        .review-grid {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+        }
+
+        .review-card {
+            padding: 16px !important;
+            border-radius: 16px !important;
+        }
+
+        .review-item {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 4px !important;
+        }
+
+        .review-item strong {
+            text-align: left !important;
+        }
+
+        .d-flex.justify-content-between.align-items-end.mt-3.pt-3,
+        .next-btn-wrapper {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 12px !important;
+        }
+
+        .next-btn,
+        .back-btn {
+            width: 100% !important;
+            min-width: 100% !important;
+            height: 46px !important;
+            margin: 0 !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .vital-input .error-message {
+            position: static !important;
+            display: block !important;
+            margin-top: 8px !important;
+            margin-bottom: 14px !important;
+            font-size: 0.9rem !important;
+            line-height: 1.35 !important;
+        }
+
+        .vital-row {
+            margin-bottom: 18px !important;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .vital-input {
+            position: relative !important;
+        }
+
+        .input-unit {
+            top: 24px !important;
+            transform: translateY(-50%) !important;
+            right: 12px !important;
+            z-index: 3 !important;
+        }
+
+        .vital-input .error-message {
+            position: static !important;
+            display: block !important;
+            margin-top: 10px !important;
+            margin-bottom: 0 !important;
+            line-height: 1.35 !important;
+        }
     }
 
 </style>

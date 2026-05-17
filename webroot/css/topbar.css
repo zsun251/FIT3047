@@ -81,7 +81,7 @@ header.navbar .navbar-brand strong {
 .topbar .navbar-brand img,
 .navbar .navbar-brand img,
 header.navbar .navbar-brand img {
-    height: 46px;
+    height: 36px;
     width: auto;
     display: block;
     background: transparent !important;
@@ -297,18 +297,19 @@ header.navbar .nav-link.active {
     .topbar-always-show .nav-link.auth-button {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        padding: 0;
-        border-radius: 8px;
-        background-color: transparent;
-        transition: all 0.2s ease;
+        padding: 0.32rem 0.1rem !important;
+        margin-left: 1rem;
+        width: auto;
+        height: auto;
+        border-radius: 0;
+        background: transparent !important;
+        transition: border-color 0.18s ease, color 0.18s ease;
     }
 
     .topbar-always-show .nav-link.auth-button:hover {
-        background-color: #f1f5f9;
-        color: #3b5bdb;
+        background: transparent !important;
+        color: #0f172a !important;
+        box-shadow: none !important;
     }
 
     .topbar-always-show .nav-link.auth-button i {
