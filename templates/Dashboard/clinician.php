@@ -1,6 +1,6 @@
 <?= $this->Html->css('clincian-dashboard.css') ?>
 
-<div class="container-fluid clinician-dashboard px-4">
+<div class="clinician-dashboard">
 
     <!-- Welcome Banner -->
     <div class="welcome-banner">
