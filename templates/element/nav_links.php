@@ -28,12 +28,12 @@ $linkLabel = function (string $label, string $icon, bool $showText = true) use (
         return '<i class="bi ' . h($icon) . '"></i><span>' . h($label) . '</span>';
     }
 
-    if ($context === 'topbar' && !$showText) {
-        return '<i class="bi ' . h($icon) . '"></i><span class="visually-hidden">' . h($label) . '</span>';
+    if ($context === 'topbar') {
+        return '<span>' . h($label) . '</span>';
     }
 
     // Mobile or with text
-    return '<i class="bi ' . h($icon) . ' topbar-mobile-icon"></i><span>' . h($label) . '</span>';
+    return '<span>' . h($label) . '</span>';
 };
 // Patients browse resources, staff manage resources
 $resourcesRoute = ['controller' => 'Resources', 'action' => 'browse'];
