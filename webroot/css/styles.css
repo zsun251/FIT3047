@@ -1266,3 +1266,488 @@ footer div {
     background: #f3e8ff;
     color: #9333ea;
 }
+
+.users-page {
+    padding-bottom: 40px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.users-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 28px 0;
+}
+
+.users-header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 6px;
+    letter-spacing: -0.04em;
+}
+
+.users-header p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+}
+
+.users-main-btn {
+    height: 46px;
+    padding: 0 22px;
+    border-radius: 14px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+    transition: all 0.2s ease;
+}
+
+.users-main-btn:hover {
+    background: #1d4ed8;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.users-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.users-stat-card {
+    background: rgba(255,255,255,0.82);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 18px;
+    padding: 14px 18px;
+    min-height: 105px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 10px 24px rgba(148, 163, 184, 0.10);
+}
+
+.users-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.users-stat-icon.blue {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.users-stat-icon.green {
+    background: #ecfdf3;
+    color: #16a34a;
+}
+
+.users-stat-icon.orange {
+    background: #fff7e8;
+    color: #f59e0b;
+}
+
+.users-stat-icon.purple {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.users-stat-card span {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #6b7280;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.users-stat-card h2 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111827;
+    margin: 2px 0;
+    line-height: 1;
+}
+
+.users-stat-card p {
+    font-size: 11px;
+    color: #94a3b8;
+    margin: 0;
+    font-weight: 600;
+}
+
+.users-panel {
+    background: rgba(255,255,255,0.82);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 12px 32px rgba(148, 163, 184, 0.12);
+}
+
+.users-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.users-tabs {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.user-filter {
+    border: 0;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 13px 24px;
+    border-right: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.user-filter:last-child {
+    border-right: 0;
+}
+
+.user-filter:hover {
+    color: #2563eb;
+    background: #eef4ff;
+}
+
+.user-filter.active {
+    color: #2563eb;
+    background: #eef4ff;
+}
+
+.users-search {
+    width: 360px;
+    height: 46px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+}
+
+.users-search i {
+    color: #94a3b8;
+}
+
+.users-search input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 14px;
+    color: #334155;
+}
+
+.users-table {
+    border: 1px solid #e8edf5;
+    border-radius: 18px;
+    overflow: hidden;
+    background: white;
+}
+
+.users-table-head,
+.user-row {
+    display: grid;
+    grid-template-columns: 0.55fr 1.4fr 1.8fr 1fr 1fr 1fr 0.9fr;
+    align-items: start;
+}
+
+.users-table-head {
+    background: #f8fafc;
+    padding: 16px 18px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.user-row {
+    padding: 16px 18px;
+    background: white;
+    border-top: 1px solid #eef2f7;
+    transition: all 0.2s ease;
+}
+
+.user-row:hover {
+    background: #f8fbff;
+}
+
+.user-id {
+    font-size: 14px;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.user-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #dbeafe, #eef4ff);
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.user-avatar.admin {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.user-avatar.clinician {
+    background: #ecfdf3;
+    color: #16a34a;
+}
+
+.user-avatar.patient {
+    background: #fff7e8;
+    color: #f59e0b;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.user-username {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 2px;
+}
+
+.user-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.user-contact div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.user-contact i {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.user-contact a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.user-type-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.user-type-badge.admin {
+    background: #eef4ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.user-type-badge.clinician {
+    background: #ecfdf3;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.user-type-badge.patient {
+    background: #fff7e8;
+    color: #f59e0b;
+    border: 1px solid #fed7aa;
+}
+
+.user-type-badge.unknown {
+    background: #f8fafc;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+}
+
+.user-date {
+    font-size: 13px;
+    color: #111827;
+    font-weight: 600;
+}
+
+.user-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.user-action-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.user-action-btn.view {
+    color: #2563eb;
+}
+
+.user-action-btn.edit {
+    color: #64748b;
+}
+
+.user-action-btn.delete {
+    color: #ef4444;
+}
+
+.user-action-btn:hover {
+    background: #eef4ff;
+    transform: translateY(-1px);
+}
+
+.users-footer {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 18px;
+    font-weight: 600;
+}
+
+.users-empty-state {
+    padding: 70px 24px;
+    text-align: center;
+}
+
+.users-empty-icon {
+    width: 76px;
+    height: 76px;
+    border-radius: 22px;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 18px;
+    background: #eef4ff;
+    color: #2563eb;
+    font-size: 34px;
+}
+
+.users-empty-state h3 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #111827;
+    margin: 0 0 8px;
+}
+
+.users-empty-state p {
+    color: #64748b;
+    margin: 0;
+    font-size: 14px;
+}
+
+@media (max-width: 1200px) {
+    .users-table-head,
+    .user-row {
+        grid-template-columns: 0.5fr 1.3fr 1.7fr 0.9fr 1fr 1fr 0.9fr;
+    }
+}
+
+@media (max-width: 992px) {
+    .users-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .users-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .users-search {
+        width: 100%;
+    }
+
+    .users-tabs {
+        overflow-x: auto;
+    }
+
+    .user-filter {
+        white-space: nowrap;
+        flex: 1;
+    }
+
+    .users-table {
+        overflow-x: auto;
+    }
+
+    .users-table-head,
+    .user-row {
+        min-width: 1050px;
+    }
+}
+
+@media (max-width: 768px) {
+    .users-header {
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .users-main-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .users-stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
