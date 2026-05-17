@@ -1,96 +1,25 @@
+<?php
+/**
+ * @var \App\View\AppView $this
+ * @var \App\Model\Entity\User $user
+ * @var string $resetUrl
+ */
+?>
 <!DOCTYPE html>
 <html>
 <head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        .email-container {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .header {
-            background: #0d6efd;
-            color: white;
-            padding: 30px 20px;
-            text-align: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .header p {
-            margin: 5px 0 0 0;
-            opacity: 0.9;
-        }
-        .content {
-            padding: 30px;
-        }
-        .button {
-            display: inline-block;
-            padding: 14px 35px;
-            background: #0d6efd;
-            color: white !important;
-            text-decoration: none;
-            border-radius: 6px;
-            margin: 20px 0;
-            font-weight: 600;
-        }
-        .button:hover {
-            background: #0b5ed7;
-        }
-        .button-container {
-            text-align: center;
-            margin: 30px 0;
-        }
-        .link-text {
-            word-break: break-all;
-            color: #0d6efd;
-            font-size: 14px;
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-        }
-        .warning {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        .footer {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #e9ecef;
-            font-size: 14px;
-            color: #6c757d;
-        }
-        .footer p {
-            margin: 10px 0;
-        }
-        .security-note {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #495057;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?= $this->Html->css('email', ['fullBase' => true]) ?>
 </head>
 <body>
 <div class="email-container">
     <div class="header">
-        <h1>🫁 RespiraCare</h1>
+        <?= $this->Html->image('logo.png', [
+            'alt' => 'RespiraCare Logo',
+            'class' => 'logo',
+            'fullBase' => true
+        ]) ?>
         <p>Password Reset Request</p>
     </div>
 
@@ -106,7 +35,7 @@
         </div>
 
         <p><strong>Or copy and paste this link into your browser:</strong></p>
-        <div class="link-text"><?= $resetUrl ?></div>
+        <div class="link-text"><?= h($resetUrl) ?></div>
 
         <div class="warning">
             <strong>⏰ This link will expire in 1 hour</strong> for security reasons.
