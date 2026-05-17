@@ -67,7 +67,7 @@ class SendVitalDataRemindersCommand extends Command
             // Check if email is enabled for this patient
             $settings = $reminderSettingsTable->getPatientSettings($patient->id);
 
-            if (!$settings || !$settings->email_enabled) {
+            if (!$settings || !$settings->is_active || !$settings->email_enabled) {
                 $io->verbose("Skipping reminder {$reminder->id}: Email notifications disabled for patient {$patient->id}");
 
                 // Mark as skipped (email disabled)
