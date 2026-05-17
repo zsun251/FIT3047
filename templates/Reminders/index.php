@@ -32,18 +32,28 @@ $this->Html->css('reminders-index', ['block' => true]);
 
     <!-- Stats Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-6 col-md-6">
+        <div class="col-6 col-md-3">
             <div class="stat-card">
-                <div class="stat-label">Active Reminders</div>
-                <div class="stat-value text-primary"><?= count($activeReminders) + count($upcomingReminders) ?></div>
+                <div class="stat-label">Active Now</div>
+                <div class="stat-value text-danger"><?= count($activeReminders) ?></div>
             </div>
         </div>
-        <div class="col-6 col-md-6">
+        <div class="col-6 col-md-3">
             <div class="stat-card">
-                <div class="stat-label">Completed Today</div>
-                <div class="stat-value text-success"><?= count(array_filter($completedReminders, function($r) {
-                        return $r->interacted_at && $r->interacted_at->isToday();
-                    })) ?></div>
+                <div class="stat-label">Upcoming</div>
+                <div class="stat-value text-info"><?= count($upcomingReminders) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value text-success"><?= count($completedTodayReminders) ?></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-label">Dismissed</div>
+                <div class="stat-value text-muted"><?= count($dismissedReminders) ?></div>
             </div>
         </div>
     </div>
