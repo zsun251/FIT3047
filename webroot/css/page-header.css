@@ -1,79 +1,55 @@
-/* Back Button Styles */
-.back-button {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-padding: 8px 16px;
-background: #f8f9fa;
-color: #495057;
-text-decoration: none;
-border-radius: 6px;
-font-size: 14px;
-font-weight: 500;
-transition: all 0.2s ease;
-border: 1px solid #dee2e6;
-}
+/* ==========================================================================
+   Legacy page header aliases
 
-.back-button:hover {
-background: #e9ecef;
-color: #212529;
-text-decoration: none;
-border-color: #ced4da;
-}
+   Shared dashboard header and back-button styling now lives in styles.css.
+   This file is kept as a compatibility shim for any template that still loads it directly.
+   ========================================================================== */
 
-.back-button i {
-font-size: 16px;
-}
-
-/* Alternative primary style */
-.back-button-primary {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-padding: 8px 16px;
-background: #0d6efd;
-color: white;
-text-decoration: none;
-border-radius: 6px;
-font-size: 14px;
-font-weight: 500;
-transition: all 0.2s ease;
-border: 1px solid #0d6efd;
-}
-
-.back-button-primary:hover {
-background: #0b5ed7;
-color: white;
-text-decoration: none;
-border-color: #0a58ca;
-}
-
-.back-button-primary i {
-font-size: 16px;
-}
-
-/* Alternative outline style */
+.back-button,
+.back-button-primary,
 .back-button-outline {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-padding: 8px 16px;
-background: transparent;
-color: #0d6efd;
-text-decoration: none;
-border-radius: 6px;
-font-size: 14px;
-font-weight: 500;
-transition: all 0.2s ease;
-border: 1px solid #0d6efd;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #0d6efd;
+    font-size: 1rem;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: none;
+    transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
 }
 
-.back-button-outline:hover {
-background: #0d6efd;
-color: white;
-text-decoration: none;
+.back-button:hover,
+.back-button:focus,
+.back-button-primary:hover,
+.back-button-primary:focus,
+.back-button-outline:hover,
+.back-button-outline:focus {
+    border-color: #93c5fd;
+    background: #dbeafe;
+    color: #0b5ed7;
+    text-decoration: none;
+    box-shadow: 0 6px 14px rgba(13, 110, 253, 0.12);
+    transform: translateY(-1px);
 }
 
-.back-button-outline i {
-font-size: 16px;
+.back-button i,
+.back-button i::before,
+.back-button-primary i,
+.back-button-primary i::before,
+.back-button-outline i,
+.back-button-outline i::before {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    line-height: 1;
 }
