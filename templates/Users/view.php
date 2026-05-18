@@ -11,6 +11,7 @@ $this->assign('title', 'User Details');
 // CSS
 echo $this->Html->css('view-shared', ['block' => true]);
 echo $this->Html->css('user-view', ['block' => true]);
+echo $this->Html->css('resources-staff', ['block' => true]);
 
 // Get user initials for avatar
 $initials = strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1));
@@ -20,11 +21,11 @@ $typeBadgeClass = 'badge-' . strtolower($user->type);
 $breadcrumbs = [
     ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
     ['title' => 'Users', 'url' => ['controller' => 'Users', 'action' => 'index']],
-    ['title' => 'View', 'url' => null]
+    ['title' => h($user->username), 'url' => null]
 ];
 ?>
 
-<!-- Header Section -->
+<!--Header Layout-->
 <?= $this->element('page_header', [
     'breadcrumbs' => $breadcrumbs
 ]) ?>
@@ -35,12 +36,15 @@ $breadcrumbs = [
         <div class="user-header">
             <div class="user-avatar"><?= $initials ?></div>
             <div class="user-info">
+                <div style="display:flex; align-items:center; gap:.625rem; margin-bottom:.75rem; flex-wrap:wrap;">
+                    <span class="type-badge type-article" style="position:static;"><i class="bi bi-person"></i> User Profile</span>
+                    <span class="<?= $typeBadgeClass ?>"><?= h(ucfirst($user->type)) ?></span>
+                </div>
                 <h1><?= h($user->first_name . ' ' . $user->last_name) ?></h1>
                 <div class="user-meta">
                     <span class="user-meta-item">
                         <i class="bi bi-at"></i> <?= h($user->username) ?>
                     </span>
-                    <span class="<?= $typeBadgeClass ?>"><?= h(ucfirst($user->type)) ?></span>
                     <span class="user-meta-item">
                         <i class="bi bi-hash"></i> ID: <?= $this->Number->format($user->id) ?>
                     </span>
@@ -54,15 +58,20 @@ $breadcrumbs = [
                 ['action' => 'edit', $user->id],
                 ['class' => 'btn btn-primary', 'escape' => false]
             ) ?>
-<!--            --><?php //= $this->Form->postLink(
-//                '<i class="bi bi-trash"></i> Delete',
-//                ['action' => 'delete', $user->id],
-//                [
-//                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
-//                    'class' => 'btn btn-outline-danger',
-//                    'escape' => false
-//                ]
-//            ) ?>
+            <?= $this->Html->link(
+                '<i class="bi bi-arrow-left"></i> Back to Users',
+                ['action' => 'index'],
+                ['class' => 'btn btn-outline-secondary', 'escape' => false]
+            ) ?>
+            <?= $this->Form->postLink(
+                '<i class="bi bi-trash"></i> Delete',
+                ['action' => 'delete', $user->id],
+                [
+                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
+                    'class' => 'btn btn-outline-danger',
+                    'escape' => false
+                ]
+            ) ?>
         </div>
     </div>
 
@@ -141,7 +150,7 @@ $breadcrumbs = [
         </div>
     </div>
 
-    <!-- Related Admin -->
+    <!-- Admin Function -->
     <?php if ($user->type === 'admin' && $adminId): ?>
         <div class="related-section">
             <h2>
@@ -158,11 +167,11 @@ $breadcrumbs = [
                         </div>
                     </div>
                     <div class="related-item-actions">
-<!--                        --><?php //= $this->Html->link(
-//                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
-//                            ['controller' => 'Admins', 'action' => 'view', $adminId],
-//                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
-//                        ) ?>
+                        <!--                        --><?php //= $this->Html->link(
+                        //                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
+                        //                            ['controller' => 'Admins', 'action' => 'view', $adminId],
+                        //                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                        //                        ) ?>
                     </div>
                 </div>
             </div>
@@ -186,11 +195,11 @@ $breadcrumbs = [
                         </div>
                     </div>
                     <div class="related-item-actions">
-<!--                        --><?php //= $this->Html->link(
-//                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
-//                            ['controller' => 'Clinicians', 'action' => 'view', $clinicianId],
-//                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
-//                        ) ?>
+                        <!--                        --><?php //= $this->Html->link(
+                        //                            '<i class="bi bi-arrow-right-circle"></i> View Full Profile',
+                        //                            ['controller' => 'Clinicians', 'action' => 'view', $clinicianId],
+                        //                            ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                        //                        ) ?>
                     </div>
                 </div>
             </div>
