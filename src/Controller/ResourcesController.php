@@ -145,8 +145,11 @@ class ResourcesController extends AppController
 
             $resource = $this->Resources->patchEntity($resource, $data);
             if ($this->Resources->save($resource)) {
-                $this->Flash->success(__('The resource has been updated.'));
-                return $this->redirect(['action' => 'view', $resource->id]);
+                $this->Flash->success(__('The resource has been saved successfully.'));
+                if ($this->request->getData('_after_save') === 'index') {
+                    return $this->redirect(['action' => 'index']);
+                }
+                return $this->redirect(['action' => 'edit', $resource->id]);
             }
             $this->Flash->error(__('The resource could not be saved. Please try again.'));
         }
