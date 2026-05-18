@@ -149,7 +149,8 @@ $renderBlockList = function (array $contentBlocks) use ($getBlockTypeKey, $getBl
                             <?= h($contentBlock->label) ?>
                         </h3>
 
-                        <span class="rc-type-badge content-block-type-badge <?= h($getBlockTypeClass($contentBlock)) ?>">
+                        <span
+                            class="rc-type-badge content-block-type-badge <?= h($getBlockTypeClass($contentBlock)) ?>">
                             <?= h($getBlockTypeLabel($contentBlock)) ?>
                         </span>
                     </div>
@@ -230,162 +231,173 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
 }
 ?>
 
-<div class="content-blocks-page">
-    <div class="rc-dashboard-page-header content-blocks-page-header">
-        <div class="rc-dashboard-header-main content-blocks-header-main">
-            <div class="rc-dashboard-header-copy content-blocks-header-copy">
-                <div class="rc-dashboard-title-row content-blocks-page-title-row">
-                    <?= $this->Html->link(
-                        '<i class="bi bi-arrow-left"></i>',
-                        $backUrl,
-                        [
-                            'class' => 'rc-back-button',
-                            'escape' => false,
-                            'aria-label' => __('Return to previous page'),
-                        ]
-                    ) ?>
+<div class="rc-dashboard-scale-stage rc-dashboard-scale-lg rc-dashboard-scale-up">
+    <div class="rc-dashboard-scale-content content-blocks-page">
+        <div class="rc-dashboard-page-header content-blocks-page-header">
+            <div class="rc-dashboard-header-main content-blocks-header-main">
+                <div class="rc-dashboard-header-copy content-blocks-header-copy">
+                    <div class="rc-dashboard-title-row content-blocks-page-title-row">
+                        <?= $this->Html->link(
+                            '<i class="bi bi-arrow-left"></i>',
+                            $backUrl,
+                            [
+                                'class' => 'rc-back-button',
+                                'escape' => false,
+                                'aria-label' => __('Return to previous page'),
+                            ]
+                        ) ?>
 
-                    <h1 class="rc-dashboard-title"><?= __('Site Content') ?></h1>
-                </div>
+                        <h1 class="rc-dashboard-title"><?= __('Site Content') ?></h1>
+                    </div>
 
-                <p class="rc-dashboard-subtitle"><?= __('Edit the text, images, and icons used across the public website.') ?></p>
-            </div>
-        </div>
-    </div>
-
-    <div class="content-blocks-admin-card">
-        <div class="content-block-filter-panel">
-            <div class="content-block-filter-group">
-                <div class="content-block-filter-controls" aria-label="<?= h(__('Filter content blocks by type')) ?>">
-                    <button class="rc-pill-control content-block-filter-button active" type="button" data-content-block-filter="all" aria-pressed="true">
-                        <?= __('All') ?>
-                    </button>
-
-                    <button class="rc-pill-control rc-pill-control-blue content-block-filter-button" type="button" data-content-block-filter="text" aria-pressed="false">
-                        <?= __('Text') ?>
-                    </button>
-
-                    <button class="rc-pill-control rc-pill-control-green content-block-filter-button" type="button" data-content-block-filter="image" aria-pressed="false">
-                        <?= __('Images') ?>
-                    </button>
-
-                    <button class="rc-pill-control rc-pill-control-purple content-block-filter-button" type="button" data-content-block-filter="icon" aria-pressed="false">
-                        <?= __('Icons') ?>
-                    </button>
+                    <p class="rc-dashboard-subtitle"><?= __('Edit the text, images, and icons used across the public website.') ?></p>
                 </div>
             </div>
         </div>
 
-        <?php if (!empty($contentBlocksGrouped)): ?>
-            <div class="content-block-section-list" id="contentBlocksAccordion">
-                <?php if (!empty($homeContentBlocksGrouped)): ?>
-                    <section class="content-block-section" data-content-block-section>
-                        <button
-                            class="content-block-section-toggle collapsed"
-                            type="button"
-                            data-content-block-toggle="content-block-section-home"
-                            aria-expanded="false"
-                            aria-controls="content-block-section-home"
-                        >
+        <div class="content-blocks-admin-card">
+            <div class="content-block-filter-panel">
+                <div class="content-block-filter-group">
+                    <div class="content-block-filter-controls"
+                         aria-label="<?= h(__('Filter content blocks by type')) ?>">
+                        <button class="rc-pill-control content-block-filter-button active" type="button"
+                                data-content-block-filter="all" aria-pressed="true">
+                            <?= __('All') ?>
+                        </button>
+
+                        <button class="rc-pill-control rc-pill-control-blue content-block-filter-button" type="button"
+                                data-content-block-filter="text" aria-pressed="false">
+                            <?= __('Text') ?>
+                        </button>
+
+                        <button class="rc-pill-control rc-pill-control-green content-block-filter-button" type="button"
+                                data-content-block-filter="image" aria-pressed="false">
+                            <?= __('Images') ?>
+                        </button>
+
+                        <button class="rc-pill-control rc-pill-control-purple content-block-filter-button" type="button"
+                                data-content-block-filter="icon" aria-pressed="false">
+                            <?= __('Icons') ?>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <?php if (!empty($contentBlocksGrouped)): ?>
+                <div class="content-block-section-list" id="contentBlocksAccordion">
+                    <?php if (!empty($homeContentBlocksGrouped)): ?>
+                        <section class="content-block-section" data-content-block-section>
+                            <button
+                                class="content-block-section-toggle collapsed"
+                                type="button"
+                                data-content-block-toggle="content-block-section-home"
+                                aria-expanded="false"
+                                aria-controls="content-block-section-home"
+                            >
                             <span class="rc-soft-icon content-block-section-icon">
                                 <i class="bi bi-house-door"></i>
                             </span>
 
-                            <span class="content-block-section-title">
+                                <span class="content-block-section-title">
                                 <?= __('Home Page') ?>
                             </span>
 
-                            <span class="content-block-section-count" data-content-block-count>
+                                <span class="rc-mini-pill content-block-section-count content-block-home-count"
+                                      data-content-block-count>
                                 <?= __('{0} items', $homeBlockCount) ?>
                             </span>
 
-                            <i class="bi bi-chevron-down content-block-section-chevron"></i>
-                        </button>
+                                <i class="bi bi-chevron-down content-block-section-chevron"></i>
+                            </button>
 
-                        <div id="content-block-section-home" class="content-block-section-body d-none">
-                            <div class="content-block-home-subsection-list">
-                                <?php foreach ($homeParents as $homeParent): ?>
-                                    <?php if (!empty($homeContentBlocksGrouped[$homeParent])): ?>
-                                        <?php $homeSubsectionId = 'content-block-home-subsection-' . strtolower(trim((string)preg_replace('/[^A-Za-z0-9-]+/', '-', $homeParent), '-')); ?>
+                            <div id="content-block-section-home" class="content-block-section-body d-none">
+                                <div class="content-block-home-subsection-list">
+                                    <?php foreach ($homeParents as $homeParent): ?>
+                                        <?php if (!empty($homeContentBlocksGrouped[$homeParent])): ?>
+                                            <?php $homeSubsectionId = 'content-block-home-subsection-' . strtolower(trim((string)preg_replace('/[^A-Za-z0-9-]+/', '-', $homeParent), '-')); ?>
 
-                                        <section class="content-block-home-subsection" data-content-block-subsection>
-                                            <button
-                                                class="content-block-home-subsection-toggle collapsed"
-                                                type="button"
-                                                data-content-block-subtoggle="<?= h($homeSubsectionId) ?>"
-                                                aria-expanded="false"
-                                                aria-controls="<?= h($homeSubsectionId) ?>"
-                                            >
+                                            <section class="content-block-home-subsection"
+                                                     data-content-block-subsection>
+                                                <button
+                                                    class="content-block-home-subsection-toggle collapsed"
+                                                    type="button"
+                                                    data-content-block-subtoggle="<?= h($homeSubsectionId) ?>"
+                                                    aria-expanded="false"
+                                                    aria-controls="<?= h($homeSubsectionId) ?>"
+                                                >
                                                 <span class="content-block-home-subsection-title">
                                                     <?= h($formatParentLabel($homeParent)) ?>
                                                 </span>
 
-                                                <span class="rc-mini-pill content-block-home-subsection-count" data-content-block-count>
+                                                    <span class="rc-mini-pill content-block-home-subsection-count"
+                                                          data-content-block-count>
                                                     <?= __('{0} items', count($homeContentBlocksGrouped[$homeParent])) ?>
                                                 </span>
 
-                                                <i class="bi bi-chevron-down content-block-home-subsection-chevron"></i>
-                                            </button>
+                                                    <i class="bi bi-chevron-down content-block-home-subsection-chevron"></i>
+                                                </button>
 
-                                            <div id="<?= h($homeSubsectionId) ?>" class="content-block-home-subsection-body d-none">
-                                                <?php $renderBlockList($homeContentBlocksGrouped[$homeParent]); ?>
-                                            </div>
-                                        </section>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
+                                                <div id="<?= h($homeSubsectionId) ?>"
+                                                     class="content-block-home-subsection-body d-none">
+                                                    <?php $renderBlockList($homeContentBlocksGrouped[$homeParent]); ?>
+                                                </div>
+                                            </section>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-                        </div>
-                    </section>
-                <?php endif; ?>
+                        </section>
+                    <?php endif; ?>
 
-                <?php foreach ($regularParents as $parent): ?>
-                    <?php
-                    $contentBlocks = $regularContentBlocksGrouped[$parent];
-                    $sectionId = 'content-block-section-' . strtolower(trim((string)preg_replace('/[^A-Za-z0-9-]+/', '-', $parent), '-'));
-                    $sectionIcon = $parentIcons[$parent] ?? 'bi-card-text';
-                    ?>
+                    <?php foreach ($regularParents as $parent): ?>
+                        <?php
+                        $contentBlocks = $regularContentBlocksGrouped[$parent];
+                        $sectionId = 'content-block-section-' . strtolower(trim((string)preg_replace('/[^A-Za-z0-9-]+/', '-', $parent), '-'));
+                        $sectionIcon = $parentIcons[$parent] ?? 'bi-card-text';
+                        ?>
 
-                    <section class="content-block-section" data-content-block-section>
-                        <button
-                            class="content-block-section-toggle collapsed"
-                            type="button"
-                            data-content-block-toggle="<?= h($sectionId) ?>"
-                            aria-expanded="false"
-                            aria-controls="<?= h($sectionId) ?>"
-                        >
+                        <section class="content-block-section" data-content-block-section>
+                            <button
+                                class="content-block-section-toggle collapsed"
+                                type="button"
+                                data-content-block-toggle="<?= h($sectionId) ?>"
+                                aria-expanded="false"
+                                aria-controls="<?= h($sectionId) ?>"
+                            >
                             <span class="rc-soft-icon content-block-section-icon">
                                 <i class="bi <?= h($sectionIcon) ?>"></i>
                             </span>
 
-                            <span class="content-block-section-title">
+                                <span class="content-block-section-title">
                                 <?= h($formatParentLabel($parent)) ?>
                             </span>
 
-                            <span class="rc-mini-pill content-block-section-count" data-content-block-count>
+                                <span class="rc-mini-pill content-block-section-count" data-content-block-count>
                                 <?= __('{0} items', count($contentBlocks)) ?>
                             </span>
 
-                            <i class="bi bi-chevron-down content-block-section-chevron"></i>
-                        </button>
+                                <i class="bi bi-chevron-down content-block-section-chevron"></i>
+                            </button>
 
-                        <div id="<?= h($sectionId) ?>" class="content-block-section-body d-none">
-                            <?php $renderBlockList($contentBlocks); ?>
-                        </div>
-                    </section>
-                <?php endforeach; ?>
-            </div>
+                            <div id="<?= h($sectionId) ?>" class="content-block-section-body d-none">
+                                <?php $renderBlockList($contentBlocks); ?>
+                            </div>
+                        </section>
+                    <?php endforeach; ?>
+                </div>
 
-            <div id="content-block-filter-empty" class="content-block-empty-state d-none">
-                <i class="bi bi-funnel"></i>
-                <h2><?= __('No matching content blocks') ?></h2>
-                <p><?= __('Choose another filter to view editable content blocks.') ?></p>
-            </div>
-        <?php else: ?>
-            <div class="content-block-empty-state">
-                <i class="bi bi-card-text"></i>
-                <h2><?= __('No content blocks found') ?></h2>
-                <p><?= __('Run the content block seed to create editable website content.') ?></p>
-            </div>
-        <?php endif; ?>
+                <div id="content-block-filter-empty" class="content-block-empty-state d-none">
+                    <i class="bi bi-funnel"></i>
+                    <h2><?= __('No matching content blocks') ?></h2>
+                    <p><?= __('Choose another filter to view editable content blocks.') ?></p>
+                </div>
+            <?php else: ?>
+                <div class="content-block-empty-state">
+                    <i class="bi bi-card-text"></i>
+                    <h2><?= __('No content blocks found') ?></h2>
+                    <p><?= __('Run the content block seed to create editable website content.') ?></p>
+                </div>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
