@@ -28,6 +28,7 @@ if ($isStaff) {
     $breadcrumbs = [
         ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
         ['title' => 'Users', 'url' => ['controller' => 'Users', 'action' => 'index']],
+        ['title' => h($user->username), 'url' => ['controller' => 'Users', 'action' => 'view', $user->id]],
         ['title' => 'Edit User', 'url' => null]
     ];
 } else {
@@ -48,7 +49,7 @@ if ($isStaff) {
     <!-- Form Header -->
     <div class="form-header">
         <div>
-            <h1><?= $isPatientSelfEdit ? __('Edit My Profile') : __('Edit User') ?></h1>
+            <h1><i class="bi bi-pencil-square" style="color:#0d6efd;margin-right:.5rem;"></i><?= $isPatientSelfEdit ? __('Edit My Profile') : __('Edit User') ?></h1>
             <?php if (!$isPatientSelfEdit): ?>
                 <small class="text-muted">Update user information for <?= h($user->username) ?></small>
             <?php endif; ?>
@@ -62,6 +63,21 @@ if ($isStaff) {
         <div class="form-info-alert">
             <i class="bi bi-info-circle"></i>
             <p>You can update your personal information below. For security reasons, please ensure your contact details are current.</p>
+        </div>
+    <?php endif; ?>
+
+
+
+    <?php if ($user->getErrors()): ?>
+        <div class="alert alert-danger mb-4" role="alert">
+            <strong><i class="bi bi-exclamation-triangle-fill"></i> Could not save — please fix the following:</strong>
+            <ul class="mb-0 mt-2">
+                <?php foreach ($user->getErrors() as $field => $errors): ?>
+                    <?php foreach ((array)$errors as $msg): ?>
+                        <li><strong><?= h(ucwords(str_replace('_', ' ', $field))) ?>:</strong> <?= h($msg) ?></li>
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            </ul>
         </div>
     <?php endif; ?>
 
@@ -83,22 +99,6 @@ if ($isStaff) {
                     'title' => 'Username must start and end with a letter or number. Can contain letters, numbers, dots, underscores, and hyphens. No consecutive special characters.',
                     'autocomplete' => 'username',
                     'class' => 'form-control',
-                ]) ?>
-            </div>
-            <div class="form-group">
-                <?= $this->Form->control('password', [
-                    'label' => 'Password',
-                    'type' => 'password',
-                    'value' => '',
-                    'required' => false,
-                    'minlength' => 8,
-                    'maxlength' => 255,
-                    'autocomplete' => 'new-password',
-                    'class' => 'form-control',
-                    'placeholder' => 'Leave blank to keep current password',
-                    'templateVars' => [
-                        'help' => 'Minimum 8 characters with uppercase, lowercase, and number. Leave blank to keep current password.'
-                    ]
                 ]) ?>
             </div>
         </div>
@@ -201,19 +201,11 @@ if ($isStaff) {
             </h2>
             <div class="form-grid">
                 <div class="form-group">
-                    <?= $this->Form->control('type', [
+                    <?= $this->Form->control('type_display', [
                         'label' => 'User Type',
-                        'type' => 'select',
-                        'options' => [
-                            'admin' => 'Admin',
-                            'clinician' => 'Clinician',
-                            'patient' => 'Patient'
-                        ],
+                        'value' => ucfirst($user->type),
                         'disabled' => true,
-                        'class' => 'form-select',
-                        'templateVars' => [
-                            'help' => 'User type cannot be changed after creation to prevent data loss.'
-                        ]
+                        'class' => 'form-control',
                     ]) ?>
                 </div>
                 <div class="form-group">
@@ -242,10 +234,10 @@ if ($isStaff) {
         <?php else: ?>
             <?= $this->Html->link(
                 '<i class="bi bi-x-circle"></i> Cancel',
-                ['action' => 'index'],
+                ['action' => 'view', $user->id],
                 ['class' => 'btn btn-outline-secondary', 'escape' => false]
             ) ?>
-<!--            --><?php //= $this->Form->postLink(
+            <!--            --><?php //= $this->Form->postLink(
 //                '<i class="bi bi-trash"></i> Delete User',
 //                ['action' => 'delete', $user->id],
 //                [
