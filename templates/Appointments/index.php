@@ -1,17 +1,23 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @var \App\View\AppView $this
+ * @var iterable<\App\Model\Entity\Appointment>|array $appointments
+ */
+
 use App\Policy\UserAccess;
 
 $identity = $this->request->getAttribute('identity');
 $isAdmin = $identity && UserAccess::isAdmin($identity);
 
-$this->assign('title', $isAdmin ? 'Appointments' : 'Assigned Appointments');
+$this->assign('title', $isAdmin ? __('Appointments') : __('Assigned Appointments'));
 
 $this->Html->css([
     'appointments',
 ], ['block' => 'css']);
 
+$appointments = $appointments ?? [];
 $appointmentList = is_array($appointments) ? $appointments : iterator_to_array($appointments);
 
 $normalizeStatus = function (?string $status): string {
@@ -109,32 +115,48 @@ foreach ($appointmentList as $appointment) {
     }
 }
 
-$breadcrumbs = [
-    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
-    ['title' => 'Appointments', 'url' => null]
-];
-?>
+$backUrl = $this->request->referer(true);
 
-<?= $this->element('page_header', [
-    'breadcrumbs' => $breadcrumbs
-]) ?>
+if (!$backUrl || str_contains($backUrl, '/appointments')) {
+    $backUrl = ['controller' => 'Dashboard', 'action' => 'staff'];
+}
+?>
 
 <div class="appointments-admin-page">
 
-    <div class="admin-appointments-hero">
-        <div>
-            <h1><?= $isAdmin ? __('Appointments') : __('Assigned Appointments') ?></h1>
-            <p>Manage upcoming and completed patient consultations</p>
-        </div>
+    <div class="rc-dashboard-page-header appointments-admin-page-header">
+        <div class="rc-dashboard-header-main appointments-admin-header-main">
+            <div class="rc-dashboard-header-copy appointments-admin-header-copy">
+                <div class="rc-dashboard-title-row appointments-admin-title-row">
+                    <?= $this->Html->link(
+                        '<i class="bi bi-arrow-left"></i>',
+                        $backUrl,
+                        [
+                            'class' => 'rc-back-button appointments-admin-back-button',
+                            'escape' => false,
+                            'aria-label' => __('Return to dashboard'),
+                        ],
+                    ) ?>
 
-        <?= $this->Html->link(
-            '<i class="bi bi-plus-circle"></i> Create Appointment',
-            ['action' => 'add'],
-            [
-                'class' => 'admin-appointment-create-btn',
-                'escape' => false,
-            ]
-        ) ?>
+                    <h1 class="rc-dashboard-title">
+                        <?= $isAdmin ? __('Appointments') : __('Assigned Appointments') ?>
+                    </h1>
+                </div>
+
+                <p class="rc-dashboard-subtitle">
+                    <?= __('Manage upcoming and completed patient consultations') ?>
+                </p>
+            </div>
+
+            <?= $this->Html->link(
+                '<i class="bi bi-plus-circle"></i><span>' . __('Create Appointment') . '</span>',
+                ['action' => 'add'],
+                [
+                    'class' => 'rc-action-pill appointments-admin-create-button',
+                    'escape' => false,
+                ],
+            ) ?>
+        </div>
     </div>
 
     <div class="admin-appointment-stats-grid">
@@ -145,9 +167,9 @@ $breadcrumbs = [
             </div>
 
             <div>
-                <span>Total Appointments</span>
+                <span><?= __('Total Appointments') ?></span>
                 <h2><?= h($stats['total']) ?></h2>
-                <p>Overall records</p>
+                <p><?= __('Overall records') ?></p>
             </div>
         </div>
 
@@ -157,9 +179,9 @@ $breadcrumbs = [
             </div>
 
             <div>
-                <span>Upcoming</span>
+                <span><?= __('Upcoming') ?></span>
                 <h2><?= h($stats['upcoming']) ?></h2>
-                <p>Next visits</p>
+                <p><?= __('Next visits') ?></p>
             </div>
         </div>
 
@@ -169,9 +191,9 @@ $breadcrumbs = [
             </div>
 
             <div>
-                <span>Completed</span>
+                <span><?= __('Completed') ?></span>
                 <h2><?= h($stats['completed']) ?></h2>
-                <p>Successfully finished</p>
+                <p><?= __('Successfully finished') ?></p>
             </div>
         </div>
 
@@ -181,9 +203,9 @@ $breadcrumbs = [
             </div>
 
             <div>
-                <span>Cancelled</span>
+                <span><?= __('Cancelled') ?></span>
                 <h2><?= h($stats['cancelled']) ?></h2>
-                <p>Missed or cancelled</p>
+                <p><?= __('Missed or cancelled') ?></p>
             </div>
         </div>
 
@@ -194,15 +216,23 @@ $breadcrumbs = [
         <div class="admin-appointments-toolbar">
 
             <div class="admin-appointment-tabs">
-                <button type="button" class="admin-appointment-filter active" data-filter="all">All</button>
-                <button type="button" class="admin-appointment-filter" data-filter="upcoming">Upcoming</button>
-                <button type="button" class="admin-appointment-filter" data-filter="completed">Completed</button>
-                <button type="button" class="admin-appointment-filter" data-filter="cancelled">Cancelled</button>
+                <button type="button" class="admin-appointment-filter active" data-filter="all">
+                    <?= __('All') ?>
+                </button>
+                <button type="button" class="admin-appointment-filter" data-filter="upcoming">
+                    <?= __('Upcoming') ?>
+                </button>
+                <button type="button" class="admin-appointment-filter" data-filter="completed">
+                    <?= __('Completed') ?>
+                </button>
+                <button type="button" class="admin-appointment-filter" data-filter="cancelled">
+                    <?= __('Cancelled') ?>
+                </button>
             </div>
 
             <div class="admin-appointment-search">
                 <i class="bi bi-search"></i>
-                <input type="text" id="appointmentSearch" placeholder="Search appointments...">
+                <input type="text" id="appointmentSearch" placeholder="<?= h(__('Search appointments...')) ?>">
             </div>
 
         </div>
@@ -240,7 +270,7 @@ $breadcrumbs = [
 
                         <div class="admin-appointment-person">
                             <h3><?= h($patientName) ?></h3>
-                            <p>Patient #<?= h($appointment->patient_id) ?></p>
+                            <p><?= __('Patient #{0}', h($appointment->patient_id)) ?></p>
                         </div>
 
                         <div class="admin-appointment-info">
@@ -257,7 +287,7 @@ $breadcrumbs = [
 
                             <div>
                                 <strong><?= h($clinicianName) ?></strong>
-                                <span>Clinician #<?= h($appointment->clinician_id) ?></span>
+                                <span><?= __('Clinician #{0}', h($appointment->clinician_id)) ?></span>
                             </div>
                         </div>
 
@@ -267,7 +297,7 @@ $breadcrumbs = [
                             <div>
                                 <strong>
                                     <?= !empty($appointment->duration)
-                                        ? h($appointment->duration) . ' min'
+                                        ? h($appointment->duration) . ' ' . __('min')
                                         : '—' ?>
                                 </strong>
                             </div>
@@ -287,7 +317,7 @@ $breadcrumbs = [
                                 [
                                     'class' => 'admin-appointment-action view',
                                     'escape' => false,
-                                    'title' => 'View',
+                                    'title' => __('View'),
                                 ]
                             ) ?>
 
@@ -297,7 +327,7 @@ $breadcrumbs = [
                                 [
                                     'class' => 'admin-appointment-action edit',
                                     'escape' => false,
-                                    'title' => 'Edit',
+                                    'title' => __('Edit'),
                                 ]
                             ) ?>
 
@@ -309,7 +339,7 @@ $breadcrumbs = [
                                     'class' => 'admin-appointment-action delete',
                                     'escape' => false,
                                     'confirm' => __('Are you sure you want to delete appointment #{0}?', $appointment->id),
-                                    'title' => 'Delete',
+                                    'title' => __('Delete'),
                                 ]
                             ) ?>
 
@@ -323,8 +353,7 @@ $breadcrumbs = [
 
             <div class="admin-appointments-footer">
                 <span>
-                    Showing <?= count($appointmentList) ?>
-                    appointment<?= count($appointmentList) === 1 ? '' : 's' ?>
+                    <?= __('Showing {0} appointment{1}', count($appointmentList), count($appointmentList) === 1 ? '' : 's') ?>
                 </span>
             </div>
 
@@ -354,7 +383,6 @@ $breadcrumbs = [
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         const filters = document.querySelectorAll('.admin-appointment-filter');
         const cards = document.querySelectorAll('.admin-appointment-card');
         const searchInput = document.getElementById('appointmentSearch');
@@ -362,39 +390,28 @@ $breadcrumbs = [
         let activeFilter = 'all';
 
         function applyFilters() {
-
             const searchValue = searchInput
                 ? searchInput.value.toLowerCase().trim()
                 : '';
 
             cards.forEach(function (card) {
-
                 const status = card.dataset.status;
                 const searchText = card.dataset.search || '';
 
-                const statusMatch =
-                    activeFilter === 'all' || status === activeFilter;
+                const statusMatch = activeFilter === 'all' || status === activeFilter;
+                const searchMatch = searchText.includes(searchValue);
 
-                const searchMatch =
-                    searchText.includes(searchValue);
-
-                card.style.display =
-                    statusMatch && searchMatch
-                        ? 'grid'
-                        : 'none';
+                card.style.display = statusMatch && searchMatch ? 'grid' : 'none';
             });
         }
 
         filters.forEach(function (button) {
-
             button.addEventListener('click', function () {
-
                 filters.forEach(function (btn) {
                     btn.classList.remove('active');
                 });
 
                 button.classList.add('active');
-
                 activeFilter = button.dataset.filter;
 
                 applyFilters();
@@ -404,6 +421,5 @@ $breadcrumbs = [
         if (searchInput) {
             searchInput.addEventListener('input', applyFilters);
         }
-
     });
 </script>

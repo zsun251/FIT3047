@@ -1,55 +1,85 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @var \App\View\AppView $this
+ * @var iterable<\App\Model\Entity\Patient>|array $patients
+ * @var int|null $totalRecords
+ * @var int|null $criticalPatients
+ */
+
 use App\Policy\UserAccess;
 
 $this->assign('title', 'Patients Management');
 
 $this->start('datatables_css');
 echo $this->Html->css([
-    'users-index'
+    'users-index',
 ]);
 $this->end();
 
 $identity = $this->request->getAttribute('identity');
 
-$breadcrumbs = [
-    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
-    ['title' => 'Patients', 'url' => null]
-];
+$patients = $patients ?? [];
+$patientList = is_array($patients) ? $patients : iterator_to_array($patients);
 
-$totalPatients = count($patients);
+$totalPatients = count($patientList);
+$totalRecords = $totalRecords ?? 0;
+$criticalPatients = $criticalPatients ?? 0;
+
+$backUrl = $this->request->referer(true);
+
+if (!$backUrl || str_contains($backUrl, '/patients')) {
+    $backUrl = ['controller' => 'Dashboard', 'action' => 'staff'];
+}
 ?>
-
-<?= $this->element('page_header', [
-    'breadcrumbs' => $breadcrumbs
-]) ?>
 
 <div class="patients-page">
 
-    <div class="patients-header">
-        <div>
-            <h1>Assigned Patients</h1>
-            <p>Manage assigned patient accounts and records</p>
-        </div>
+    <div class="rc-dashboard-page-header patients-page-header">
+        <div class="rc-dashboard-header-main patients-header-main">
+            <div class="rc-dashboard-header-copy patients-header-copy">
+                <div class="rc-dashboard-title-row patients-title-row">
+                    <?= $this->Html->link(
+                        '<i class="bi bi-arrow-left"></i>',
+                        $backUrl,
+                        [
+                            'class' => 'rc-back-button patients-back-button',
+                            'escape' => false,
+                            'aria-label' => __('Return to dashboard'),
+                        ],
+                    ) ?>
 
-        <?php if (UserAccess::isAdmin($identity)): ?>
-            <?= $this->Html->link(
-                '<i class="bi bi-people"></i> Assign Patients to Clinician',
-                ['controller' => 'Patients', 'action' => 'assign'],
-                [
-                    'class' => 'patients-main-btn',
-                    'escape' => false
-                ]
-            ) ?>
-        <?php elseif (UserAccess::isClinician($identity)): ?>
-            <?= $this->Html->link(
-                '<i class="bi bi-people"></i> Manage My Patients',
-                ['controller' => 'Patients', 'action' => 'assign', UserAccess::getClinicianId($identity)],
-                [
-                    'class' => 'patients-main-btn',
-                    'escape' => false
-                ]
-            ) ?>
-        <?php endif; ?>
+                    <h1 class="rc-dashboard-title">
+                        <?= __('Assigned Patients') ?>
+                    </h1>
+                </div>
+
+                <p class="rc-dashboard-subtitle">
+                    <?= __('Manage assigned patient accounts and records') ?>
+                </p>
+            </div>
+
+            <?php if (UserAccess::isAdmin($identity)): ?>
+                <?= $this->Html->link(
+                    '<i class="bi bi-people"></i><span>' . __('Assign Patients to Clinician') . '</span>',
+                    ['controller' => 'Patients', 'action' => 'assign'],
+                    [
+                        'class' => 'rc-action-pill patients-main-button',
+                        'escape' => false,
+                    ],
+                ) ?>
+            <?php elseif (UserAccess::isClinician($identity)): ?>
+                <?= $this->Html->link(
+                    '<i class="bi bi-people"></i><span>' . __('Manage My Patients') . '</span>',
+                    ['controller' => 'Patients', 'action' => 'assign', UserAccess::getClinicianId($identity)],
+                    [
+                        'class' => 'rc-action-pill patients-main-button',
+                        'escape' => false,
+                    ],
+                ) ?>
+            <?php endif; ?>
+        </div>
     </div>
 
     <div class="patients-stats-grid">
@@ -60,9 +90,9 @@ $totalPatients = count($patients);
             </div>
 
             <div>
-                <span>TOTAL PATIENTS</span>
-                <h2><?= count($patients) ?></h2>
-                <p>Assigned to you</p>
+                <span><?= __('Total Patients') ?></span>
+                <h2><?= h($totalPatients) ?></h2>
+                <p><?= __('Assigned to you') ?></p>
             </div>
         </div>
 
@@ -72,9 +102,9 @@ $totalPatients = count($patients);
             </div>
 
             <div>
-                <span>ACTIVE THIS WEEK</span>
-                <h2><?= count($patients) ?></h2>
-                <p>Had recent activity</p>
+                <span><?= __('Active This Week') ?></span>
+                <h2><?= h($totalPatients) ?></h2>
+                <p><?= __('Had recent activity') ?></p>
             </div>
         </div>
 
@@ -84,9 +114,9 @@ $totalPatients = count($patients);
             </div>
 
             <div>
-                <span>TOTAL RECORDS</span>
-                <h2><?= $totalRecords ?></h2>
-                <p>Health records</p>
+                <span><?= __('Total Records') ?></span>
+                <h2><?= h($totalRecords) ?></h2>
+                <p><?= __('Health records') ?></p>
             </div>
         </div>
 
@@ -96,9 +126,9 @@ $totalPatients = count($patients);
             </div>
 
             <div>
-                <span>HIGH PRIORITY</span>
-                <h2><?= $criticalPatients ?></h2>
-                <p>Requiring attention</p>
+                <span><?= __('High Priority') ?></span>
+                <h2><?= h($criticalPatients) ?></h2>
+                <p><?= __('Requiring attention') ?></p>
             </div>
         </div>
 
@@ -109,39 +139,57 @@ $totalPatients = count($patients);
         <div class="patients-toolbar">
             <div class="patients-search">
                 <i class="bi bi-search"></i>
-                <input type="text" id="patientSearchInput" placeholder="Search patients by name, email or phone...">
+                <input
+                    type="text"
+                    id="patientSearchInput"
+                    placeholder="<?= h(__('Search patients by name, email or phone...')) ?>"
+                >
             </div>
         </div>
 
         <div class="patients-table">
 
             <div class="patients-table-head">
-                <div>Patient</div>
-                <div>Contact</div>
-                <div>Joined</div>
-                <div>Actions</div>
+                <div><?= __('Patient') ?></div>
+                <div><?= __('Contact') ?></div>
+                <div><?= __('Joined') ?></div>
+                <div><?= __('Actions') ?></div>
             </div>
 
-            <?php foreach ($patients as $patient): ?>
+            <?php foreach ($patientList as $patient): ?>
                 <?php
                 $user = $patient->user ?? null;
 
-                $fullName = $user
-                    ? trim(($user->first_name ?? '') . ' ' . ($user->last_name ?? ''))
-                    : 'Patient #' . $patient->id;
+                $firstName = $user ? trim((string)($user->first_name ?? '')) : '';
+                $lastName = $user ? trim((string)($user->last_name ?? '')) : '';
 
-                $initials = $user
-                    ? strtoupper(substr($user->first_name ?? 'P', 0, 1) . substr($user->last_name ?? '', 0, 1))
-                    : 'P';
+                $fullName = trim($firstName . ' ' . $lastName);
+
+                if ($fullName === '') {
+                    $fullName = 'Patient #' . (int)$patient->id;
+                }
+
+                $initials = strtoupper(substr($firstName !== '' ? $firstName : 'P', 0, 1) . substr($lastName, 0, 1));
+                $initials = substr($initials ?: 'P', 0, 2);
 
                 $email = $user->email ?? null;
                 $phone = $user->phone ?? null;
+                $phoneHref = $phone ? preg_replace('/[^0-9+]/', '', (string)$phone) : null;
                 $username = $user->username ?? null;
                 $createdAt = $user->created_at ?? null;
+
+                $searchText = strtolower(
+                    $fullName . ' ' .
+                    ($email ?? '') . ' ' .
+                    ($phone ?? '') . ' ' .
+                    ($username ?? '')
+                );
                 ?>
 
-                <div class="patient-row"
-                     data-search="<?= h(strtolower($fullName . ' ' . ($email ?? '') . ' ' . ($phone ?? '') . ' ' . ($username ?? ''))) ?>">
+                <div
+                    class="patient-row"
+                    data-search="<?= h($searchText) ?>"
+                >
 
                     <div class="patient-main">
                         <div class="patient-avatar">
@@ -164,7 +212,9 @@ $totalPatients = count($patients);
                             <i class="bi bi-envelope"></i>
 
                             <?php if ($email): ?>
-                                <a href="mailto:<?= h($email) ?>"><?= h($email) ?></a>
+                                <a href="mailto:<?= h($email) ?>">
+                                    <?= h($email) ?>
+                                </a>
                             <?php else: ?>
                                 <span>—</span>
                             <?php endif; ?>
@@ -173,8 +223,10 @@ $totalPatients = count($patients);
                         <div>
                             <i class="bi bi-telephone"></i>
 
-                            <?php if ($phone): ?>
-                                <a href="tel:<?= h($phone) ?>"><?= h($phone) ?></a>
+                            <?php if ($phone && $phoneHref): ?>
+                                <a href="tel:<?= h($phoneHref) ?>">
+                                    <?= h($phone) ?>
+                                </a>
                             <?php else: ?>
                                 <span>—</span>
                             <?php endif; ?>
@@ -195,20 +247,22 @@ $totalPatients = count($patients);
                             '<i class="bi bi-eye"></i>',
                             ['action' => 'view', $patient->id],
                             [
-                                'class' => 'patient-action-btn view',
+                                'class' => 'rc-icon-action patient-action-btn view',
                                 'escape' => false,
-                                'title' => 'View'
-                            ]
+                                'title' => __('View'),
+                                'aria-label' => __('View patient'),
+                            ],
                         ) ?>
 
                         <?= $this->Html->link(
                             '<i class="bi bi-pencil"></i>',
                             ['action' => 'edit', $patient->id],
                             [
-                                'class' => 'patient-action-btn edit',
+                                'class' => 'rc-icon-action rc-icon-action-green patient-action-btn edit',
                                 'escape' => false,
-                                'title' => 'Edit'
-                            ]
+                                'title' => __('Edit'),
+                                'aria-label' => __('Edit patient'),
+                            ],
                         ) ?>
                     </div>
 
@@ -219,7 +273,7 @@ $totalPatients = count($patients);
         </div>
 
         <div class="patients-footer">
-            Showing <?= h($totalPatients) ?> patient<?= $totalPatients === 1 ? '' : 's' ?>
+            <?= __('Showing {0} patient{1}', h($totalPatients), $totalPatients === 1 ? '' : 's') ?>
         </div>
 
     </div>
