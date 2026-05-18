@@ -23,7 +23,7 @@ $breadcrumbs = [
     <!-- Form Header -->
     <div class="form-header">
         <div>
-            <h1><?= __('Add New User') ?></h1>
+            <h1><i class="bi bi-person-plus" style="color:#0d6efd;margin-right:.5rem;"></i><?= __('Add New User') ?></h1>
             <small class="text-muted">Create a new user account</small>
         </div>
     </div>
