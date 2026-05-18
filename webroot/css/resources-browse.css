@@ -156,6 +156,7 @@
 .read-link:hover {
     text-decoration: underline;
 }
+
 /* Pagination */
 .pagination-container {
     display: flex;

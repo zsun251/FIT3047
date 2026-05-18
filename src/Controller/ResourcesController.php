@@ -43,7 +43,14 @@ class ResourcesController extends AppController
         }
 
         $resources = $this->paginate($query);
-        $this->set(compact('resources'));
+
+        // Stats (always global, ignoring the active type filter)
+        $totalCount     = $this->Resources->find()->count();
+        $publishedCount = $this->Resources->find()->where(['status' => 'published'])->count();
+        $draftCount     = $this->Resources->find()->where(['status' => 'draft'])->count();
+        $videoCount     = $this->Resources->find()->where(['type' => 'video'])->count();
+
+        $this->set(compact('resources', 'totalCount', 'publishedCount', 'draftCount', 'videoCount'));
     }
     /**
      * View method
