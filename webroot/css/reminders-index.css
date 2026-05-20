@@ -356,3 +356,12 @@
         border: 1px solid #dee2e6;
     }
 }
+
+.rc-dashboard-page-header {
+    margin-bottom: -2rem !important;
+    padding-bottom: 0 !important;
+}
+
+.stats-grid {
+    margin-top: 0 !important;
+}
