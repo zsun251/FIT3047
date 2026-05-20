@@ -149,7 +149,7 @@ $renderBlockList = function (array $contentBlocks) use ($getBlockTypeKey, $getBl
                             <?= h($contentBlock->label) ?>
                         </h3>
 
-                        <span class="content-block-type-badge <?= h($getBlockTypeClass($contentBlock)) ?>">
+                        <span class="rc-type-badge content-block-type-badge <?= h($getBlockTypeClass($contentBlock)) ?>">
                             <?= h($getBlockTypeLabel($contentBlock)) ?>
                         </span>
                     </div>
@@ -162,7 +162,7 @@ $renderBlockList = function (array $contentBlocks) use ($getBlockTypeKey, $getBl
                 <?php if (!empty($contentBlock->previous_value)): ?>
                     <div class="content-block-item-actions">
                         <?= $this->Form->postLink(
-                            '<i class="bi bi-arrow-counterclockwise"></i><span>Restore</span>',
+                            '<i class="bi bi-arrow-counterclockwise"></i><span>' . __('Restore') . '</span>',
                             [
                                 'plugin' => false,
                                 'controller' => 'ContentBlocks',
@@ -170,7 +170,7 @@ $renderBlockList = function (array $contentBlocks) use ($getBlockTypeKey, $getBl
                                 $contentBlock->id,
                             ],
                             [
-                                'class' => 'btn btn-outline-secondary btn-sm',
+                                'class' => 'rc-action-pill rc-action-pill-clear content-block-restore-button',
                                 'escapeTitle' => false,
                                 'confirm' => __(
                                     "Are you sure you want to restore the previous version for this item?\n{0}/{1}\nNote: You cannot cancel this action!",
@@ -230,38 +230,46 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
 }
 ?>
 
-<div class="content-blocks-page-header">
-    <div class="content-blocks-page-title-row">
-        <?= $this->Html->link(
-            '<i class="bi bi-arrow-left"></i>',
-            $backUrl,
-            [
-                'class' => 'content-blocks-back-button',
-                'escape' => false,
-                'aria-label' => __('Return to previous page'),
-            ]
-        ) ?>
+<div class="content-blocks-page">
+    <div class="rc-dashboard-page-header content-blocks-page-header">
+        <div class="rc-dashboard-header-main content-blocks-header-main">
+            <div class="rc-dashboard-header-copy content-blocks-header-copy">
+                <div class="rc-dashboard-title-row content-blocks-page-title-row">
+                    <?= $this->Html->link(
+                        '<i class="bi bi-arrow-left"></i>',
+                        $backUrl,
+                        [
+                            'class' => 'rc-back-button',
+                            'escape' => false,
+                            'aria-label' => __('Return to previous page'),
+                        ]
+                    ) ?>
 
-        <h1><?= __('Site Content') ?></h1>
+                    <h1 class="rc-dashboard-title"><?= __('Site Content') ?></h1>
+                </div>
+
+                <p class="rc-dashboard-subtitle"><?= __('Edit the text, images, and icons used across the public website.') ?></p>
+            </div>
+        </div>
     </div>
-
-    <p><?= __('Edit the text, images, and icons used across the public website.') ?></p>
-</div>
 
     <div class="content-blocks-admin-card">
         <div class="content-block-filter-panel">
             <div class="content-block-filter-group">
                 <div class="content-block-filter-controls" aria-label="<?= h(__('Filter content blocks by type')) ?>">
-                    <button class="content-block-filter-button active" type="button" data-content-block-filter="all" aria-pressed="true">
+                    <button class="rc-pill-control content-block-filter-button active" type="button" data-content-block-filter="all" aria-pressed="true">
                         <?= __('All') ?>
                     </button>
-                    <button class="content-block-filter-button" type="button" data-content-block-filter="text" aria-pressed="false">
+
+                    <button class="rc-pill-control rc-pill-control-blue content-block-filter-button" type="button" data-content-block-filter="text" aria-pressed="false">
                         <?= __('Text') ?>
                     </button>
-                    <button class="content-block-filter-button" type="button" data-content-block-filter="image" aria-pressed="false">
+
+                    <button class="rc-pill-control rc-pill-control-green content-block-filter-button" type="button" data-content-block-filter="image" aria-pressed="false">
                         <?= __('Images') ?>
                     </button>
-                    <button class="content-block-filter-button" type="button" data-content-block-filter="icon" aria-pressed="false">
+
+                    <button class="rc-pill-control rc-pill-control-purple content-block-filter-button" type="button" data-content-block-filter="icon" aria-pressed="false">
                         <?= __('Icons') ?>
                     </button>
                 </div>
@@ -279,7 +287,7 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
                             aria-expanded="false"
                             aria-controls="content-block-section-home"
                         >
-                            <span class="content-block-section-icon">
+                            <span class="rc-soft-icon content-block-section-icon">
                                 <i class="bi bi-house-door"></i>
                             </span>
 
@@ -312,7 +320,7 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
                                                     <?= h($formatParentLabel($homeParent)) ?>
                                                 </span>
 
-                                                <span class="content-block-home-subsection-count" data-content-block-count>
+                                                <span class="rc-mini-pill content-block-home-subsection-count" data-content-block-count>
                                                     <?= __('{0} items', count($homeContentBlocksGrouped[$homeParent])) ?>
                                                 </span>
 
@@ -345,7 +353,7 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
                             aria-expanded="false"
                             aria-controls="<?= h($sectionId) ?>"
                         >
-                            <span class="content-block-section-icon">
+                            <span class="rc-soft-icon content-block-section-icon">
                                 <i class="bi <?= h($sectionIcon) ?>"></i>
                             </span>
 
@@ -353,7 +361,7 @@ foreach ($homeContentBlocksGrouped as $contentBlocks) {
                                 <?= h($formatParentLabel($parent)) ?>
                             </span>
 
-                            <span class="content-block-section-count" data-content-block-count>
+                            <span class="rc-mini-pill content-block-section-count" data-content-block-count>
                                 <?= __('{0} items', count($contentBlocks)) ?>
                             </span>
 

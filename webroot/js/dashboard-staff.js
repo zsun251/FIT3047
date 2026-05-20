@@ -10,14 +10,18 @@ $(function(){
             { orderable: false, targets: [2, 5] }
         ],
         layout: {
-            topStart: 'pageLength',
-            topEnd: 'search',
+            topStart: null,
+            topEnd: null,
             bottomStart: 'info',
             bottomEnd: 'paging'
         }
     });
 
     $('#recentTable').removeClass('dt-hidden');
+
+    $('#tableSearch').on('keyup input', function () {
+        table.search(this.value).draw();
+    });
 
     // Initialize mobile data table
     const mobileTable = new MobileDataTable({
