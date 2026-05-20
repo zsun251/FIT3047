@@ -1006,13 +1006,7 @@ if ($isStaff) {
         line-height: 1.3 !important;
     }
 
-    /* FINAL MOBILE RESPONSIVE FIX FOR VITAL DATA FORM */
     @media (max-width: 768px) {
-
-        .wizard-card {
-            padding: 24px 16px 20px 16px !important;
-            border-radius: 24px !important;
-        }
 
         .wizard-header {
             padding: 24px 10px 18px !important;
@@ -1045,7 +1039,6 @@ if ($isStaff) {
             border-radius: 18px !important;
         }
 
-        .step-icon-box,
         .section-icon {
             width: 46px !important;
             height: 46px !important;
@@ -1053,17 +1046,6 @@ if ($isStaff) {
             font-size: 20px !important;
         }
 
-        .step-title {
-            font-size: 1.2rem !important;
-        }
-
-        .step-subtitle {
-            font-size: 0.85rem !important;
-        }
-
-        .step-description {
-            font-size: 0.9rem !important;
-        }
 
         .vital-row {
             display: grid !important;
@@ -1082,7 +1064,7 @@ if ($isStaff) {
             font-size: 0.9rem !important;
         }
 
-        .vital-input .form-control {
+        .vital-input {
             width: 100% !important;
             height: 48px !important;
             font-size: 0.95rem !important;
@@ -1096,11 +1078,6 @@ if ($isStaff) {
 
         .section-description {
             margin-left: 0 !important;
-        }
-
-        .back-link {
-            margin-left: 0 !important;
-            margin-top: 10px !important;
         }
 
         .symptom-option {
@@ -1118,7 +1095,7 @@ if ($isStaff) {
             font-size: 0.95rem !important;
         }
 
-        .symptom-option .form-select {
+        .symptom-option {
             width: 100% !important;
         }
 
@@ -1156,10 +1133,15 @@ if ($isStaff) {
             height: 46px !important;
             margin: 0 !important;
         }
+
+        .mb-4.d-flex.align-items-start.gap-4 {
+            flex-direction: column !important;
+            gap: 14px !important;
+        }
     }
 
     @media (max-width: 768px) {
-        .vital-input .error-message {
+        .vital-input {
             position: static !important;
             display: block !important;
             margin-top: 8px !important;
