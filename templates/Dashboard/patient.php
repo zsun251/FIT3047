@@ -73,7 +73,8 @@ if ($settings && $settings->is_active) {
 
 <!-- Header Section -->
 <?= $this->element('page_header', [
-    'breadcrumbs' => $breadcrumbs
+    'breadcrumbs' => $breadcrumbs,
+    'showBack' => false,
 ]) ?>
 
 <div class="form-container patient-dashboard">
