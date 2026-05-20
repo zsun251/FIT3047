@@ -37,31 +37,31 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
 ?>
 
 <!-- Header Section -->
-<div class="health-records-page-header">
-    <div class="health-records-header-main">
-        <div class="health-records-header-copy">
-            <div class="health-records-title-row">
+<div class="rc-dashboard-page-header health-records-page-header">
+    <div class="rc-dashboard-header-main health-records-header-main">
+        <div class="rc-dashboard-header-copy health-records-header-copy">
+            <div class="rc-dashboard-title-row health-records-title-row">
                 <?= $this->Html->link(
                     '<i class="bi bi-arrow-left"></i>',
                     $backUrl,
                     [
-                        'class' => 'health-records-back-button',
+                        'class' => 'rc-back-button health-records-back-button',
                         'escape' => false,
                         'aria-label' => __('Return to previous page'),
                     ]
                 ) ?>
 
-                <h1><?= __('Patient Health Records') ?></h1>
+                <h1 class="rc-dashboard-title"><?= __('Patient Health Records') ?></h1>
             </div>
 
-            <p><?= __('Monitor patient health metrics') ?></p>
+            <p class="rc-dashboard-subtitle"><?= __('Monitor patient health metrics') ?></p>
         </div>
 
         <?= $this->Html->link(
             '<i class="bi bi-plus-circle"></i><span>' . __('New Record') . '</span>',
             ['action' => 'add'],
             [
-                'class' => 'health-records-new-record-button',
+                'class' => 'rc-action-pill health-records-new-record-button',
                 'escape' => false,
             ]
         ) ?>
@@ -110,7 +110,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                     <?php foreach ($symptomOptions as $value => $label): ?>
                         <button
                             type="button"
-                            class="symptom-chip <?= ($filters['symptom_filter'] ?? 'any') === $value ? 'is-active' : '' ?>"
+                            class="rc-pill-control rc-pill-control-purple symptom-chip <?= ($filters['symptom_filter'] ?? 'any') === $value ? 'is-active' : '' ?>"
                             data-symptom-filter="<?= h($value) ?>"
                             aria-pressed="<?= (($filters['symptom_filter'] ?? 'any') === $value) ? 'true' : 'false' ?>"
                         >
@@ -166,7 +166,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                     <?php foreach ($datePresetOptions as $value => $label): ?>
                         <button
                             type="button"
-                            class="date-chip <?= ($filters['date_preset'] ?? 'any') === $value ? 'is-active' : '' ?>"
+                            class="rc-pill-control rc-pill-control-purple date-chip <?= ($filters['date_preset'] ?? 'any') === $value ? 'is-active' : '' ?>"
                             data-date-preset="<?= h($value) ?>"
                             aria-pressed="<?= (($filters['date_preset'] ?? 'any') === $value) ? 'true' : 'false' ?>"
                         >
@@ -208,100 +208,37 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                         </div>
 
                         <div class="custom-date-help-items">
-                    <span class="custom-date-help-pill help-pill-end">
-                        Only <strong>end date</strong> → shows everything up to that date
-                    </span>
+                            <span class="custom-date-help-pill help-pill-end">
+                                Only <strong>end date</strong> → shows everything up to that date
+                            </span>
+
                             <span class="custom-date-help-pill help-pill-start">
-                        Only <strong>start date</strong> → shows everything from that date onward
-                    </span>
+                                Only <strong>start date</strong> → shows everything from that date onward
+                            </span>
+
                             <span class="custom-date-help-pill help-pill-range">
-                        <strong>Both dates</strong> → filters to the selected date range
-                    </span>
+                                <strong>Both dates</strong> → filters to the selected date range
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="filter-actions">
-                <?= $this->Form->button('<i class="bi bi-funnel"></i> Apply', [
+                <?= $this->Form->button('<i class="bi bi-funnel"></i><span>Apply</span>', [
                     'type' => 'submit',
-                    'class' => 'btn btn-primary',
+                    'class' => 'rc-action-pill',
                     'escapeTitle' => false
                 ]) ?>
 
                 <?= $this->Html->link(
-                    '<i class="bi bi-x-circle"></i> Clear',
+                    '<i class="bi bi-x-circle"></i><span>Clear</span>',
                     ['action' => 'index'],
-                    ['class' => 'btn btn-outline-secondary', 'escape' => false]
+                    [
+                        'class' => 'rc-action-pill rc-action-pill-clear',
+                        'escape' => false
+                    ]
                 ) ?>
-            </div>
-        </div>
-
-        <div
-            class="symptom-severity-row <?= (($filters['symptom_filter'] ?? 'any') === 'with') ? 'is-visible' : '' ?>"
-            id="severityRow"
-        >
-            <div class="filter-field">
-                <?= $this->Form->control('severity', [
-                    'type' => 'select',
-                    'options' => [
-                        'mild' => 'Mild',
-                        'moderate' => 'Moderate',
-                        'severe' => 'Severe',
-                    ],
-                    'empty' => 'Any severity',
-                    'label' => 'Severity',
-                    'value' => $filters['severity'] ?? '',
-                    'class' => 'form-select',
-                    'id' => 'severityField',
-                    'disabled' => (($filters['symptom_filter'] ?? 'any') !== 'with')
-                ]) ?>
-            </div>
-        </div>
-
-        <div
-            class="custom-date-row <?= ($filters['date_preset'] ?? '') === 'custom' ? 'is-visible' : '' ?>"
-            id="customDateRow"
-        >
-            <div class="filter-field" id="dateFromGroup">
-                <label for="dateFromField" class="form-label">Start date</label>
-                <input
-                    type="date"
-                    name="date_from"
-                    id="dateFromField"
-                    class="form-control"
-                    value="<?= h($filters['date_from'] ?? '') ?>"
-                >
-            </div>
-
-            <div class="filter-field" id="dateToGroup">
-                <label for="dateToField" class="form-label">End date</label>
-                <input
-                    type="date"
-                    name="date_to"
-                    id="dateToField"
-                    class="form-control"
-                    value="<?= h($filters['date_to'] ?? '') ?>"
-                >
-            </div>
-
-            <div class="custom-date-help">
-                <div class="custom-date-help-title">
-                    <i class="bi bi-info-circle-fill"></i>
-                    <span>How custom date filtering works</span>
-                </div>
-
-                <div class="custom-date-help-items">
-                    <span class="custom-date-help-pill help-pill-end">
-                        Only <strong>end date</strong> → shows everything up to that date
-                    </span>
-                    <span class="custom-date-help-pill help-pill-start">
-                        Only <strong>start date</strong> → shows everything from that date onward
-                    </span>
-                    <span class="custom-date-help-pill help-pill-range">
-                        <strong>Both dates</strong> → filters to the selected date range
-                    </span>
-                </div>
             </div>
         </div>
 
@@ -343,7 +280,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
 
                     <tr>
                         <td class="align-middle">
-                            <span class="badge bg-secondary">#<?= $this->Number->format($vitalDataEntity->id) ?></span>
+                            <span class="rc-mini-pill record-id-pill">#<?= $this->Number->format($vitalDataEntity->id) ?></span>
                         </td>
 
                         <td class="align-middle">
@@ -351,7 +288,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                                 <?= $this->Html->link(
                                     h($patientName),
                                     ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id],
-                                    ['class' => 'patient-pill-link text-decoration-none']
+                                    ['class' => 'rc-pill-link patient-pill-link']
                                 ) ?>
                             <?php endif; ?>
                         </td>
@@ -426,7 +363,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                                     '<i class="bi bi-clock-history"></i>',
                                     ['action' => 'patientHistory', $vitalDataEntity->patient_id],
                                     [
-                                        'class' => 'btn btn-sm btn-outline-info',
+                                        'class' => 'rc-icon-action rc-icon-action-purple',
                                         'escape' => false,
                                         'title' => 'View Patient History'
                                     ]
@@ -436,7 +373,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                                     '<i class="bi bi-eye"></i>',
                                     ['action' => 'view', $vitalDataEntity->id],
                                     [
-                                        'class' => 'btn btn-sm btn-outline-primary',
+                                        'class' => 'rc-icon-action',
                                         'escape' => false,
                                         'title' => 'View'
                                     ]
@@ -446,7 +383,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                                     '<i class="bi bi-pencil"></i>',
                                     ['action' => 'edit', $vitalDataEntity->id],
                                     [
-                                        'class' => 'btn btn-sm btn-outline-secondary',
+                                        'class' => 'rc-icon-action rc-icon-action-green',
                                         'escape' => false,
                                         'title' => 'Edit'
                                     ]
@@ -456,7 +393,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                                     '<i class="bi bi-trash"></i>',
                                     ['action' => 'delete', $vitalDataEntity->id],
                                     [
-                                        'class' => 'btn btn-sm btn-outline-danger',
+                                        'class' => 'rc-icon-action rc-icon-action-danger',
                                         'escape' => false,
                                         'confirm' => __('Are you sure you want to delete record #{0}?', $vitalDataEntity->id),
                                         'title' => 'Delete'
@@ -593,28 +530,37 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
 
                     <div class="record-card-actions">
                         <?= $this->Html->link(
-                            '<i class="bi bi-clock-history"></i> History',
+                            '<i class="bi bi-clock-history"></i><span>History</span>',
                             ['action' => 'patientHistory', $vitalDataEntity->patient_id],
-                            ['class' => 'btn btn-sm btn-outline-info flex-fill', 'escape' => false]
+                            [
+                                'class' => 'rc-action-pill rc-action-pill-purple flex-fill',
+                                'escape' => false
+                            ]
                         ) ?>
 
                         <?= $this->Html->link(
-                            '<i class="bi bi-eye"></i> View',
+                            '<i class="bi bi-eye"></i><span>View</span>',
                             ['action' => 'view', $vitalDataEntity->id],
-                            ['class' => 'btn btn-sm btn-outline-primary flex-fill', 'escape' => false]
+                            [
+                                'class' => 'rc-action-pill flex-fill',
+                                'escape' => false
+                            ]
                         ) ?>
 
                         <?= $this->Html->link(
-                            '<i class="bi bi-pencil"></i> Edit',
+                            '<i class="bi bi-pencil"></i><span>Edit</span>',
                             ['action' => 'edit', $vitalDataEntity->id],
-                            ['class' => 'btn btn-sm btn-outline-secondary flex-fill', 'escape' => false]
+                            [
+                                'class' => 'rc-action-pill rc-action-pill-green flex-fill',
+                                'escape' => false
+                            ]
                         ) ?>
 
                         <?= $this->Form->postLink(
-                            '<i class="bi bi-trash"></i> Delete',
+                            '<i class="bi bi-trash"></i><span>Delete</span>',
                             ['action' => 'delete', $vitalDataEntity->id],
                             [
-                                'class' => 'btn btn-sm btn-outline-danger flex-fill',
+                                'class' => 'rc-action-pill rc-action-pill-danger flex-fill',
                                 'escape' => false,
                                 'confirm' => __('Delete record #{0}?', $vitalDataEntity->id)
                             ]

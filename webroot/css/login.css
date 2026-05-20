@@ -6,7 +6,6 @@
     align-items: center;
     justify-content: center;
     padding: 2rem 1rem;
-    background: #f8f9fa;
 }
 
 .login-card {
@@ -230,6 +229,8 @@
     font-size: 0.9rem;
     border: 1px solid #f5c6cb;
 }
+
+
 
 /* Responsive Design */
 @media (max-width: 576px) {
