@@ -135,11 +135,10 @@ if ($isStaff) {
                             'min' => 70,
                             'max' => 100,
                             'label' => false,
+                            'error' => false,
                             'placeholder' => 'e.g. 90',
                             'class' => 'form-control',
-                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')",
                         ]) ?>
-
                         <span class="input-unit">%</span>
 
                     </div>
@@ -161,11 +160,11 @@ if ($isStaff) {
                         <?= $this->Form->control('respiratory_rate', [
                             'type' => 'text',
                             'inputmode' => 'numeric',
-                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')",
                             'step' => '1',
                             'min' => 8,
                             'max' => 40,
                             'label' => false,
+                            'error' => false,
                             'placeholder' => 'e.g. 12',
                             'class' => 'form-control',
                         ]) ?>
@@ -191,10 +190,9 @@ if ($isStaff) {
                         <?= $this->Form->control('blood_pressure', [
                             'type' => 'text',
                             'label' => false,
+                            'error' => false,
                             'placeholder' => 'e.g. 120/80',
                             'class' => 'form-control',
-                            'inputmode' => 'numeric',
-                            'pattern' => '\d{2,3}/\d{2,3}',
                         ]) ?>
 
                         <span class="input-unit">mmHg</span>
@@ -219,9 +217,9 @@ if ($isStaff) {
                             'type' => 'text',
                             'inputmode' => 'numeric',
                             'label' => false,
+                            'error' => false,
                             'placeholder' => 'e.g. 98',
                             'class' => 'form-control',
-                            'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')",
                         ]) ?>
 
                         <span class="input-unit">%</span>
@@ -246,6 +244,7 @@ if ($isStaff) {
                             'type' => 'text',
                             'inputmode' => 'decimal',
                             'label' => false,
+                            'error' => false,
                             'placeholder' => 'e.g. 65.5',
                             'class' => 'form-control',
                         ]) ?>
@@ -571,7 +570,7 @@ if ($isStaff) {
         grid-template-columns: 70px 220px 1fr;
         align-items: center;
         gap: 18px;
-        margin-bottom: 24px;
+        margin-bottom: 48px;
 
 
     }
@@ -935,12 +934,17 @@ if ($isStaff) {
 
 
     .vital-input .error-message {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        margin-top: 6px;
-        color: #dc3545;
-        font-size: 0.85rem;
+        position: static !important;
+        display: block !important;
+
+        margin-top: 8px !important;
+        margin-bottom: 0 !important;
+
+        color: #dc3545 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.4 !important;
+
+        white-space: normal !important;
     }
 
     .severity-dropdown-wrapper {
@@ -980,7 +984,9 @@ if ($isStaff) {
 
     .vital-input {
         position: relative !important;
-        padding-bottom: 8px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
     }
 
     .input-unit {
@@ -1000,13 +1006,7 @@ if ($isStaff) {
         line-height: 1.3 !important;
     }
 
-    /* FINAL MOBILE RESPONSIVE FIX FOR VITAL DATA FORM */
     @media (max-width: 768px) {
-
-        .wizard-card {
-            padding: 24px 16px 20px 16px !important;
-            border-radius: 24px !important;
-        }
 
         .wizard-header {
             padding: 24px 10px 18px !important;
@@ -1039,7 +1039,6 @@ if ($isStaff) {
             border-radius: 18px !important;
         }
 
-        .step-icon-box,
         .section-icon {
             width: 46px !important;
             height: 46px !important;
@@ -1047,17 +1046,6 @@ if ($isStaff) {
             font-size: 20px !important;
         }
 
-        .step-title {
-            font-size: 1.2rem !important;
-        }
-
-        .step-subtitle {
-            font-size: 0.85rem !important;
-        }
-
-        .step-description {
-            font-size: 0.9rem !important;
-        }
 
         .vital-row {
             display: grid !important;
@@ -1076,7 +1064,7 @@ if ($isStaff) {
             font-size: 0.9rem !important;
         }
 
-        .vital-input .form-control {
+        .vital-input {
             width: 100% !important;
             height: 48px !important;
             font-size: 0.95rem !important;
@@ -1090,11 +1078,6 @@ if ($isStaff) {
 
         .section-description {
             margin-left: 0 !important;
-        }
-
-        .back-link {
-            margin-left: 0 !important;
-            margin-top: 10px !important;
         }
 
         .symptom-option {
@@ -1112,7 +1095,7 @@ if ($isStaff) {
             font-size: 0.95rem !important;
         }
 
-        .symptom-option .form-select {
+        .symptom-option {
             width: 100% !important;
         }
 
@@ -1150,10 +1133,15 @@ if ($isStaff) {
             height: 46px !important;
             margin: 0 !important;
         }
+
+        .mb-4.d-flex.align-items-start.gap-4 {
+            flex-direction: column !important;
+            gap: 14px !important;
+        }
     }
 
     @media (max-width: 768px) {
-        .vital-input .error-message {
+        .vital-input {
             position: static !important;
             display: block !important;
             margin-top: 8px !important;
@@ -1283,75 +1271,106 @@ if ($isStaff) {
 
                 [oxygen, respiratory, bloodPressure, pulse, weight].forEach(clearFieldError);
 
-                if (oxygen.value === '') {
-                    showFieldError(oxygen, 'Please enter oxygen saturation.');
-                    isValid = false;
-                } else if (isNaN(oxygen.value) || oxygen.value < 0 || oxygen.value > 100) {
-                    showFieldError(oxygen, 'Oxygen saturation must be between 0 and 100%.');
+                function validateNumberField(input, fieldName, min, max, unit = '') {
+                    const value = input.value.trim();
+
+                    if (value === '') {
+                        showFieldError(input, `Please enter ${fieldName}.`);
+                        return false;
+                    }
+
+                    if (!/^\d+(\.\d+)?$/.test(value)) {
+                        showFieldError(input, `${fieldName} must only contain numbers.`);
+                        return false;
+                    }
+
+                    const numberValue = Number(value);
+
+                    if (numberValue < min) {
+                        showFieldError(input, `${fieldName} cannot be below ${min}${unit}.`);
+                        return false;
+                    }
+
+                    if (numberValue > max) {
+                        showFieldError(input, `${fieldName} cannot exceed ${max}${unit}.`);
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                if (!validateNumberField(oxygen, 'Oxygen saturation', 0, 100, '%')) {
                     isValid = false;
                 }
 
-                if (respiratory.value === '') {
-                    showFieldError(respiratory, 'Please enter respiratory rate.');
-                    isValid = false;
-                } else if (isNaN(respiratory.value) || respiratory.value < 0 || respiratory.value > 100) {
-                    showFieldError(respiratory, 'Respiratory rate must be between 0 and 100.');
+                if (!validateNumberField(respiratory, 'Respiratory rate', 0, 100)) {
                     isValid = false;
                 }
 
-                if (bloodPressure.value === '') {
+                if (bloodPressure.value.trim() === '') {
                     showFieldError(bloodPressure, 'Please enter blood pressure.');
                     isValid = false;
-                } else if (!/^\d{1,3}\/\d{1,3}$/.test(bloodPressure.value)) {
+                } else if (!/^\d{1,3}\/\d{1,3}$/.test(bloodPressure.value.trim())) {
                     showFieldError(bloodPressure, 'Blood pressure must be in the format 120/80.');
                     isValid = false;
                 } else {
-                    const parts = bloodPressure.value.split('/');
+                    const parts = bloodPressure.value.trim().split('/');
                     const systolic = Number(parts[0]);
                     const diastolic = Number(parts[1]);
 
-                    if (systolic < 0 || systolic > 300 || diastolic < 0 || diastolic > 300) {
-                        showFieldError(bloodPressure, 'Blood pressure must be between 0/0 and 300/300.');
+                    if (systolic < 0) {
+                        showFieldError(bloodPressure, 'Systolic pressure cannot be below 0.');
+                        isValid = false;
+                    } else if (systolic > 300) {
+                        showFieldError(bloodPressure, 'Systolic pressure cannot exceed 300.');
+                        isValid = false;
+                    } else if (diastolic < 0) {
+                        showFieldError(bloodPressure, 'Diastolic pressure cannot be below 0.');
+                        isValid = false;
+                    } else if (diastolic > 300) {
+                        showFieldError(bloodPressure, 'Diastolic pressure cannot exceed 300.');
                         isValid = false;
                     }
                 }
 
-                if (pulse.value === '') {
-                    showFieldError(pulse, 'Please enter pulse oximetry.');
-                    isValid = false;
-                } else if (isNaN(pulse.value) || pulse.value < 0 || pulse.value > 100) {
-                    showFieldError(pulse, 'Pulse oximetry must be between 0 and 100%.');
+                if (!validateNumberField(pulse, 'Pulse oximetry', 0, 100, '%')) {
                     isValid = false;
                 }
 
-                if (weight.value === '') {
-                    showFieldError(weight, 'Please enter weight.');
-                    isValid = false;
-                } else if (isNaN(weight.value) || weight.value < 0 || weight.value > 300) {
-                    showFieldError(weight, 'Weight must be between 0 and 300kg.');
+                if (!validateNumberField(weight, 'Weight', 0, 300, 'kg')) {
                     isValid = false;
                 }
             }
 
             if (step === 2) {
 
-                const selectedSymptoms = document.querySelectorAll('input[name^="selected_symptoms"]:checked');
+                const severityDropdowns = document.querySelectorAll('select[name^="symptom_severity"]');
 
-                selectedSymptoms.forEach(function (checkbox) {
+                severityDropdowns.forEach(function (severity) {
 
-                    const symptomId = checkbox.value;
+                    const symptomOption = severity.closest('.symptom-option');
+                    const checkbox = symptomOption.querySelector('input[name^="selected_symptoms"]');
 
-                    const severity = document.querySelector(
-                        `[name="symptom_severity[${symptomId}]"]`
-                    );
+                    const existingError = severity.parentElement.querySelector('.error-message');
+                    if (existingError) {
+                        existingError.remove();
+                    }
 
-                    clearFieldError(severity);
+                    severity.classList.remove('is-invalid');
 
-                    if (!severity || severity.value === '') {
-
+                    if (checkbox.checked && severity.value === '') {
                         showFieldError(
                             severity,
                             'Please select a severity.'
+                        );
+
+                        isValid = false;
+                    }
+
+                    if (!checkbox.checked && severity.value !== '') {
+                        showFieldError(
+                            severity,
+                            'Please tick the symptom checkbox.'
                         );
 
                         isValid = false;

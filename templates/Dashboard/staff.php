@@ -18,7 +18,6 @@ echo $this->Html->script([
 ]);
 $this->end();
 
-// Page-specific JS
 $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('dashboard-staff', ['block' => 'script']);
 
@@ -28,13 +27,12 @@ $breadcrumbs = [
 ];
 ?>
 
-<!-- Header Section -->
 <?= $this->element('page_header', [
-    'breadcrumbs' => $breadcrumbs
+    'breadcrumbs' => $breadcrumbs,
+    'showBack' => false,
 ]) ?>
 
-<!-- Header Section -->
-<!-- Hero Welcome Card -->
+
 <div class="dashboard-hero mb-4">
 
     <div class="hero-left">
@@ -98,8 +96,7 @@ $breadcrumbs = [
 
 </div>
 
-<!-- Stats -->
-<!-- Premium Stats Cards -->
+
 <div class="stats-grid mb-4">
 
     <div class="premium-stat-card total">
@@ -228,12 +225,12 @@ $breadcrumbs = [
     </div>
 
 </div>
-<!-- Mobile Search (visible only on mobile) -->
+
 <div class="d-md-none mb-3">
     <input type="text" id="mobileSearch" class="form-control" placeholder="Search messages...">
 </div>
 
-<!-- Desktop Table -->
+
 <div class="table-responsive d-none d-md-block">
     <table id="recentTable" class="table table-striped dt-hidden">
         <thead>
@@ -346,7 +343,7 @@ $breadcrumbs = [
     </table>
 </div>
 
-<!-- Mobile Cards -->
+
 <div class="d-md-none" id="mobileCardsContainer">
     <?php foreach ($recent as $msg): ?>
         <div class="sub-card"
@@ -447,7 +444,7 @@ $breadcrumbs = [
     <?php endforeach; ?>
 </div>
 
-<!-- Mobile Pagination -->
+
 <div class="d-md-none mt-3" id="mobilePagination">
     <div class="d-flex justify-content-between align-items-center">
         <button id="mobilePrevBtn" class="btn btn-sm btn-outline-secondary" disabled>

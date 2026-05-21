@@ -57,11 +57,59 @@ $getInitials = function (string $name): string {
 };
 
 $formatDate = function ($date): string {
+
+    if (!$date) {
+        return '—';
+    }
+
     if ($date instanceof DateTimeInterface) {
         return $date->format('M d, Y');
     }
 
-    return '—';
+    $dateString = trim((string)$date);
+
+    if ($dateString === '' || $dateString === '0000-00-00') {
+        return '—';
+    }
+
+    $formats = [
+        'Y-m-d',
+        'd/m/Y',
+        'm/d/Y',
+        'd-m-Y',
+        'd/m/y',
+        'm/d/y',
+        'd-m-y'
+    ];
+
+    foreach ($formats as $format) {
+
+        $parsed = DateTime::createFromFormat($format, $dateString);
+
+        if ($parsed instanceof DateTime) {
+
+            $year = (int)$parsed->format('Y');
+
+            if ($year < 100) {
+
+                $parsed->modify('+2000 years');
+
+                if ((int)$parsed->format('Y') > (int)date('Y')) {
+                    $parsed->modify('-100 years');
+                }
+            }
+
+            return $parsed->format('M d, Y');
+        }
+    }
+
+    $timestamp = strtotime($dateString);
+
+    if ($timestamp === false) {
+        return '—';
+    }
+
+    return date('M d, Y', $timestamp);
 };
 
 $getDateOfBirth = function ($user) use ($formatDate): string {
