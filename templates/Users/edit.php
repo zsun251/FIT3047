@@ -14,14 +14,17 @@ $this->assign('title', $isPatientSelfEdit ? 'My Profile' : 'Edit User');
 
 // CSS
 echo $this->Html->css('form-shared', ['block' => true]);
+echo $this->Html->css('view-shared', ['block' => true]);
+echo $this->Html->css('user-view', ['block' => true]);
 
-// Type badge class
 $typeBadgeClass = 'badge-' . strtolower($user->type);
 
 $identity = $this->request->getAttribute('identity');
 $isStaff = UserAccess::isStaff($identity);
 
-// Build breadcrumbs based on user type
+// Get initials
+$initials = strtoupper(substr($user->first_name, 0, 1) . substr($user->last_name, 0, 1));
+
 $breadcrumbs = [];
 
 if ($isStaff) {
@@ -33,40 +36,69 @@ if ($isStaff) {
     ];
 } else {
     $breadcrumbs = [
-        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'Profile', 'url' => ['controller' => 'Users', 'action' => 'view', $user->id]],
         ['title' => 'Edit Profile', 'url' => null]
     ];
 }
 ?>
 
-<!-- Header Section -->
 <?= $this->element('page_header', [
     'breadcrumbs' => $breadcrumbs
 ]) ?>
 
-
 <div class="form-container">
-    <!-- Form Header -->
-    <div class="form-header">
-        <div>
-            <h1><i class="bi bi-pencil-square" style="color:#0d6efd;margin-right:.5rem;"></i><?= $isPatientSelfEdit ? __('Edit My Profile') : __('Edit User') ?></h1>
-            <?php if (!$isPatientSelfEdit): ?>
-                <small class="text-muted">Update user information for <?= h($user->username) ?></small>
-            <?php endif; ?>
+
+    <!-- Header -->
+    <div class="view-header mb-4">
+        <div class="user-header">
+            <div class="user-avatar">
+                <?= $initials ?>
+            </div>
+
+            <div class="user-info">
+                <div style="display:flex; align-items:center; gap:.625rem; margin-bottom:.75rem; flex-wrap:wrap;">
+                    <span class="type-badge type-article" style="position:static;">
+                        <i class="bi bi-pencil-square"></i>
+                        <?= $isPatientSelfEdit ? 'Edit Profile' : 'Edit User' ?>
+                    </span>
+
+                    <?php if (!$isPatientSelfEdit): ?>
+                        <span class="<?= $typeBadgeClass ?>">
+                            <?= h(ucfirst($user->type)) ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
+
+                <h1><?= h($user->first_name . ' ' . $user->last_name) ?></h1>
+
+                <div class="user-meta">
+                    <span class="user-meta-item">
+                        <i class="bi bi-at"></i>
+                        <?= h($user->username) ?>
+                    </span>
+
+                    <span class="user-meta-item">
+                        <i class="bi bi-hash"></i>
+                        ID: <?= $this->Number->format($user->id) ?>
+                    </span>
+                </div>
+
+                <?php if ($isPatientSelfEdit): ?>
+                    <small class="text-muted d-block mt-2">
+                        Update your personal information and contact details below.
+                    </small>
+                <?php endif; ?>
+            </div>
         </div>
-        <?php if (!$isPatientSelfEdit): ?>
-            <span class="<?= $typeBadgeClass ?>"><?= h(ucfirst($user->type)) ?></span>
-        <?php endif; ?>
+
+        <div class="view-actions">
+            <?= $this->Html->link(
+                '<i class="bi bi-arrow-left"></i> Back to Profile',
+                ['controller' => 'Users', 'action' => 'view', $user->id],
+                ['class' => 'btn btn-outline-secondary', 'escape' => false]
+            ) ?>
+        </div>
     </div>
-
-    <?php if ($isPatientSelfEdit): ?>
-        <div class="form-info-alert">
-            <i class="bi bi-info-circle"></i>
-            <p>You can update your personal information below. For security reasons, please ensure your contact details are current.</p>
-        </div>
-    <?php endif; ?>
-
-
 
     <?php if ($user->getErrors()): ?>
         <div class="alert alert-danger mb-4" role="alert">
@@ -88,16 +120,12 @@ if ($isStaff) {
         <h2 class="form-section-title">
             <i class="bi bi-key"></i> Account Credentials
         </h2>
+
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('username', [
                     'label' => 'Username',
                     'required' => true,
-                    'minlength' => 3,
-                    'maxlength' => 50,
-                    'pattern' => '[A-Za-z0-9][A-Za-z0-9._-]*[A-Za-z0-9]',
-                    'title' => 'Username must start and end with a letter or number. Can contain letters, numbers, dots, underscores, and hyphens. No consecutive special characters.',
-                    'autocomplete' => 'username',
                     'class' => 'form-control',
                 ]) ?>
             </div>
@@ -109,38 +137,28 @@ if ($isStaff) {
         <h2 class="form-section-title">
             <i class="bi bi-person"></i> Personal Information
         </h2>
+
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('first_name', [
                     'label' => 'First Name',
                     'required' => true,
-                    'minlength' => 2,
-                    'maxlength' => 100,
-                    'pattern' => "[A-Za-z]+([\' -][A-Za-z]+)*",
-                    'title' => 'First name can only contain letters, spaces, hyphens, and apostrophes. Must start with a letter.',
-                    'autocomplete' => 'given-name',
                     'class' => 'form-control',
                 ]) ?>
             </div>
+
             <div class="form-group">
                 <?= $this->Form->control('last_name', [
                     'label' => 'Last Name',
                     'required' => true,
-                    'minlength' => 2,
-                    'maxlength' => 100,
-                    'pattern' => "[A-Za-z]+([\' -][A-Za-z]+)*",
-                    'title' => 'Last name can only contain letters, spaces, hyphens, and apostrophes. Must start with a letter.',
-                    'autocomplete' => 'family-name',
                     'class' => 'form-control',
                 ]) ?>
             </div>
+
             <div class="form-group">
                 <?= $this->Form->control('date_of_birth', [
                     'label' => 'Date of Birth',
                     'empty' => true,
-                    'required' => false,
-                    'min' => '1900-01-01',
-                    'max' => date('Y-m-d'),
                     'class' => 'form-control',
                 ]) ?>
             </div>
@@ -152,101 +170,47 @@ if ($isStaff) {
         <h2 class="form-section-title">
             <i class="bi bi-envelope"></i> Contact Information
         </h2>
+
         <div class="form-grid">
             <div class="form-group">
                 <?= $this->Form->control('email', [
                     'label' => 'Email Address',
                     'type' => 'email',
                     'required' => true,
-                    'maxlength' => 255,
-                    'autocomplete' => 'email',
                     'class' => 'form-control',
-                    'placeholder' => 'your.email@example.com'
                 ]) ?>
             </div>
+
             <div class="form-group">
                 <?= $this->Form->control('phone', [
                     'label' => 'Phone Number',
                     'type' => 'tel',
-                    'required' => false,
-                    'minlength' => 10,
-                    'maxlength' => 15,
-                    'pattern' => '0[0-9]{9}',
-                    'title' => 'Australian phone number: 10 digits starting with 0 (e.g., 0412345678). Spaces will be removed automatically.',
-                    'autocomplete' => 'tel',
                     'class' => 'form-control',
-                    'placeholder' => '0412 345 678'
                 ]) ?>
             </div>
+
             <div class="form-group form-grid-full">
                 <?= $this->Form->control('address', [
                     'label' => 'Address',
                     'type' => 'text',
-                    'required' => false,
-                    'minlength' => 5,
-                    'maxlength' => 500,
-                    'autocomplete' => 'street-address',
-                    'placeholder' => '123 Example Street, Suburb VIC 3000',
                     'class' => 'form-control',
                 ]) ?>
             </div>
         </div>
     </div>
 
-    <!-- System Information (Staff Only) -->
-    <?php if (!$isPatientSelfEdit): ?>
-        <div class="form-section">
-            <h2 class="form-section-title">
-                <i class="bi bi-gear"></i> System Information
-            </h2>
-            <div class="form-grid">
-                <div class="form-group">
-                    <?= $this->Form->control('type_display', [
-                        'label' => 'User Type',
-                        'value' => ucfirst($user->type),
-                        'disabled' => true,
-                        'class' => 'form-control',
-                    ]) ?>
-                </div>
-                <div class="form-group">
-                    <?= $this->Form->control('created_at', [
-                        'label' => 'Created At',
-                        'disabled' => true,
-                        'class' => 'form-control',
-                    ]) ?>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
-
     <!-- Form Actions -->
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">
-            <i class="bi bi-check-circle"></i> <?= __('Save Changes') ?>
+            <i class="bi bi-check-circle"></i>
+            <?= __('Save Changes') ?>
         </button>
 
-        <?php if ($isPatientSelfEdit): ?>
-            <?= $this->Html->link(
-                '<i class="bi bi-x-circle"></i> Cancel',
-                ['controller' => 'Dashboard', 'action' => 'patient'],
-                ['class' => 'btn btn-outline-secondary', 'escape' => false]
-            ) ?>
-        <?php else: ?>
-            <?= $this->Html->link(
-                '<i class="bi bi-x-circle"></i> Cancel',
-                ['action' => 'view', $user->id],
-                ['class' => 'btn btn-outline-secondary', 'escape' => false]
-            ) ?>
-            <!--            --><?php //= $this->Form->postLink(
-//                '<i class="bi bi-trash"></i> Delete User',
-//                ['action' => 'delete', $user->id],
-//                [
-//                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
-//                    'class' => 'btn btn-outline-danger ms-auto',
-//                    'escape' => false
-//                ]
-//            ) ?>
-        <?php endif; ?>
+        <?= $this->Html->link(
+            '<i class="bi bi-x-circle"></i> Cancel',
+            ['controller' => 'Users', 'action' => 'view', $user->id],
+            ['class' => 'btn btn-outline-secondary', 'escape' => false]
+        ) ?>
     </div>
 
     <?= $this->Form->end() ?>
