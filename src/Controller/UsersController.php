@@ -385,8 +385,9 @@ class UsersController extends AppController
 
                 if ($isPatientSelfEdit) {
                     return $this->redirect([
-                        'controller' => 'Dashboard',
-                        'action' => 'patient',
+                        'controller' => 'Users',
+                        'action' => 'view',
+                        $user->id,
                     ]);
                 }
 

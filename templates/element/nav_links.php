@@ -156,7 +156,7 @@ if ($isStaff) {
         </li>
 
         <li class="<?= $itemClass ?> topbar-always-show">
-            <?= $this->Html->link($linkLabel('Profile', 'bi-person'), ['controller' => 'Users', 'action' => 'edit', $identity ? $identity->getIdentifier() : null], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : ''), 'escape' => false]) ?>
+            <?= $this->Html->link($linkLabel('Profile', 'bi-person'), ['controller' => 'Users', 'action' => 'view', $identity ? $identity->getIdentifier() : null], ['class' => $linkClass . ($currentController === 'Users' && in_array($currentAction, ['view', 'edit']) ? ' active' : ''), 'escape' => false]) ?>
         </li>
     <?php endif; ?>
 <?php endif; ?>
@@ -226,7 +226,7 @@ if ($isStaff) {
         </li>
 
         <li class="<?= $itemClass ?>">
-            <?= $this->Html->link($linkLabel('Profile', 'bi-person'), ['controller' => 'Users', 'action' => 'edit', $identity ? $identity->getIdentifier() : null], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'edit' ? ' active' : ''), 'escape' => false]) ?>
+            <?= $this->Html->link($linkLabel('Profile', 'bi-person'), ['controller' => 'Users', 'action' => 'view', $identity ? $identity->getIdentifier() : null], ['class' => $linkClass . ($currentController === 'Users' && in_array($currentAction, ['view', 'edit']) ? ' active' : ''), 'escape' => false]) ?>
         </li>
     <?php endif; ?>
 <?php endif; ?>
