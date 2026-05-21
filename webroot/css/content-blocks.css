@@ -353,8 +353,16 @@
     padding: 0.65rem 0.85rem;
 }
 
+.content-block-square-input,
+.content-block-edit-input,
 textarea.content-block-edit-input {
-    min-height: 9rem;
+    width: min(46rem, 100%);
+    border-radius: var(--rc-radius-square, 0.8rem) !important;
+}
+
+textarea.content-block-edit-input,
+.content-block-textarea {
+    min-height: 12rem;
     resize: vertical;
     line-height: 1.5;
 }
