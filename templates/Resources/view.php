@@ -23,81 +23,69 @@ $typeConfig = [
 ];
 $cfg = $typeConfig[$resource->type] ?? $typeConfig['article'];
 
-$statusClass = $resource->status === 'published' ? 'bg-success' : 'bg-secondary';
-
-$breadcrumbs = [
-    ['title' => 'Dashboard',  'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
-    ['title' => 'Resources',  'url' => ['controller' => 'Resources',  'action' => 'index']],
-    ['title' => h($resource->title), 'url' => null],
-];
 ?>
 
-<?= $this->element('page_header', ['breadcrumbs' => $breadcrumbs]) ?>
-
-<!-- Staff Action Bar -->
-<div class="resource-view-header">
-    <div style="flex:1; min-width:0;">
-        <div style="display:flex; align-items:center; gap:.625rem; margin-bottom:.75rem; flex-wrap:wrap;">
-            <span class="type-badge <?= h($cfg['color']) ?>" style="position:static;">
-                <i class="bi <?= h($cfg['icon']) ?>"></i>
-                <?= h($cfg['label']) ?>
-            </span>
-            <span class="badge <?= $statusClass ?>"><?= h(ucfirst($resource->status)) ?></span>
+<div class="rc-dashboard-page-header resources-page-header">
+    <div class="rc-dashboard-header-main resources-header-main">
+        <div class="rc-dashboard-header-copy">
+            <div class="rc-dashboard-title-row">
+                <?= $this->Html->link(
+                    '<i class="bi bi-arrow-left"></i>',
+                    ['action' => 'index'],
+                    ['class' => 'rc-back-button', 'escape' => false, 'aria-label' => 'Back to Resources'],
+                ) ?>
+                <h1 class="rc-dashboard-title"><?= h($resource->title) ?></h1>
+            </div>
+            <p class="rc-dashboard-subtitle resources-view-subtitle">
+                <span class="resource-type-inline">
+                    <i class="bi <?= h($cfg['icon']) ?>"></i> <?= h($cfg['label']) ?>
+                </span>
+                <span class="resource-status-badge status-<?= h($resource->status) ?>">
+                    <?= h(ucfirst($resource->status)) ?>
+                </span>
+                <?php if (isset($resource->clinician->user)): ?>
+                    <span class="resources-view-meta-item">
+                        <i class="bi bi-person-circle"></i>
+                        <?= h($resource->clinician->user->first_name . ' ' . $resource->clinician->user->last_name) ?>
+                    </span>
+                <?php endif; ?>
+                <?php if ($resource->published_at): ?>
+                    <span class="resources-view-meta-item">
+                        <i class="bi bi-calendar3"></i>
+                        <?= $resource->published_at->format('M j, Y') ?>
+                    </span>
+                <?php endif; ?>
+            </p>
         </div>
-        <h1 style="font-size:1.625rem; font-weight:700; color:#1f2937; margin:0 0 .75rem 0; line-height:1.3;">
-            <?= h($resource->title) ?>
-        </h1>
-        <div class="resource-view-meta">
-            <?php if (isset($resource->clinician->user)): ?>
-                <span class="meta-item">
-                    <i class="bi bi-person-circle"></i>
-                    <?= h($resource->clinician->user->first_name . ' ' . $resource->clinician->user->last_name) ?>
-                </span>
-            <?php endif; ?>
-            <?php if ($resource->published_at): ?>
-                <span class="meta-item">
-                    <i class="bi bi-calendar3"></i>
-                    <?= $resource->published_at->format('F j, Y') ?>
-                </span>
-            <?php endif; ?>
-            <?php if ($resource->body): ?>
-                <span class="meta-item">
-                    <i class="bi bi-clock"></i>
-                    <?= max(1, ceil(str_word_count(strip_tags($resource->body)) / 200)) ?> min read
-                </span>
-            <?php endif; ?>
-            <span class="meta-item">
-                <i class="bi bi-hash"></i> ID: <?= $resource->id ?>
-            </span>
-        </div>
-    </div>
 
-    <div class="resource-view-actions">
-        <?php if ($canModify): ?>
+        <div class="resources-view-actions">
+            <?php if ($canModify): ?>
+                <?= $this->Html->link(
+                    '<i class="bi bi-pencil"></i><span>Edit</span>',
+                    ['action' => 'edit', $resource->id],
+                    ['class' => 'rc-action-pill', 'escape' => false],
+                ) ?>
+            <?php endif; ?>
             <?= $this->Html->link(
-                '<i class="bi bi-pencil"></i> Edit',
-                ['action' => 'edit', $resource->id],
-                ['class' => 'btn btn-primary', 'escape' => false]
+                '<i class="bi bi-eye"></i><span>Patient View</span>',
+                ['action' => 'read', $resource->id],
+                ['class' => 'rc-action-pill rc-action-pill-clear', 'escape' => false],
             ) ?>
-        <?php endif; ?>
-        <?= $this->Html->link(
-            '<i class="bi bi-eye"></i> Patient View',
-            ['action' => 'read', $resource->id],
-            ['class' => 'btn btn-outline-primary', 'escape' => false]
-        ) ?>
-        <?php if ($canModify): ?>
-            <?= $this->Form->postLink(
-                '<i class="bi bi-trash"></i> Delete',
-                ['action' => 'delete', $resource->id],
-                [
-                    'method'  => 'delete',
-                    'confirm' => __('Delete "{0}"? This cannot be undone.', $resource->title),
-                    'class'   => 'btn btn-outline-danger',
-                    'escape'  => false,
-                    'block'   => true,
-                ]
-            ) ?>
-        <?php endif; ?>
+            <?php if ($canModify): ?>
+                <?= $this->Form->postLink(
+                    '<i class="bi bi-trash"></i>',
+                    ['action' => 'delete', $resource->id],
+                    [
+                        'method'  => 'delete',
+                        'confirm' => __('Delete "{0}"? This cannot be undone.', $resource->title),
+                        'class'   => 'rc-icon-action rc-icon-action-danger',
+                        'escape'  => false,
+                        'title'   => 'Delete',
+                        'block'   => true,
+                    ],
+                ) ?>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 <?= $this->fetch('postLink') ?>
@@ -122,32 +110,26 @@ $breadcrumbs = [
     </div>
 </div>
 
-<!-- Thumbnail preview (visible confirmation the value was saved) -->
+<!-- Thumbnail preview -->
 <?php if ($resource->thumbnail_url): ?>
-    <div style="margin-bottom:1.5rem; padding:1rem; background:#f8f9fa; border:1px solid #e9ecef; border-radius:.375rem;">
-        <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#868e96;margin-bottom:.75rem;">
-            <i class="bi bi-image"></i> Thumbnail Image
-        </p>
-        <div style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
-            <img src="<?= h($resource->thumbnail_url) ?>"
-                 alt="Thumbnail"
-                 style="max-height:120px;max-width:200px;border-radius:.375rem;border:1px solid #dee2e6;object-fit:cover;">
-            <div>
-                <p style="font-size:.8125rem;color:#6c757d;margin:0;word-break:break-all;"><?= h($resource->thumbnail_url) ?></p>
-            </div>
+    <div class="resources-thumbnail-preview">
+        <p class="resources-thumbnail-label"><i class="bi bi-image"></i> Thumbnail Image</p>
+        <div class="resources-thumbnail-row">
+            <img src="<?= h($resource->thumbnail_url) ?>" alt="Thumbnail" class="resources-thumbnail-img">
+            <p class="resources-thumbnail-url"><?= h($resource->thumbnail_url) ?></p>
         </div>
     </div>
 <?php endif; ?>
 
 <!-- Featured Image -->
 <?php if ($resource->thumbnail_url): ?>
-    <div class="resource-view-featured-image" style="max-width:800px; margin:0 auto 2rem;">
+    <div class="resource-view-featured-image resources-featured-image">
         <img src="<?= h($resource->thumbnail_url) ?>" alt="<?= h($resource->title) ?>">
     </div>
 <?php endif; ?>
 
 <!-- Content Area -->
-<div style="max-width:800px; margin:0 auto;">
+<div class="resources-view-content">
 
     <?php if ($resource->type === 'video' && $resource->url): ?>
         <!-- Video Embed -->
@@ -196,26 +178,17 @@ $breadcrumbs = [
     <?php endif; ?>
 
     <?php if (!$resource->body && !$resource->url): ?>
-        <div class="empty-state" style="margin-bottom:2rem;">
-            <div class="empty-state-icon"><i class="bi bi-file-earmark-text"></i></div>
+        <div class="resources-empty-state">
+            <div class="resources-empty-icon"><i class="bi bi-file-earmark-text"></i></div>
             <h3>No content yet</h3>
             <p>Add body text or a URL to give this resource content.</p>
             <?php if ($canModify): ?>
                 <?= $this->Html->link(
-                    '<i class="bi bi-pencil"></i> Edit Resource',
+                    '<i class="bi bi-pencil"></i><span>Edit Resource</span>',
                     ['action' => 'edit', $resource->id],
-                    ['class' => 'btn btn-primary', 'escape' => false]
+                    ['class' => 'rc-action-pill', 'escape' => false],
                 ) ?>
             <?php endif; ?>
         </div>
     <?php endif; ?>
-
-    <!-- Footer Actions -->
-    <div style="display:flex; gap:.75rem; padding-top:1.5rem; border-top:1px solid #e9ecef; flex-wrap:wrap;">
-        <?= $this->Html->link(
-            '<i class="bi bi-arrow-left"></i> Back to Resources',
-            ['action' => 'index'],
-            ['class' => 'btn btn-outline-secondary', 'escape' => false]
-        ) ?>
-    </div>
 </div>
