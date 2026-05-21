@@ -90,7 +90,7 @@
 <body>
 <div class="email-container">
     <div class="header">
-        <h1>🫁 RespiraCare</h1>
+        <h1>RespiraCare</h1>
         <p>Password Reset Request</p>
     </div>
 
@@ -109,11 +109,11 @@
         <div class="link-text"><?= $resetUrl ?></div>
 
         <div class="warning">
-            <strong>⏰ This link will expire in 1 hour</strong> for security reasons.
+            <strong>This link will expire in 1 hour</strong> for security reasons.
         </div>
 
         <div class="security-note">
-            <strong>🔒 Security Notice:</strong><br>
+            <strong>Security Notice:</strong><br>
             If you didn't request this password reset, you can safely ignore this email. Your password will remain unchanged and your account is secure.
         </div>
 

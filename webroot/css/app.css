@@ -30,7 +30,7 @@
 }
 
 body {
-    background: var(--c-bg);
+    background: var(--rc-page-bg, var(--c-bg)) fixed;
     color: var(--c-ink);
 }
 
@@ -386,8 +386,42 @@ body {
         color: var(--c-muted);
         margin-top: .5rem;
     }
+}
 
+/* ========================================================================
+   FLOATING FLASH MESSAGES
+   ======================================================================== */
+.flash-overlay {
+    position: fixed;
+    top: 6.5rem;
+    left: 50%;
+    z-index: 1080;
+    width: min(720px, calc(100vw - 2rem));
+    transform: translateX(-50%);
+    pointer-events: none;
+}
 
+.flash-overlay .alert,
+.flash-overlay .message {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 0.75rem !important;
+    pointer-events: auto;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+}
+
+.flash-overlay .alert.flash-hiding,
+.flash-overlay .message.flash-hiding {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+@media (max-width: 767.98px) {
+    .flash-overlay {
+        top: 7.5rem;
+        width: calc(100vw - 2rem);
+    }
 }
 
 #main-content {

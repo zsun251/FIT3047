@@ -144,9 +144,6 @@ class UsersController extends AppController
                 $user->reset_token_expires = new \Cake\I18n\DateTime('+1 hour');
 
                 if ($this->Users->save($user, ['validate' => false])) {
-                    $this->sendResetEmail($user);
-                    $this->Flash->success('Password reset instructions have been sent to your email.');
-                    // For development: show the link directly
                     // Generate reset URL
                     $resetUrl = \Cake\Routing\Router::url([
                         'controller' => 'Users',
@@ -154,11 +151,40 @@ class UsersController extends AppController
                         $user->reset_token
                     ], true);
 
-                    // For development: show the link directly
-                    $this->Flash->success(
-                        'Password reset link (development mode): <a href="' . $resetUrl . '">' . $resetUrl . '</a>',
-                        ['escape' => false]
-                    );
+                    // Send email using password_reset template
+                    try {
+                        $mailer = new \Cake\Mailer\Mailer('default');
+                        $mailer
+                            ->setEmailFormat('both')
+                            ->setTo('noreply@u26s1187.iedev.org') // Development: send to noreply
+                            ->setSubject('Reset your RespiraCare password');
+
+                        // Use password_reset template
+                        $mailer
+                            ->viewBuilder()
+                            ->setTemplate('password_reset');
+
+                        // Pass user and resetUrl to template
+                        $mailer->setViewVars([
+                            'user' => $user,
+                            'resetUrl' => $resetUrl
+                        ]);
+
+                        $mailer->deliver();
+
+                        $this->Flash->success('Password reset instructions have been sent to noreply@u26s1187.iedev.org');
+
+                        // For development: show the link directly in flash message
+//                        $this->Flash->info(
+//                            'Development: <a href="' . $resetUrl . '" target="_blank">Click here to reset password</a>',
+//                            ['escape' => false]
+//                        );
+                    } catch (\Exception $e) {
+                        // Show detailed error in development
+                        $this->Flash->error('Email error: ' . $e->getMessage());
+                        \Cake\Log\Log::error('Password reset email failed: ' . $e->getMessage());
+                        \Cake\Log\Log::error('Stack trace: ' . $e->getTraceAsString());
+                    }
                 } else {
                     $this->Flash->error('Unable to process your request. Please try again.');
                 }

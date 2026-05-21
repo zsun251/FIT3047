@@ -7,13 +7,23 @@ $this->assign('title', $resource->title);
 
 // CSS
 echo $this->Html->css('resource-read', ['block' => true]);
+
+use App\Policy\UserAccess;
+$identity = $this->request->getAttribute('identity');
+$isStaff  = $identity && UserAccess::isStaff($identity);
+
+$backUrl    = $this->request->referer(true);
+if (!$backUrl || str_contains($backUrl, '/read')) {
+    $backUrl = $isStaff ? ['action' => 'index'] : ['action' => 'browse'];
+}
+$libraryUrl = $isStaff ? ['action' => 'index'] : ['action' => 'browse'];
 ?>
 
 <!-- Back Link -->
 <div class="back-navigation">
     <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i> Back to Library',
-        ['action' => 'browse'],
+        '<i class="bi bi-arrow-left"></i> Back',
+        $backUrl,
         ['class' => 'back-link', 'escape' => false]
     ) ?>
 </div>
@@ -127,8 +137,8 @@ echo $this->Html->css('resource-read', ['block' => true]);
                     <i class="bi bi-box-arrow-up-right"></i>
                 </div>
                 <div class="external-link-content">
-                    <h3>Visit External Resource</h3>
-                    <p>This resource is hosted on an external website.</p>
+                    <h3><?= $this->ContentBlock->text('resources-external-heading') ?></h3>
+                    <p><?= $this->ContentBlock->text('resources-external-text') ?></p>
                     <?= $this->Html->link(
                         'Continue to Resource <i class="bi bi-arrow-right"></i>',
                         $resource->url,
@@ -145,19 +155,6 @@ echo $this->Html->css('resource-read', ['block' => true]);
 
     <!-- Article Footer -->
     <footer class="article-footer">
-        <div class="footer-content">
-            <div class="helpful-section">
-                <h4>Was this helpful?</h4>
-                <p>Let us know if you found this resource useful</p>
-                <div class="helpful-buttons">
-                    <button class="btn-helpful" onclick="alert('Thank you for your feedback!')">
-                        <i class="bi bi-hand-thumbs-up"></i> Yes, helpful
-                    </button>
-                    <button class="btn-helpful" onclick="alert('Thank you for your feedback!')">
-                        <i class="bi bi-hand-thumbs-down"></i> Not helpful
-                    </button>
-                </div>
-            </div>
 
             <?php if ($resource->url && $resource->type !== 'link'): ?>
                 <div class="source-section">
@@ -173,12 +170,10 @@ echo $this->Html->css('resource-read', ['block' => true]);
 
         <div class="back-to-library">
             <?= $this->Html->link(
-                '<i class="bi bi-arrow-left"></i> Return to Resource Library',
-                ['action' => 'browse'],
+                '<i class="bi bi-arrow-left"></i> Back to Resource Library',
+                $libraryUrl,
                 ['class' => 'btn-back', 'escape' => false]
             ) ?>
         </div>
     </footer>
 </article>
-
-

@@ -29,6 +29,102 @@ class DashboardController extends AppController
             return $this->redirect($this->getRedirectUrl());
         }
 
+        $identity = $this->Authentication->getIdentity();
+
+        if (UserAccess::isClinician($identity)) {
+
+            $clinician = $this->fetchTable('Clinicians')->find()
+                ->contain(['Users'])
+                ->where(['user_id' => $identity->getIdentifier()])
+                ->first();
+
+            $stats = [
+                'patients' => $this->fetchTable('CliniciansPatients')
+                    ->find()
+                    ->where([
+                        'clinician_id' => $clinician->id,
+                        'status' => 'active'
+                    ])
+                    ->count(),
+
+                'appointments' => $this->fetchTable('Appointments')
+                    ->find()
+                    ->where([
+                        'clinician_id' => $clinician->id,
+                        'DATE(scheduled_at)' => date('Y-m-d')
+                    ])
+                    ->count(),
+
+                'records' => $this->fetchTable('VitalData')
+                    ->find()
+                    ->matching('Patients.Clinicians', function ($q) use ($clinician) {
+                        return $q->where([
+                            'CliniciansPatients.clinician_id' => $clinician->id,
+                            'CliniciansPatients.status' => 'active'
+                        ]);
+                    })
+                    ->count(),
+
+                'alerts' => $this->fetchTable('VitalData')
+                    ->find()
+                    ->matching('Patients.Clinicians', function ($q) use ($clinician) {
+                        return $q->where([
+                            'CliniciansPatients.clinician_id' => $clinician->id,
+                            'CliniciansPatients.status' => 'active'
+                        ]);
+                    })
+                    ->where([
+                        'OR' => [
+                            'oxygen_saturation <' => 90,
+                            'pulse_oximetry <' => 90,
+                            'respiratory_rate <' => 12,
+                            'respiratory_rate >' => 25,
+                        ]
+                    ])
+                    ->count()
+            ];
+
+            $appointments = $this->fetchTable('Appointments')
+                ->find()
+                ->contain(['Patients.Users'])
+                ->where([
+                    'Appointments.clinician_id' => $clinician->id,
+                    'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime()
+                ])
+                ->orderBy([
+                    'Appointments.scheduled_at' => 'ASC'
+                ])
+                ->limit(4)
+                ->all();
+
+            $recentVitals = $this->fetchTable('VitalData')
+                ->find()
+                ->contain(['Patients.Users'])
+                ->matching('Patients.Clinicians', function ($q) use ($clinician) {
+                    return $q->where([
+                        'CliniciansPatients.clinician_id' => $clinician->id,
+                        'CliniciansPatients.status' => 'active'
+                    ]);
+                })
+                ->orderBy([
+                    'VitalData.recorded_at' => 'DESC'
+                ])
+                ->limit(5)
+                ->all();
+
+            $this->set(compact(
+                'stats',
+                'appointments',
+                'recentVitals',
+                'clinician'
+            ));
+
+            $this->render('clinician');
+
+            return;
+        }
+
+
         $contactMessages = $this->fetchTable('ContactMessages');
 
         $status = $this->request->getQuery('status') ?? 'all';
@@ -61,7 +157,10 @@ class DashboardController extends AppController
             ->all();
 
         $this->set(compact('stats', 'recent', 'status'));
+
+        $this->render('staff');
     }
+
 
     public function patient(): void
     {
@@ -79,9 +178,12 @@ class DashboardController extends AppController
         $patient = $currentUser->patient ?? null;
         $patientId = $patient?->id;
 
-        $latestVital = null;
         $nextAppointment = null;
+        $upcomingAppointments = [];
+        $pastAppointments = [];
         $latestResource = null;
+        $activeReminders = [];
+        $reminderCount = 0;
 
         if ($patientId) {
             // Fetch the latest submitted vital data and linked symptoms
@@ -93,9 +195,52 @@ class DashboardController extends AppController
 
             // Fetch the next upcoming appointment for the patient
             $nextAppointment = $this->fetchTable('Appointments')->find()
-                ->where(['Appointments.patient_id' => $patientId, 'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime(),])
+                ->where([
+                    'Appointments.patient_id' => $patientId,
+                    'Appointments.scheduled_at >=' => new \Cake\I18n\FrozenTime(),
+                ])
                 ->orderBy(['Appointments.scheduled_at' => 'ASC'])
                 ->first();
+
+            // Fetch the next 2 upcoming appointments for the patient
+            $upcomingAppointments = $this->fetchTable('Appointments')->find()
+                ->contain(['Clinicians.Users'])
+                ->where([
+                    'Appointments.patient_id' => $patientId,
+                    'Appointments.scheduled_at >=' => \Cake\I18n\FrozenTime::now(),
+                ])
+                ->orderBy(['Appointments.scheduled_at' => 'ASC'])
+                ->limit(2)
+                ->all();
+
+            // Fetch the latest 2 past appointments for the patient
+            $pastAppointments = $this->fetchTable('Appointments')->find()
+                ->contain(['Clinicians.Users'])
+                ->where([
+                    'Appointments.patient_id' => $patientId,
+                    'Appointments.scheduled_at <' => \Cake\I18n\FrozenTime::now(),
+                ])
+                ->orderBy(['Appointments.scheduled_at' => 'DESC'])
+                ->limit(2)
+                ->all();
+
+            // Fetch active reminders for the patient
+            $remindersTable = $this->fetchTable('Reminders');
+            $now = \Cake\I18n\FrozenTime::now();
+
+            $activeReminders = $remindersTable->find()
+                ->innerJoinWith('VitalsReminders')
+                ->where([
+                    'VitalsReminders.patient_id' => $patientId,
+                    'Reminders.scheduled_at <=' => $now,
+                    'Reminders.interaction_type IS' => null
+                ])
+                ->orderBy(['Reminders.scheduled_at' => 'DESC'])
+                ->limit(3) // Show only 3 most recent
+                ->all();
+
+            // Get total count of active reminders
+            $reminderCount = $remindersTable->getPendingCount($patientId);
         }
 
         // Fetch the latest published resource to preview on the dashboard
@@ -108,7 +253,11 @@ class DashboardController extends AppController
             'currentUser',
             'latestVital',
             'nextAppointment',
-            'latestResource'
+            'upcomingAppointments',
+            'pastAppointments',
+            'latestResource',
+            'activeReminders',
+            'reminderCount'
         ));
     }
 }

@@ -88,6 +88,11 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             \App\Policy\PagePolicy::class
         );
 
+        $mapResolver->map(
+            \ContentBlocks\Model\Entity\ContentBlock::class,
+            \App\Policy\ContentBlockPolicy::class
+        );
+
         $resolver = new ResolverCollection([
             $ormResolver,  // check default orm resolver
             $mapResolver // fallback to custom page resolver

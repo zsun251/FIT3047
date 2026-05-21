@@ -1,0 +1,244 @@
+/* ==========================================================================
+   Authentication Pages
+   ========================================================================== */
+
+.auth-page {
+    min-height: calc(100vh - 0px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background:
+        radial-gradient(circle at 12% 12%, rgba(59, 130, 246, 0.16), transparent 26rem),
+        radial-gradient(circle at 88% 12%, rgba(139, 92, 246, 0.16), transparent 28rem),
+        linear-gradient(180deg, #eef5ff 0%, #f6f8fc 45%, #f7f3ff 100%);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 560px;
+    border: 1px solid #e4e8f2;
+    border-radius: 1rem;
+    background: #ffffff;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+}
+
+.auth-card-wide {
+    max-width: 760px;
+}
+
+.auth-brand-panel {
+    padding: 3rem 2rem 2.6rem;
+    text-align: center;
+    background:
+        radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.12), transparent 16rem),
+        linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
+    border-bottom: 1px solid #e8ecf4;
+}
+
+.auth-logo-img {
+    width: 112px;
+    height: 112px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 1rem;
+}
+
+.auth-brand-name {
+    margin: 0;
+    color: #0f172a;
+    font-size: 2rem;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+}
+
+.auth-form-panel {
+    padding: 3rem 2.5rem 2.5rem;
+}
+
+.auth-heading {
+    margin-bottom: 2rem;
+}
+
+.auth-heading h2 {
+    margin: 0 0 0.4rem;
+    color: #0f172a;
+    font-size: 1.8rem;
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.auth-heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 1.05rem;
+}
+
+.auth-form {
+    margin: 0;
+}
+
+.auth-field {
+    margin-bottom: 1.45rem;
+}
+
+.auth-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.65rem;
+    color: #334155;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.auth-label i {
+    color: #2563eb;
+    font-size: 1rem;
+}
+
+.auth-input {
+    width: 100%;
+    min-height: 62px;
+    border: 1px solid #d8deea;
+    border-radius: 0.7rem;
+    background: #ffffff;
+    color: #0f172a;
+    font-size: 1.05rem;
+    padding: 0.95rem 1.15rem;
+    box-shadow: none;
+}
+
+.auth-textarea {
+    min-height: 104px;
+    resize: vertical;
+}
+
+.auth-input::placeholder {
+    color: #a0aec0;
+}
+
+.auth-input:focus {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 0.22rem rgba(111, 66, 193, 0.12);
+}
+
+.auth-submit {
+    width: 100%;
+    min-height: 64px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-top: 0.45rem;
+    border: 0;
+    border-radius: 0.7rem;
+    background: linear-gradient(135deg, #4f46e5 0%, #3b16ff 100%);
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    box-shadow: 0 14px 28px rgba(79, 70, 229, 0.22);
+}
+
+.auth-submit:hover,
+.auth-submit:focus {
+    background: linear-gradient(135deg, #4338ca 0%, #3210df 100%);
+    color: #ffffff;
+}
+
+.auth-divider {
+    height: 1px;
+    background: #e8ecf4;
+    margin: 1.85rem 0;
+}
+
+.auth-link-row {
+    text-align: center;
+}
+
+.auth-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #0d6efd;
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.auth-link:hover,
+.auth-link:focus {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+.auth-register-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.35rem;
+    color: #64748b;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* CakePHP flash messages inside auth card */
+.auth-form-panel .message,
+.auth-form-panel .error,
+.auth-form-panel .success,
+.auth-form-panel .alert {
+    margin-bottom: 1.25rem;
+    border-radius: 0.7rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 575.98px) {
+    .auth-page {
+        align-items: flex-start;
+        padding: 1.25rem 0.85rem;
+    }
+
+    .auth-card {
+        border-radius: 0.9rem;
+    }
+
+    .auth-brand-panel {
+        padding: 2.2rem 1.4rem 2rem;
+    }
+
+    .auth-logo-img {
+        width: 92px;
+        height: 92px;
+    }
+
+    .auth-brand-name {
+        font-size: 1.7rem;
+    }
+
+    .auth-form-panel {
+        padding: 2.2rem 1.4rem 1.8rem;
+    }
+
+    .auth-heading h2 {
+        font-size: 1.55rem;
+    }
+
+    .auth-heading p {
+        font-size: 1rem;
+    }
+
+    .auth-input,
+    .auth-submit {
+        min-height: 58px;
+    }
+
+    .auth-register-row {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}

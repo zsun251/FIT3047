@@ -76,18 +76,24 @@ if (!empty($scheduledAtErrors)) {
         $scheduledAtErrorMessage = 'Please enter a valid appointment date and time.';
     }
 }
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+    ['title' => 'Appointments', 'url' => ['controller' => 'Appointments', 'action' => 'index']],
+    ['title' => 'Add', 'url' => null]
+];
 ?>
 
-<?= $this->Html->link(
-    '<i class="bi bi-arrow-left"></i> Back to Appointments',
-    ['action' => 'index'],
-    ['class' => 'back-link', 'escape' => false]
-) ?>
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
+
 
 <div class="form-container">
     <div class="form-header">
         <div>
-            <h1><?= __('Add New Appointment') ?></h1>
+            <h1><i class="bi bi-calendar-plus" style="color:#0d6efd;margin-right:.5rem;"></i><?= __('Add New Appointment') ?></h1>
+            <small class="text-muted">Schedule a new appointment between a patient and clinician</small>
         </div>
     </div>
 

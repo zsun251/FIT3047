@@ -18,77 +18,219 @@ echo $this->Html->script([
 ]);
 $this->end();
 
-// Page-specific JS
 $this->Html->script('mobile-datatable', ['block' => 'script']);
 $this->Html->script('dashboard-staff', ['block' => 'script']);
 
 $user = $this->Identity->get();
+$breadcrumbs = [
+    ['title' => 'Dashboard', 'url' => null]
+];
 ?>
 
-<!-- Header Section -->
-<div class="dash-header d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="dash-title mb-1">
-            Welcome, <em><?= h($user->first_name . ' ' . $user->last_name) ?></em>
-        </h1>
-        <p class="text-muted mb-0">Manage contact messages submissions and inquiries</p>
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs,
+    'showBack' => false,
+]) ?>
+
+
+<div class="dashboard-hero mb-4">
+
+    <div class="hero-left">
+
+        <div class="hero-avatar">
+            <?= $this->Html->image('admin.png', [
+                'alt' => 'Doctor',
+                'class' => 'hero-doctor-img'
+            ]) ?>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Welcome back,
+                <span class="hero-name">
+            System Admin
+        </span>
+            </h1>
+
+            <p class="hero-subtitle">
+                Here’s what’s happening with your messages today.
+            </p>
+
+            <div class="hero-alert">
+                <i class="bi bi-envelope-fill"></i>
+                You have
+                <strong><?= h($stats['unread']) ?> unread patient enquiries</strong>
+            </div>
+
+            <div class="hero-buttons">
+                <?= $this->Html->link(
+                    '<i class="bi bi-chat-dots-fill"></i> View Messages',
+                    '#recentTable',
+                    [
+                        'class' => 'hero-btn primary',
+                        'escape' => false
+                    ]
+                ) ?>
+
+                <?= $this->Html->link(
+                    '<i class="bi bi-person-lines-fill"></i> Patient Records',
+                    ['controller' => 'Patients', 'action' => 'index'],
+                    [
+                        'class' => 'hero-btn secondary',
+                        'escape' => false
+                    ]
+                ) ?>
+            </div>
+
+        </div>
+
     </div>
+
+    <div class="hero-envelope">
+        <i class="bi bi-envelope-paper-heart-fill"></i>
+
+        <div class="hero-badge">
+            <?= h($stats['unread']) ?>
+        </div>
+    </div>
+
 </div>
 
-<!-- Stats -->
-<div class="row g-3 mb-4">
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Total Submissions</div>
-            <div class="stat-value"><?= h($stats['total']) ?></div>
+
+<div class="stats-grid mb-4">
+
+    <div class="premium-stat-card total">
+        <div class="stat-top">
+            <div class="stat-icon blue">
+                <i class="bi bi-files"></i>
+            </div>
+
+            <div class="stat-info-top">
+                <div class="premium-stat-label">Total Submissions</div>
+            </div>
         </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Unread</div>
-            <div class="stat-value stat-unread"><?= h($stats['unread']) ?></div>
+
+        <div class="premium-stat-value">
+            <?= h($stats['total']) ?>
         </div>
+
+        <div class="mini-wave blue"></div>
     </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Read</div>
-            <div class="stat-value stat-read"><?= h($stats['read']) ?></div>
+
+    <div class="premium-stat-card unread">
+        <div class="stat-top">
+            <div class="stat-icon red">
+                <i class="bi bi-envelope"></i>
+            </div>
+
+            <div class="stat-info-top">
+                <div class="premium-stat-label">Unread</div>
+            </div>
         </div>
-    </div>
-    <div class="col-6 col-md-3">
-        <div class="stat-card">
-            <div class="stat-label">Archived</div>
-            <div class="stat-value stat-arch"><?= h($stats['archived']) ?></div>
+
+        <div class="premium-stat-value text-danger">
+            <?= h($stats['unread']) ?>
         </div>
+
+        <div class="mini-wave red"></div>
     </div>
+
+    <div class="premium-stat-card read">
+        <div class="stat-top">
+            <div class="stat-icon green">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <div class="stat-info-top">
+                <div class="premium-stat-label">Read</div>
+            </div>
+        </div>
+
+        <div class="premium-stat-value text-success">
+            <?= h($stats['read']) ?>
+        </div>
+
+        <div class="mini-wave green"></div>
+    </div>
+
+    <div class="premium-stat-card archived">
+        <div class="stat-top">
+            <div class="stat-icon purple">
+                <i class="bi bi-archive"></i>
+            </div>
+
+            <div class="stat-info-top">
+                <div class="premium-stat-label">Archived</div>
+            </div>
+        </div>
+
+        <div class="premium-stat-value text-secondary">
+            <?= h($stats['archived']) ?>
+        </div>
+
+        <div class="mini-wave purple"></div>
+    </div>
+
 </div>
 
-<!-- Filters -->
-<div class="mb-3">
-    <?= $this->Html->link('All', ['?' => ['status'=>'all']], [
-        'class' => 'filter-btn ' . ($status==='all' ? 'active' : ''),
-        'data-filter' => 'all'
-    ]) ?>
-    <?= $this->Html->link('Unread', ['?' => ['status'=>'unread']], [
-        'class' => 'filter-btn unread ' . ($status==='unread' ? 'active' : ''),
-        'data-filter' => 'unread'
-    ]) ?>
-    <?= $this->Html->link('Read', ['?' => ['status'=>'read']], [
-        'class' => 'filter-btn read ' . ($status==='read' ? 'active' : ''),
-        'data-filter' => 'read'
-    ]) ?>
-    <?= $this->Html->link('Archived', ['?' => ['status'=>'archived']], [
-        'class' => 'filter-btn archived ' . ($status==='archived' ? 'active' : ''),
-        'data-filter' => 'archived'
-    ]) ?>
+<div class="filters-bar mb-3">
+
+    <div class="filters-left">
+
+        <?= $this->Html->link(
+            '<i class="bi bi-grid"></i> All',
+            ['?' => ['status'=>'all']],
+            [
+                'class' => 'filter-btn ' . ($status==='all' ? 'active' : ''),
+                'escape' => false
+            ]
+        ) ?>
+
+        <?= $this->Html->link(
+            '<i class="bi bi-circle-fill"></i> Unread',
+            ['?' => ['status'=>'unread']],
+            [
+                'class' => 'filter-btn unread ' . ($status==='unread' ? 'active' : ''),
+                'escape' => false
+            ]
+        ) ?>
+
+        <?= $this->Html->link(
+            '<i class="bi bi-check-circle"></i> Read',
+            ['?' => ['status'=>'read']],
+            [
+                'class' => 'filter-btn read ' . ($status==='read' ? 'active' : ''),
+                'escape' => false
+            ]
+        ) ?>
+
+        <?= $this->Html->link(
+            '<i class="bi bi-archive"></i> Archived',
+            ['?' => ['status'=>'archived']],
+            [
+                'class' => 'filter-btn archived ' . ($status==='archived' ? 'active' : ''),
+                'escape' => false
+            ]
+        ) ?>
+
+    </div>
+
+    <div class="filters-search">
+        <i class="bi bi-search"></i>
+        <input
+            type="text"
+            id="tableSearch"
+            placeholder="Search patient messages..."
+        >
+    </div>
+
 </div>
 
-<!-- Mobile Search (visible only on mobile) -->
 <div class="d-md-none mb-3">
     <input type="text" id="mobileSearch" class="form-control" placeholder="Search messages...">
 </div>
 
-<!-- Desktop Table -->
+
 <div class="table-responsive d-none d-md-block">
     <table id="recentTable" class="table table-striped dt-hidden">
         <thead>
@@ -201,7 +343,7 @@ $user = $this->Identity->get();
     </table>
 </div>
 
-<!-- Mobile Cards -->
+
 <div class="d-md-none" id="mobileCardsContainer">
     <?php foreach ($recent as $msg): ?>
         <div class="sub-card"
@@ -302,7 +444,7 @@ $user = $this->Identity->get();
     <?php endforeach; ?>
 </div>
 
-<!-- Mobile Pagination -->
+
 <div class="d-md-none mt-3" id="mobilePagination">
     <div class="d-flex justify-content-between align-items-center">
         <button id="mobilePrevBtn" class="btn btn-sm btn-outline-secondary" disabled>

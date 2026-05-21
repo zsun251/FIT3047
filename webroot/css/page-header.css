@@ -1,0 +1,55 @@
+/* ==========================================================================
+   Legacy page header aliases
+
+   Shared dashboard header and back-button styling now lives in styles.css.
+   This file is kept as a compatibility shim for any template that still loads it directly.
+   ========================================================================== */
+
+.back-button,
+.back-button-primary,
+.back-button-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid #bfdbfe;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #0d6efd;
+    font-size: 1rem;
+    line-height: 1;
+    text-decoration: none;
+    box-shadow: none;
+    transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.back-button:hover,
+.back-button:focus,
+.back-button-primary:hover,
+.back-button-primary:focus,
+.back-button-outline:hover,
+.back-button-outline:focus {
+    border-color: #93c5fd;
+    background: #dbeafe;
+    color: #0b5ed7;
+    text-decoration: none;
+    box-shadow: 0 6px 14px rgba(13, 110, 253, 0.12);
+    transform: translateY(-1px);
+}
+
+.back-button i,
+.back-button i::before,
+.back-button-primary i,
+.back-button-primary i::before,
+.back-button-outline i,
+.back-button-outline i::before {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
+    line-height: 1;
+}
