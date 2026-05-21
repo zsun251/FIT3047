@@ -43,7 +43,14 @@ class ResourcesController extends AppController
         }
 
         $resources = $this->paginate($query);
-        $this->set(compact('resources'));
+
+        // Stats (always global, ignoring the active type filter)
+        $totalCount     = $this->Resources->find()->count();
+        $publishedCount = $this->Resources->find()->where(['status' => 'published'])->count();
+        $draftCount     = $this->Resources->find()->where(['status' => 'draft'])->count();
+        $videoCount     = $this->Resources->find()->where(['type' => 'video'])->count();
+
+        $this->set(compact('resources', 'totalCount', 'publishedCount', 'draftCount', 'videoCount'));
     }
     /**
      * View method
@@ -138,8 +145,11 @@ class ResourcesController extends AppController
 
             $resource = $this->Resources->patchEntity($resource, $data);
             if ($this->Resources->save($resource)) {
-                $this->Flash->success(__('The resource has been updated.'));
-                return $this->redirect(['action' => 'view', $resource->id]);
+                $this->Flash->success(__('The resource has been saved successfully.'));
+                if ($this->request->getData('_after_save') === 'index') {
+                    return $this->redirect(['action' => 'index']);
+                }
+                return $this->redirect(['action' => 'edit', $resource->id]);
             }
             $this->Flash->error(__('The resource could not be saved. Please try again.'));
         }

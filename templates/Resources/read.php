@@ -7,13 +7,23 @@ $this->assign('title', $resource->title);
 
 // CSS
 echo $this->Html->css('resource-read', ['block' => true]);
+
+use App\Policy\UserAccess;
+$identity = $this->request->getAttribute('identity');
+$isStaff  = $identity && UserAccess::isStaff($identity);
+
+$backUrl    = $this->request->referer(true);
+if (!$backUrl || str_contains($backUrl, '/read')) {
+    $backUrl = $isStaff ? ['action' => 'index'] : ['action' => 'browse'];
+}
+$libraryUrl = $isStaff ? ['action' => 'index'] : ['action' => 'browse'];
 ?>
 
 <!-- Back Link -->
 <div class="back-navigation">
     <?= $this->Html->link(
-        '<i class="bi bi-arrow-left"></i> Back to Library',
-        ['action' => 'browse'],
+        '<i class="bi bi-arrow-left"></i> Back',
+        $backUrl,
         ['class' => 'back-link', 'escape' => false]
     ) ?>
 </div>
@@ -160,8 +170,8 @@ echo $this->Html->css('resource-read', ['block' => true]);
 
         <div class="back-to-library">
             <?= $this->Html->link(
-                '<i class="bi bi-arrow-left"></i> Return to Resource Library',
-                ['action' => 'browse'],
+                '<i class="bi bi-arrow-left"></i> Back to Resource Library',
+                $libraryUrl,
                 ['class' => 'btn-back', 'escape' => false]
             ) ?>
         </div>
