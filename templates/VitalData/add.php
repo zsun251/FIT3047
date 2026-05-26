@@ -5,6 +5,9 @@
  * @var \Cake\Collection\CollectionInterface|string[] $patients
  * @var \Cake\Collection\CollectionInterface|string[] $symptoms
  */
+
+use App\Policy\UserAccess;
+
 ?>
 
 <?php
@@ -12,8 +15,7 @@ $identity = $this->request->getAttribute('identity');
 
 $isStaff = false;
 if ($identity) {
-    $user = $identity->getOriginalData();
-    $isStaff = !empty($user->is_staff);
+    $isStaff = $identity && UserAccess::isStaff($identity);
 }
 
 $backText = $isStaff ? 'Back' : 'Back';
@@ -99,7 +101,7 @@ if ($isStaff) {
                 </div>
                 </div>
 
-            <?php
+                <?php
                 if (!$isStaff && $patientId) {
                     echo $this->Form->control('patient_id', [
                         'type' => 'hidden',
@@ -108,13 +110,30 @@ if ($isStaff) {
                 }
 
                 if ($isStaff) {
-                    echo $this->Form->control('patient_id', [
-                        'options' => $patients,
-                        'empty' => 'Select a patient Id',
-                        'class' => 'form-select mb-3'
-                    ]);
+                    ?>
+                    <div class="vital-row">
+                        <div class="vital-icon">
+                            <i class="bi bi-person-fill"></i>
+                        </div>
+
+                        <div class="vital-label">
+                            <label>Patient</label>
+                        </div>
+
+                        <div class="vital-input">
+                            <?= $this->Form->control('patient_id', [
+                                'options' => $patients,
+                                'empty' => 'Select a patient',
+                                'label' => false,
+                                'error' => false,
+                                'class' => 'form-control',
+                                'style' => 'padding-right: 18px;'
+                            ]) ?>
+                        </div>
+                    </div>
+                    <?php
                 }
-            ?>
+                ?>
 
                 <div class="vital-row">
 
@@ -363,6 +382,13 @@ if ($isStaff) {
             </div>
 
             <div class="review-grid">
+                <?php if ($isStaff): ?>
+                    <div class="review-card" style="grid-column: 1 / -1;">
+                        <h5>Patient Information</h5>
+                        <div id="review-patient-info"></div>
+                    </div>
+                <?php endif; ?>
+
                 <div class="review-card">
                     <h5>Vital Signs Summary</h5>
                     <div id="review-vitals-list"></div>
@@ -1263,13 +1289,24 @@ if ($isStaff) {
             let isValid = true;
 
             if (step === 1) {
+                const patientDropdown = document.querySelector('[name="patient_id"]');
                 const oxygen = document.querySelector('[name="oxygen_saturation"]');
                 const respiratory = document.querySelector('[name="respiratory_rate"]');
                 const bloodPressure = document.querySelector('[name="blood_pressure"]');
                 const pulse = document.querySelector('[name="pulse_oximetry"]');
                 const weight = document.querySelector('[name="weight"]');
 
+                // Clear all field errors
+                if (patientDropdown) {
+                    clearFieldError(patientDropdown);
+                }
                 [oxygen, respiratory, bloodPressure, pulse, weight].forEach(clearFieldError);
+
+                // Validate patient dropdown if it exists (staff users only)
+                if (patientDropdown && patientDropdown.value === '') {
+                    showFieldError(patientDropdown, 'Please select a patient.');
+                    isValid = false;
+                }
 
                 function validateNumberField(input, fieldName, min, max, unit = '') {
                     const value = input.value.trim();
@@ -1384,6 +1421,24 @@ if ($isStaff) {
         function updateReview() {
             const vitalsList = document.getElementById('review-vitals-list');
             const symptomsList = document.getElementById('review-symptoms-list');
+
+            // Update patient info if staff user
+            <?php if ($isStaff): ?>
+            const patientDropdown = document.querySelector('[name="patient_id"]');
+            const patientInfo = document.getElementById('review-patient-info');
+
+            if (patientDropdown && patientInfo) {
+                const selectedOption = patientDropdown.options[patientDropdown.selectedIndex];
+                const patientText = selectedOption.value ? selectedOption.text : 'No patient selected';
+
+                patientInfo.innerHTML = `
+                <div class="review-item">
+                    <span>Selected Patient</span>
+                    <strong>${patientText}</strong>
+                </div>
+            `;
+            }
+            <?php endif; ?>
 
             vitalsList.innerHTML = `
         <div class="review-item"><span>Oxygen Saturation</span><strong>${document.querySelector('[name="oxygen_saturation"]').value || 'Not entered'}%</strong></div>
