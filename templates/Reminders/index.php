@@ -18,8 +18,9 @@ $this->Html->css('reminders-index', ['block' => true]);
 ?>
 
 
+
     <!-- Header Section -->
-    <div class="mb-5 pb-3">
+    <div class="mb-5 pb-3 d-flex justify-content-between align-items-start">
         <?= $this->element('page_header', [
             'title' => 'My Reminders',
             'subtitle' => 'Manage your vital data entry reminders',
@@ -28,6 +29,16 @@ $this->Html->css('reminders-index', ['block' => true]);
                 ['title' => 'Reminders', 'url' => null] // Current page
             ]
         ]) ?>
+        <div>
+            <?= $this->Html->link(
+                '<i class="bi bi-gear"></i> Settings',
+                ['action' => 'settings'],
+                [
+                    'class' => 'btn btn-primary',
+                    'escape' => false
+                ]
+            ) ?>
+        </div>
     </div>
 
     <!-- Stats Cards -->
@@ -64,16 +75,6 @@ $this->Html->css('reminders-index', ['block' => true]);
             <div class="section-header d-flex justify-content-between align-items-center">
                 <div>
                     <h3><i class="bi bi-calendar-week"></i> Your Schedule</h3>
-                </div>
-                <div>
-                    <?= $this->Html->link(
-                        '<i class="bi bi-gear"></i> Settings',
-                        ['action' => 'settings'],
-                        [
-                            'class' => 'btn btn-sm btn-outline-primary',
-                            'escape' => false
-                        ]
-                    ) ?>
                 </div>
             </div>
             <div class="schedule-info">

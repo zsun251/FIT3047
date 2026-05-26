@@ -8,34 +8,15 @@ $this->assign('title', 'Add Resource');
 echo $this->Html->css('form-shared', ['block' => true]);
 echo $this->Html->css('resources-staff', ['block' => true]);
 
-$breadcrumbs = [
-    ['title' => 'Dashboard',  'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
-    ['title' => 'Resources',  'url' => ['controller' => 'Resources',  'action' => 'index']],
-    ['title' => 'Add Resource', 'url' => null],
-];
 ?>
 
-<?= $this->element('page_header', ['breadcrumbs' => $breadcrumbs]) ?>
+<?= $this->element('page_header', [
+    'title'   => 'Add Resource',
+    'subtitle' => 'Create a new educational resource for patients',
+    'backUrl'  => ['controller' => 'Resources', 'action' => 'index'],
+]) ?>
 
 <div class="form-container">
-
-    <!-- Form Header -->
-    <div class="form-header">
-        <div>
-            <h1><i class="bi bi-journal-plus" style="color:#0d6efd;margin-right:.5rem;"></i>Add Resource</h1>
-            <small class="text-muted">Create a new educational resource for patients</small>
-        </div>
-        <span class="badge bg-primary">New</span>
-    </div>
-
-    <div class="resource-form-info">
-        <i class="bi bi-info-circle"></i>
-        <?php if ($isAdmin): ?>
-            <span>As an admin you can publish resources on behalf of any clinician. Select the author below — they will appear as the resource's creator in the library.</span>
-        <?php else: ?>
-            <span>Resources you publish will be visible to patients in the Resource Library. Your name will appear as the author automatically.</span>
-        <?php endif; ?>
-    </div>
 
     <?= $this->Form->create($resource) ?>
 
@@ -177,7 +158,7 @@ $breadcrumbs = [
         <?= $this->Html->link(
             '<i class="bi bi-x-circle"></i> Cancel',
             ['action' => 'index'],
-            ['class' => 'btn btn-outline-secondary', 'escape' => false]
+            ['class' => 'btn btn-outline-secondary', 'escape' => false, 'data-cancel' => 'true']
         ) ?>
     </div>
 
@@ -212,17 +193,65 @@ $breadcrumbs = [
 </div>
 
 <?= $this->Html->scriptBlock(<<<'JS'
-    // Character counter for body
+    // Character counter for body — hidden until focused
     const bodyEl = document.getElementById('resource-body');
     const counter = document.getElementById('body-counter');
     if (bodyEl && counter) {
+        counter.style.display = 'none';
         const update = () => {
             const n = bodyEl.value.length;
             counter.textContent = n.toLocaleString() + ' character' + (n !== 1 ? 's' : '');
         };
         bodyEl.addEventListener('input', update);
+        bodyEl.addEventListener('focus', () => { counter.style.display = ''; });
+        bodyEl.addEventListener('blur',  () => { if (!bodyEl.value) counter.style.display = 'none'; });
         update();
     }
+
+    // Hint text: hide on focus, restore on blur
+    (function () {
+        function bindHint(inputId) {
+            const el = document.getElementById(inputId);
+            const hint = el && el.closest('.form-group') && el.closest('.form-group').querySelector('.form-text');
+            if (!el || !hint) return;
+            el.addEventListener('focus', () => { hint.style.display = 'none'; });
+            el.addEventListener('blur',  () => { hint.style.display = ''; });
+        }
+        bindHint('resource-url');
+        bindHint('resource-thumbnail');
+    })();
+
+    // Unsaved changes protection
+    (function () {
+        let dirty = false;
+        const form = document.querySelector('form');
+        if (!form) return;
+
+        form.querySelectorAll('input:not([type=hidden]), textarea, select').forEach(function (el) {
+            el.addEventListener('input',  function () { dirty = true; });
+            el.addEventListener('change', function () { dirty = true; });
+        });
+
+        // Catch ALL form submits on the page (main form + postLink delete form)
+        document.addEventListener('submit', function () { dirty = false; });
+
+        // Expose clear function for publishFromPreview() which calls .submit() directly
+        window._clearResourceDirty = function () { dirty = false; };
+
+        document.querySelectorAll('[data-cancel]').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                if (dirty && !confirm('Changes are not saved and will be lost. Leave this page?')) {
+                    e.preventDefault();
+                } else {
+                    dirty = false;
+                }
+            });
+        });
+
+        window.addEventListener('beforeunload', function (e) {
+            if (dirty) { e.preventDefault(); e.returnValue = ''; }
+        });
+    })();
 
     // Live image preview for thumbnail URL
     const thumbEl  = document.getElementById('resource-thumbnail');
@@ -342,6 +371,7 @@ $breadcrumbs = [
     }
 
     function publishFromPreview() {
+        window._clearResourceDirty && window._clearResourceDirty();
         bootstrap.Modal.getInstance(document.getElementById('previewModal'))?.hide();
         document.querySelector('form').submit();
     }

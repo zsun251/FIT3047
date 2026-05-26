@@ -1,44 +1,19 @@
 /**
  * Content block edit page interactions.
  *
- * Handles live validation, image previews, image file labels, textarea sizing,
+ * Handles live validation, image previews, image file labels,
  * and Bootstrap Icons picker behaviour.
  */
 document.addEventListener('DOMContentLoaded', () => {
     const saveButton = document.querySelector('.content-block-edit-form button[type="submit"]');
+    const defaultIcons = Array.isArray(window.RespiraCareContentBlockIcons)
+        ? window.RespiraCareContentBlockIcons
+        : [];
 
     const validationState = {
         text: true,
         image: true,
     };
-
-    const defaultIcons = [
-        'bi-heart-pulse',
-        'bi-bell',
-        'bi-clipboard2-pulse',
-        'bi-person-lines-fill',
-        'bi-house',
-        'bi-house-door',
-        'bi-grid',
-        'bi-journal-medical',
-        'bi-journal-text',
-        'bi-people',
-        'bi-person',
-        'bi-person-check',
-        'bi-calendar3',
-        'bi-calendar-event',
-        'bi-card-text',
-        'bi-envelope',
-        'bi-shield-lock',
-        'bi-speedometer2',
-        'bi-globe2',
-        'bi-info-circle',
-        'bi-question-circle',
-        'bi-check-circle',
-        'bi-lightbulb',
-        'bi-chat-dots',
-        'bi-activity',
-    ];
 
     const updateSaveButton = () => {
         if (!saveButton) {
@@ -47,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveButton.disabled = !validationState.text || !validationState.image;
     };
+
+    const isSafeIconClass = (value) => /^bi-[a-z0-9-]{1,80}$/.test(String(value || '').trim());
 
     const getBootstrapIconsFromStylesheets = () => {
         const icons = new Set(defaultIcons);
@@ -94,9 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const maxLength = Number(input.dataset.maxLength);
+        const maxLength = Number(input.dataset.maxLength || 0);
         const iconMode = input.dataset.iconMode === '1';
-        const iconPattern = /^bi-[a-z0-9-]{1,80}$/;
 
         const updateCharacterFeedback = () => {
             const currentLength = input.value.length;
@@ -111,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             validationState.text = true;
 
-            if (currentLength > maxLength) {
+            if (maxLength > 0 && currentLength > maxLength) {
                 input.classList.add('is-invalid');
                 help.classList.add('is-invalid');
                 error.classList.remove('d-none');
@@ -122,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (iconMode && value.length > 0 && !iconPattern.test(value)) {
+            if (iconMode && value.length > 0 && !isSafeIconClass(value)) {
                 input.classList.add('is-invalid');
                 help.classList.add('is-invalid');
                 error.textContent = 'Invalid Bootstrap icon class.';
@@ -147,9 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchInput = document.getElementById('content-block-icon-search');
         const grid = document.getElementById('content-block-icon-grid');
         const emptyMessage = document.getElementById('content-block-icon-empty');
-        const iconPattern = /^bi-[a-z0-9-]{1,80}$/;
 
-        if (!input || !previewIcon || !grid) {
+        if (!input || !previewIcon || !grid || input.dataset.iconMode !== '1') {
             return;
         }
 
@@ -157,8 +132,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const updatePreview = () => {
             const value = input.value.trim();
+            const iconClass = isSafeIconClass(value) ? value : 'bi-question-circle';
 
-            previewIcon.className = iconPattern.test(value) ? `bi ${value}` : 'bi bi-question-circle';
+            previewIcon.className = `bi ${iconClass}`;
 
             grid.querySelectorAll('[data-content-block-icon-choice]').forEach((button) => {
                 button.classList.toggle('active', button.dataset.contentBlockIconChoice === value);
@@ -166,19 +142,27 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const renderIconButtons = (icons) => {
-            grid.innerHTML = '';
+            grid.replaceChildren();
 
             icons.forEach((iconClass) => {
+                if (!isSafeIconClass(iconClass)) {
+                    return;
+                }
+
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'content-block-icon-option';
                 button.dataset.contentBlockIconChoice = iconClass;
                 button.title = iconClass;
 
-                button.innerHTML = `
-                    <i class="bi ${iconClass}"></i>
-                    <span>${iconClass.replace('bi-', '')}</span>
-                `;
+                const icon = document.createElement('i');
+                icon.classList.add('bi', iconClass);
+
+                const label = document.createElement('span');
+                label.textContent = iconClass.replace('bi-', '');
+
+                button.appendChild(icon);
+                button.appendChild(label);
 
                 button.addEventListener('click', () => {
                     input.value = iconClass;
@@ -224,9 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const maxSize = Number(input.dataset.maxSize);
-        const allowedTypes = input.dataset.allowedTypes.split(',');
-        const allowedExtensions = input.dataset.allowedExtensions.split(',');
+        const maxSize = Number(input.dataset.maxSize || 0);
+        const allowedTypes = (input.dataset.allowedTypes || '').split(',').filter(Boolean);
+        const allowedExtensions = (input.dataset.allowedExtensions || '').split(',').filter(Boolean);
 
         let previewObjectUrl = null;
 
@@ -294,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (file.size > maxSize) {
+            if (maxSize > 0 && file.size > maxSize) {
                 input.classList.add('is-invalid');
                 help.classList.add('is-invalid');
                 error.textContent = 'Image exceeds 2MB limit.';

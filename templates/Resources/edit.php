@@ -8,28 +8,15 @@ $this->assign('title', 'Edit Resource');
 echo $this->Html->css('form-shared', ['block' => true]);
 echo $this->Html->css('resources-staff', ['block' => true]);
 
-$statusClass = $resource->status === 'published' ? 'bg-success' : 'bg-secondary';
-
-$breadcrumbs = [
-    ['title' => 'Dashboard',  'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
-    ['title' => 'Resources',  'url' => ['controller' => 'Resources',  'action' => 'index']],
-    ['title' => h($resource->title), 'url' => ['controller' => 'Resources', 'action' => 'view', $resource->id]],
-    ['title' => 'Edit', 'url' => null],
-];
 ?>
 
-<?= $this->element('page_header', ['breadcrumbs' => $breadcrumbs]) ?>
+<?= $this->element('page_header', [
+    'title'    => 'Edit: ' . h($resource->title),
+    'subtitle' => 'ID #' . $resource->id . ' · Last updated ' . $resource->updated_at->format('M d, Y'),
+    'backUrl'  => ['controller' => 'Resources', 'action' => 'view', $resource->id],
+]) ?>
 
 <div class="form-container">
-
-    <!-- Form Header -->
-    <div class="form-header">
-        <div>
-            <h1><i class="bi bi-pencil-square" style="color:#0d6efd;margin-right:.5rem;"></i>Edit Resource</h1>
-            <small class="text-muted">ID #<?= $resource->id ?> &mdash; Last updated: <?= $resource->updated_at->format('M d, Y H:i') ?></small>
-        </div>
-        <span class="badge <?= $statusClass ?>"><?= h(ucfirst($resource->status)) ?></span>
-    </div>
 
     <!-- Read-only author info -->
     <?php if (isset($resource->clinician->user)): ?>
@@ -58,6 +45,7 @@ $breadcrumbs = [
     <?php endif; ?>
 
     <?= $this->Form->create($resource) ?>
+    <?= $this->Form->hidden('_after_save', ['value' => 'edit', 'id' => 'after-save-target']) ?>
 
     <!-- Basic Information -->
     <div class="form-section">
@@ -183,14 +171,9 @@ $breadcrumbs = [
             <i class="bi bi-eye"></i> Preview
         </button>
         <?= $this->Html->link(
-            '<i class="bi bi-arrow-left"></i> Back to Resource',
-            ['action' => 'view', $resource->id],
-            ['class' => 'btn btn-outline-secondary', 'escape' => false]
-        ) ?>
-        <?= $this->Html->link(
-            '<i class="bi bi-list-ul"></i> All Resources',
+            '<i class="bi bi-x-circle"></i> Cancel',
             ['action' => 'index'],
-            ['class' => 'btn btn-outline-secondary', 'escape' => false]
+            ['class' => 'btn btn-outline-secondary', 'escape' => false, 'data-cancel' => 'true']
         ) ?>
         <?= $this->Form->postLink(
             '<i class="bi bi-trash"></i> Delete',
@@ -237,17 +220,65 @@ $breadcrumbs = [
 </div>
 
 <?= $this->Html->scriptBlock(<<<'JS'
-    // Character counter for body
+    // Character counter for body — hidden until focused
     const bodyEl = document.getElementById('resource-body');
     const counter = document.getElementById('body-counter');
     if (bodyEl && counter) {
+        counter.style.display = 'none';
         const update = () => {
             const n = bodyEl.value.length;
             counter.textContent = n.toLocaleString() + ' character' + (n !== 1 ? 's' : '');
         };
         bodyEl.addEventListener('input', update);
+        bodyEl.addEventListener('focus', () => { counter.style.display = ''; });
+        bodyEl.addEventListener('blur',  () => { if (!bodyEl.value) counter.style.display = 'none'; });
         update();
     }
+
+    // Hint text: hide on focus, restore on blur
+    (function () {
+        function bindHint(inputId) {
+            const el = document.getElementById(inputId);
+            const hint = el && el.closest('.form-group') && el.closest('.form-group').querySelector('.form-text');
+            if (!el || !hint) return;
+            el.addEventListener('focus', () => { hint.style.display = 'none'; });
+            el.addEventListener('blur',  () => { hint.style.display = ''; });
+        }
+        bindHint('resource-url');
+        bindHint('resource-thumbnail');
+    })();
+
+    // Unsaved changes protection
+    (function () {
+        let dirty = false;
+        const form = document.querySelector('form');
+        if (!form) return;
+
+        form.querySelectorAll('input:not([type=hidden]), textarea, select').forEach(function (el) {
+            el.addEventListener('input',  function () { dirty = true; });
+            el.addEventListener('change', function () { dirty = true; });
+        });
+
+        // Catch ALL form submits on the page (main form + postLink delete form)
+        document.addEventListener('submit', function () { dirty = false; });
+
+        // Expose clear function for publishFromPreview() which calls .submit() directly
+        window._clearResourceDirty = function () { dirty = false; };
+
+        document.querySelectorAll('[data-cancel]').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                if (dirty && !confirm('Changes are not saved and will be lost. Leave this page?')) {
+                    e.preventDefault();
+                } else {
+                    dirty = false;
+                }
+            });
+        });
+
+        window.addEventListener('beforeunload', function (e) {
+            if (dirty) { e.preventDefault(); e.returnValue = ''; }
+        });
+    })();
 
     // Live image preview for thumbnail URL
     const thumbEl  = document.getElementById('resource-thumbnail');
@@ -367,7 +398,9 @@ $breadcrumbs = [
     }
 
     function publishFromPreview() {
-        // Ensure status is set to published before saving
+        window._clearResourceDirty && window._clearResourceDirty();
+        const afterSave = document.getElementById('after-save-target');
+        if (afterSave) afterSave.value = 'index';
         const statusEl = document.querySelector('[name="status"]');
         if (statusEl) statusEl.value = 'published';
         bootstrap.Modal.getInstance(document.getElementById('previewModal'))?.hide();
