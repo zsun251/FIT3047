@@ -6,7 +6,11 @@
  * @var int|null $clinicianId
  * @var int|null $patientId
  */
-$this->assign('title', 'User Details');
+
+use App\Policy\UserAccess;
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);$this->assign('title', 'User Details');
 
 // CSS
 echo $this->Html->css('view-shared', ['block' => true]);
@@ -54,24 +58,28 @@ $breadcrumbs = [
 
         <div class="view-actions">
             <?= $this->Html->link(
-                '<i class="bi bi-pencil"></i> Edit',
+                '<i class="bi bi-pencil"></i> Edit Profile',
                 ['action' => 'edit', $user->id],
                 ['class' => 'btn btn-primary', 'escape' => false]
             ) ?>
-            <?= $this->Html->link(
-                '<i class="bi bi-arrow-left"></i> Back to Users',
-                ['action' => 'index'],
-                ['class' => 'btn btn-outline-secondary', 'escape' => false]
-            ) ?>
-            <?= $this->Form->postLink(
-                '<i class="bi bi-trash"></i> Delete',
-                ['action' => 'delete', $user->id],
-                [
-                    'confirm' => __('Are you sure you want to delete {0}?', $user->username),
-                    'class' => 'btn btn-outline-danger',
-                    'escape' => false
-                ]
-            ) ?>
+
+            <?php if ($isStaff): ?>
+                <?= $this->Html->link(
+                    '<i class="bi bi-arrow-left"></i> Back to Users',
+                    ['action' => 'index'],
+                    ['class' => 'btn btn-outline-secondary', 'escape' => false]
+                ) ?>
+
+                <?= $this->Form->postLink(
+                    '<i class="bi bi-trash"></i> Delete',
+                    ['action' => 'delete', $user->id],
+                    [
+                        'confirm' => __('Are you sure you want to delete {0}?', $user->username),
+                        'class' => 'btn btn-outline-danger',
+                        'escape' => false
+                    ]
+                ) ?>
+            <?php endif; ?>
         </div>
     </div>
 
