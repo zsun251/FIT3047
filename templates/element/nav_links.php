@@ -184,7 +184,7 @@ if ($isStaff) {
         <!-- Staff sidebar links -->
         <?php if ($isAdmin): ?>
             <li class="<?= $itemClass ?>">
-                <?= $this->Html->link($linkLabel('Users', 'bi-people'), ['controller' => 'Users', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'Users' && $currentAction === 'index' ? ' active' : ''), 'escape' => false]) ?>
+                <?= $this->Html->link($linkLabel('Users', 'bi-people'), ['controller' => 'Users', 'action' => 'index'], ['class' => $linkClass . ($currentController === 'Users' ? ' active' : ''), 'escape' => false]) ?>
             </li>
         <?php endif; ?>
 
