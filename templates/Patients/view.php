@@ -176,7 +176,7 @@ $breadcrumbs = [
                         <div class="related-item-actions">
                             <?= $this->Html->link(
                                 '<i class="bi bi-arrow-right-circle"></i> View Profile',
-                                ['controller' => 'Clinicians', 'action' => 'view', $clinician->id],
+                                ['controller' => 'Users', 'action' => 'view', $clinician->user_id],
                                 ['class' => 'btn btn-sm btn-primary', 'escape' => false]
                             ) ?>
                         </div>
