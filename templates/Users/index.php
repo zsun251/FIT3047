@@ -377,17 +377,17 @@ if (!$backUrl || str_contains($backUrl, '/users')) {
                                 ],
                             ) ?>
 
-                            <?= $this->Form->postLink(
-                                '<i class="bi bi-trash"></i>',
-                                ['action' => 'delete', $user->id],
-                                [
-                                    'class' => 'rc-icon-action rc-icon-action-danger user-action-btn delete',
-                                    'escape' => false,
-                                    'confirm' => __('Are you sure you want to delete user #{0}?', $user->id),
-                                    'title' => __('Delete'),
-                                    'aria-label' => __('Delete user'),
-                                ],
-                            ) ?>
+<!--                            --><?php //= $this->Form->postLink(
+//                                '<i class="bi bi-trash"></i>',
+//                                ['action' => 'delete', $user->id],
+//                                [
+//                                    'class' => 'rc-icon-action rc-icon-action-danger user-action-btn delete',
+//                                    'escape' => false,
+//                                    'confirm' => __('Are you sure you want to delete user #{0}?', $user->id),
+//                                    'title' => __('Delete'),
+//                                    'aria-label' => __('Delete user'),
+//                                ],
+//                            ) ?>
                         </div>
 
                     </div>
