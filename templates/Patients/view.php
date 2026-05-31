@@ -26,6 +26,7 @@ $breadcrumbs = [
     ['title' => 'Patients', 'url' => ['controller' => 'Patients', 'action' => 'index']],
     ['title' => 'View', 'url' => null]
 ];
+$isStaff = UserAccess::isStaff($identity);
 ?>
 
 <!-- Header Section -->
@@ -173,13 +174,15 @@ $breadcrumbs = [
                                 <?php endif; ?>
                             </div>
                         </div>
-                        <div class="related-item-actions">
-                            <?= $this->Html->link(
-                                '<i class="bi bi-arrow-right-circle"></i> View Profile',
-                                ['controller' => 'Users', 'action' => 'view', $clinician->user_id],
-                                ['class' => 'btn btn-sm btn-primary', 'escape' => false]
-                            ) ?>
-                        </div>
+                        <?php if ($isStaff): ?>
+                            <div class="related-item-actions">
+                                <?= $this->Html->link(
+                                    '<i class="bi bi-arrow-right-circle"></i> View Profile',
+                                    ['controller' => 'Users', 'action' => 'view', $clinician->user_id],
+                                    ['class' => 'btn btn-sm btn-primary', 'escape' => false]
+                                ) ?>
+                            </div>
+                            <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
