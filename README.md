@@ -1,6 +1,29 @@
 # team187-app_fit3047
 
+## Local setup (personal backup notes)
 
+Private backup of the Monash FIT3047 team project (team187-app_fit3047, CakePHP 5, PHP >= 8.2), with all team branches. Keep any clone in a non-synced folder such as `~/Developer`, not iCloud/OneDrive.
+
+**Branches**: `Dev` has the latest team work (last commit 2026-05-31); `main` is older. This README section and `config/app_local.php` live only on `main` of this backup. When working on another branch, copy the config over: `git show main:config/app_local.php > config/app_local.php` (it is gitignored there).
+
+1. **Dependencies**: `vendor/` is not committed. Regenerate it from `composer.lock`:
+   ```sh
+   composer install
+   ```
+2. **Config**: `config/app_local.php` **is committed on `main`** (it is gitignored in the team repo). It holds the database connection (`Datasources`, database `fit3047` on `localhost`), the security salt and email settings. `config/app_local.example.php` is the clean template. `config/.env` is not used.
+3. **Database**: start MariaDB/MySQL, create the database and import the schema:
+   ```sh
+   mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS fit3047"
+   mysql -u root -p fit3047 < schema.sql
+   ```
+   Use the username/password from `app_local.php`.
+4. **Run**:
+   ```sh
+   bin/cake server
+   ```
+   Then open http://localhost:8765
+
+**Troubleshooting**: if `composer install` crashes with `segmentation fault`, Homebrew has mixed OpenSSL 3 and 4 builds. Fix with `brew upgrade curl php@8.4`.
 
 ## Getting started
 
