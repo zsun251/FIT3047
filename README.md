@@ -1,93 +1,138 @@
-# team187-app_fit3047
+# RespiraCare Online
 
+A web app for managing respiratory care. Patients record vital data and symptoms. Clinicians and staff manage patients, appointments, reminders and resources. The app was built for Monash FIT3047 (team 187) with CakePHP 5.
 
+## Requirements
+
+- PHP 8.2 or later
+- [Composer](https://getcomposer.org/)
+- MySQL or MariaDB
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Run all commands from the project root.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### 1. Install dependencies
 
-## Add your files
-
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.infotech.monash.edu/UGIE/ugie-2026/team187/team187-app_fit3047.git
-git branch -M main
-git push -uf origin main
+```sh
+composer install
 ```
 
-## Integrate with your tools
+This also creates `config/app_local.php` from `config/app_local.example.php`. That file holds your local settings and is gitignored, so each developer has their own copy.
 
-* [Set up project integrations](https://git.infotech.monash.edu/UGIE/ugie-2026/team187/team187-app_fit3047/-/settings/integrations)
+### 2. Create a database and user
 
-## Collaborate with your team
+Use your MySQL root account (or any account that can create databases and users). The names and password below are examples; pick your own.
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+```sh
+mysql -u root -p -e "
+  CREATE DATABASE respiracare;
+  CREATE USER 'respiracare'@'localhost' IDENTIFIED BY 'password';
+  GRANT ALL PRIVILEGES ON respiracare.* TO 'respiracare'@'localhost';"
+```
 
-## Test and Deploy
+### 3. Point the app at your database
 
-Use the built-in continuous integration in GitLab.
+Open `config/app_local.php`. Under `Datasources` → `default`, set the values from step 2:
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+```php
+'username' => 'respiracare',
+'password' => 'password',
+'database' => 'respiracare',
+```
 
-***
+The template ships with `my_app` / `secret` / `my_app`. If you leave those values, the app cannot connect to the database.
 
-# Editing this README
+### 4. Create the tables and load sample data
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```sh
+# App tables
+mysql -u respiracare -p respiracare < config/schema/schema.sql
 
-## Suggestions for a good README
+# Sample users, patients, appointments, etc. (development only)
+mysql -u respiracare -p respiracare < config/schema/seed.sql
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+# schema.sql already includes the changes from config/Migrations,
+# so mark those migrations as applied instead of running them
+bin/cake migrations mark_migrated
 
-## Name
-Choose a self-explaining name for your project.
+# content_blocks table (editable site text) from the ContentBlocks plugin
+bin/cake migrations migrate -p ContentBlocks
+bin/cake migrations seed --seed ContentBlocksSeed
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Don't run `bin/cake migrations migrate` on a fresh import. It fails with `Duplicate column name 'reset_token'` because `schema.sql` already has those columns.
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### 5. Run the app
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```sh
+bin/cake server
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Open http://localhost:8765.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Test accounts
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+`seed.sql` creates these accounts. All of them use the password `password`.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+| Username     | Role      |
+|--------------|-----------|
+| `admin1`     | Admin     |
+| `clinician1` | Clinician |
+| `patient1`   | Patient   |
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+`seed.sql` contains more sample accounts (for example `admin2`, `clinician2`).
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## Working with the database
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Each developer uses their own local database. Databases are not shared through Git; only the files that build them are.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+**Changing the table structure.** Add a migration so everyone can apply the same change:
 
-## License
-For open source projects, say how it is licensed.
+```sh
+bin/cake bake migration AddSomethingToTable
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Also update `config/schema/schema.sql`, so new setups get the change from step 4.
+
+**After pulling someone else's migration**, apply it to your database:
+
+```sh
+bin/cake migrations migrate
+bin/cake migrations status   # check which migrations have run
+```
+
+If `migrations status` shows `** MISSING **`, a migration was run on your database (usually from another branch) but its file is not on your current branch. Your database is then ahead of the code.
+
+**Resetting to a clean state.** Re-import the schema and seed files, then repeat the remaining step 4 commands. **This deletes all data in that database.**
+
+**Sharing exact data with a teammate** (for example, to reproduce a bug):
+
+```sh
+mysqldump -u respiracare -p respiracare > dump.sql   # export
+mysql -u respiracare -p respiracare < dump.sql       # import
+```
+
+Don't commit dump files.
+
+## Project structure
+
+| Path | Contents |
+|------|----------|
+| `src/Controller/` | Controllers (Patients, Clinicians, Appointments, VitalData, Reminders, …) |
+| `src/Model/` | Tables and entities |
+| `src/Policy/` | Authorization policies (who can see or do what) |
+| `templates/` | Views, layouts and email templates |
+| `webroot/` | CSS, JavaScript and images |
+| `config/app_local.php` | Your local settings (database, email). Not committed. |
+| `config/schema/` | `schema.sql` (tables), `seed.sql` (sample data), `production.sql` (initial production data) |
+| `config/Migrations/` | Database migrations |
+
+## Production
+
+For a production deployment, import `config/schema/schema.sql` and then `config/schema/production.sql` instead of `seed.sql`. `production.sql` creates a single `admin` account with the temporary password `password`. Change that password right after the first login.
+
+## Troubleshooting
+
+- **Can't connect to the database:** check the `Datasources.default` values in `config/app_local.php`, and make sure MySQL/MariaDB is running.
+- **Password reset emails don't arrive:** set up `EmailTransport` in `config/app_local.php` with a real SMTP server.
