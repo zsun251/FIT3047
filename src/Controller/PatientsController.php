@@ -10,6 +10,13 @@ namespace App\Controller;
  */
 class PatientsController extends AppController
 {
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->viewBuilder()->setLayout('app');
+        $this->loadComponent('Flash');
+    }
     /**
      * Index method
      *
@@ -17,11 +24,37 @@ class PatientsController extends AppController
      */
     public function index()
     {
+        $patient = $this->Patients->newEmptyEntity();
+
+        // Authorize before any operations
+        if (!$this->Authorization->can($patient, 'index')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $query = $this->Patients->find()
             ->contain(['Users']);
+
+        $query = $this->Authorization->applyScope($query, 'index')
+            ->orderBy([
+                'Patients.id' => 'DESC',
+            ]);
+
         $patients = $this->paginate($query);
 
-        $this->set(compact('patients'));
+        $totalRecords = $this->Patients->VitalData->find()
+            ->where([
+                'patient_id IN' => collection($patients)->extract('id')->toList()
+            ])
+            ->count();
+
+        $criticalPatients = 0;
+
+        $this->set(compact(
+            'patients',
+            'totalRecords',
+            'criticalPatients'
+        ));
     }
 
     /**
@@ -33,7 +66,25 @@ class PatientsController extends AppController
      */
     public function view($id = null)
     {
-        $patient = $this->Patients->get($id, contain: ['Users', 'Clinicians', 'Appointments', 'VitalData', 'VitalsReminders']);
+        $patient = $this->Patients->get($id, [
+            'contain' => [
+                'Users',
+                'Clinicians.Users',
+                'Appointments' => [
+                    'sort' => ['Appointments.scheduled_at' => 'DESC']
+                ],
+                'VitalData' => [
+                    'sort' => ['VitalData.recorded_at' => 'DESC']
+                ],
+                'VitalsReminders'
+            ]
+        ]);
+        // Check authorization
+        if (!$this->Authorization->can($patient, 'view')) {
+            $this->Flash->error(__('You do not have permission to view this patient.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $this->set(compact('patient'));
     }
 
@@ -45,6 +96,13 @@ class PatientsController extends AppController
     public function add()
     {
         $patient = $this->Patients->newEmptyEntity();
+
+        // Check authorization
+        if (!$this->Authorization->can($patient, 'add')) {
+            $this->Flash->error(__('You do not have permission to add patients.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is('post')) {
             $patient = $this->Patients->patchEntity($patient, $this->request->getData());
             if ($this->Patients->save($patient)) {
@@ -68,7 +126,14 @@ class PatientsController extends AppController
      */
     public function edit($id = null)
     {
-        $patient = $this->Patients->get($id, contain: ['Clinicians']);
+        $patient = $this->Patients->get($id, contain: ['Clinicians', 'Users']);
+
+        // Check authorization
+        if (!$this->Authorization->can($patient, 'edit')) {
+            $this->Flash->error(__('You do not have permission to edit this patient.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $patient = $this->Patients->patchEntity($patient, $this->request->getData());
             if ($this->Patients->save($patient)) {
@@ -79,7 +144,10 @@ class PatientsController extends AppController
             $this->Flash->error(__('The patient could not be saved. Please, try again.'));
         }
         $users = $this->Patients->Users->find('list', limit: 200)->all();
-        $clinicians = $this->Patients->Clinicians->find('list', limit: 200)->all();
+        $clinicians = $this->Patients->Clinicians
+            ->find('list', ['limit' => 200])
+            ->contain(['Users'])
+            ->all();
         $this->set(compact('patient', 'users', 'clinicians'));
     }
 
@@ -94,6 +162,13 @@ class PatientsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $patient = $this->Patients->get($id);
+
+        // Check authorization
+        if (!$this->Authorization->can($patient, 'delete')) {
+            $this->Flash->error(__('You do not have permission to delete this patient.'));
+            return $this->redirect(['action' => 'index']);
+        }
+
         if ($this->Patients->delete($patient)) {
             $this->Flash->success(__('The patient has been deleted.'));
         } else {
@@ -101,5 +176,101 @@ class PatientsController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    // bella 4.2, 4.3
+    // TODO I do not believe this is being used, and was moved into VitalDataController - Mark
+    public function patientHistory($patientId = null)
+    {
+        // get logged-in clinician
+        $clinicianId = $this->request->getAttribute('identity')->get('id');
+
+        // check patient belongs to this clinician (security gate)
+        $patient = $this->Clinicians->Patients->find()
+            ->matching('Clinicians', function ($q) use ($clinicianId) {
+                return $q->where(['Clinicians.id' => $clinicianId]);
+            })
+            ->where(['Patients.id' => $patientId])
+            ->first();
+
+        if (!$patient) {
+            throw new \Cake\Http\Exception\ForbiddenException('Not allowed');
+        }
+
+        // fetch vital history
+        $vitalHistory = $this->Clinicians->Patients->VitalData->find()
+            ->where(['patient_id' => $patientId])
+            ->contain(['Symptoms'])
+            ->orderBy(['recorded_at' => 'ASC']);
+
+        $this->set(compact('patient', 'vitalHistory'));
+    }
+
+    public function assign($clinicianId = null)
+    {
+
+        // Create empty entity for authorization check
+        $patient = $this->Patients->newEmptyEntity();
+
+        // Check authorization
+        if (!$this->Authorization->can($patient, 'assign')) {
+            $this->Flash->error(__('You do not have permission to assign patients.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $clinician = null;
+        $assignedPatientIds = [];
+
+        // Get clinician if ID provided
+        if ($clinicianId) {
+            $clinician = $this->Patients->Clinicians->get($clinicianId, [
+                'contain' => ['Users', 'Patients']
+            ]);
+
+            // Get currently assigned patient IDs
+            $assignedPatientIds = collection($clinician->patients)->extract('id')->toArray();
+        }
+
+        // Handle form submission
+        if ($this->request->is('post')) {
+            $data = $this->request->getData();
+
+            // If no clinician selected yet, redirect with clinician_id
+            if (!$clinicianId && !empty($data['clinician_id'])) {
+                return $this->redirect(['action' => 'assign', $data['clinician_id']]);
+            }
+
+            // Save patient assignments
+            if ($clinicianId) {
+                $clinician = $this->Patients->Clinicians->get($clinicianId);
+                $patientIds = $data['patient_ids'] ?? [];
+
+                // Update the clinician's patient associations
+                $clinician = $this->Patients->Clinicians->patchEntity($clinician, [
+                    'patients' => ['_ids' => $patientIds]
+                ]);
+
+                if ($this->Patients->Clinicians->save($clinician)) {
+                    $this->Flash->success(__('Patient assignments have been updated.'));
+                    return $this->redirect(['controller' => 'Patients', 'action' => 'index']);
+                }
+
+                $this->Flash->error(__('Unable to save patient assignments. Please try again.'));
+            }
+        }
+
+        // Get all clinicians for dropdown
+        $clinicians = $this->Patients->Clinicians
+            ->find('list')
+            ->contain(['Users'])
+            ->all();
+
+        // Get all patients for checkboxes
+        $patients = $this->Patients
+            ->find('list')
+            ->contain(['Users'])
+            ->all();
+
+        $this->set(compact('clinician', 'clinicians', 'patients', 'assignedPatientIds'));
     }
 }

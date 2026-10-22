@@ -1,5 +1,5 @@
-<footer class="bg-white py-4 mt-auto border-top">
+<footer class="site-footer py-4 mt-auto">
     <div class="container px-5">
-        <div class="text-center small text-muted">&copy; RespiraCare<?= date('Y') ?></div>
+        <div class="text-center small"><?= $this->ContentBlock->text('global-footer-copyright') ?></div>
     </div>
 </footer>

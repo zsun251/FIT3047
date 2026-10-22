@@ -1,0 +1,562 @@
+/* ============================================================================
+   Users and Patients Index Pages
+   Shared list/card layout for admin dashboard screens.
+   Shared headers, back buttons, action pills, mini pills, and icon buttons
+   live in styles.css.
+   ========================================================================== */
+
+/* ============================================================================
+   Shared page actions
+   ========================================================================== */
+
+.users-main-button,
+.patients-main-button {
+    white-space: nowrap;
+}
+
+/* ============================================================================
+   Shared stats cards
+   ========================================================================== */
+
+.users-stats-grid,
+.patients-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.users-stat-card,
+.patients-stat-card {
+    min-height: 105px;
+    padding: 14px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 10px 24px rgba(148, 163, 184, 0.10);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.users-stat-icon,
+.patients-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.users-stat-icon.blue,
+.patients-stat-icon.blue {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.users-stat-icon.green,
+.patients-stat-icon.green {
+    background: #ecfdf3;
+    color: #16a34a;
+}
+
+.users-stat-icon.orange,
+.patients-stat-icon.orange {
+    background: #fff7e8;
+    color: #f59e0b;
+}
+
+.users-stat-icon.purple,
+.patients-stat-icon.purple {
+    background: #f3e8ff;
+    color: #9333ea;
+}
+
+.users-stat-card span,
+.patients-stat-card span {
+    display: block;
+    margin-bottom: 3px;
+    color: #6b7280;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.users-stat-card h2,
+.patients-stat-card h2 {
+    margin: 2px 0;
+    color: #111827;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.users-stat-card p,
+.patients-stat-card p {
+    margin: 0;
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* ============================================================================
+   Shared panels, toolbar, and search
+   ========================================================================== */
+
+.users-page,
+.patients-page {
+    padding-bottom: 40px;
+    font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+.users-panel,
+.patients-panel {
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 12px 32px rgba(148, 163, 184, 0.12);
+}
+
+.users-toolbar,
+.patients-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.users-search,
+.patients-search {
+    width: min(420px, 100%);
+    height: 46px;
+    padding: 0 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.users-search i,
+.patients-search i {
+    color: #94a3b8;
+}
+
+.users-search input,
+.patients-search input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #334155;
+    font-size: 14px;
+}
+
+/* ============================================================================
+   User filter tabs
+   ========================================================================== */
+
+.users-tabs {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.user-filter {
+    padding: 13px 24px;
+    border: 0;
+    border-right: 1px solid #e5e7eb;
+    background: transparent;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 800;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.user-filter:last-child {
+    border-right: 0;
+}
+
+.user-filter:hover,
+.user-filter.active {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+/* ============================================================================
+   Shared tables and rows
+   ========================================================================== */
+
+.users-table,
+.patients-table {
+    overflow: hidden;
+    border: 1px solid #e8edf5;
+    border-radius: 18px;
+    background: #ffffff;
+}
+
+.users-table-head,
+.user-row,
+.patients-table-head,
+.patient-row {
+    display: grid;
+    align-items: center;
+}
+
+.users-table-head,
+.patients-table-head {
+    padding: 16px 18px;
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.user-row,
+.patient-row {
+    padding: 16px 18px;
+    border-top: 1px solid #eef2f7;
+    background: #ffffff;
+    transition: background 0.2s ease;
+}
+
+.user-row:hover,
+.patient-row:hover {
+    background: #f8fbff;
+}
+
+/* Users have more columns than Patients */
+.users-table-head,
+.user-row {
+    grid-template-columns: 0.55fr 1.4fr 1.8fr 1fr 1fr 1fr 0.9fr;
+    align-items: start;
+}
+
+.patients-table-head,
+.patient-row {
+    grid-template-columns: 1.4fr 1.5fr 1fr 0.6fr;
+}
+
+/* ============================================================================
+   Shared person cells
+   ========================================================================== */
+
+.user-main,
+.patient-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.user-avatar,
+.patient-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #dbeafe, #eef4ff);
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.patient-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 16px;
+}
+
+.user-avatar.admin {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.user-avatar.clinician {
+    background: #ecfdf3;
+    color: #16a34a;
+}
+
+.user-avatar.patient {
+    background: #fff7e8;
+    color: #f59e0b;
+}
+
+.user-name,
+.patient-name {
+    color: #111827;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.patient-name {
+    font-size: 15px;
+}
+
+.user-username,
+.patient-username {
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.patient-username {
+    font-size: 13px;
+}
+
+/* ============================================================================
+   Shared contact, date, and action columns
+   ========================================================================== */
+
+.user-contact,
+.patient-contact {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.patient-contact {
+    gap: 6px;
+}
+
+.user-contact div,
+.patient-contact div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.user-contact i,
+.patient-contact i {
+    color: #2563eb;
+    font-size: 13px;
+}
+
+.user-contact a,
+.patient-contact a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.user-date,
+.patient-created strong {
+    color: #111827;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.patient-created strong {
+    display: block;
+}
+
+.patient-created span {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.user-id {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.user-actions,
+.patient-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.user-action-btn,
+.patient-action-btn {
+    flex: 0 0 auto;
+}
+
+/* ============================================================================
+   User type badges
+   ========================================================================== */
+
+.user-type-badge,
+.badge-admin,
+.badge-clinician,
+.badge-patient {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.75rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.user-type-badge.admin,
+.badge-admin {
+    background: #eef4ff;
+    color: #2563eb;
+}
+
+.user-type-badge.clinician,
+.badge-clinician {
+    background: #ecfdf3;
+    color: #16a34a;
+}
+
+.user-type-badge.patient,
+.badge-patient {
+    background: #fff7e8;
+    color: #f59e0b;
+}
+
+.user-type-badge.unknown {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+/* ============================================================================
+   Empty states and footers
+   ========================================================================== */
+
+.users-footer,
+.patients-footer {
+    margin-top: 18px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.users-empty-state {
+    padding: 3rem 1rem;
+    color: #64748b;
+    text-align: center;
+}
+
+.users-empty-icon {
+    width: 4rem;
+    height: 4rem;
+    margin: 0 auto 1rem;
+    border-radius: 18px;
+    background: #eef4ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.users-empty-state h3 {
+    margin: 0 0 0.5rem;
+    color: #111827;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.users-empty-state p {
+    margin: 0;
+}
+
+/* ============================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 1199.98px) {
+    .users-stats-grid,
+    .patients-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .users-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .users-search {
+        width: 100%;
+    }
+
+    .users-table {
+        overflow-x: auto;
+    }
+
+    .users-table-head,
+    .user-row {
+        min-width: 980px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .users-header-main,
+    .patients-header-main {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .users-main-button,
+    .patients-main-button {
+        align-self: flex-start;
+    }
+
+    .users-stats-grid,
+    .patients-stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .users-panel,
+    .patients-panel {
+        padding: 18px;
+    }
+
+    .users-tabs {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .user-filter {
+        flex: 0 0 auto;
+        white-space: nowrap;
+    }
+
+    .patients-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .patients-search {
+        width: 100%;
+    }
+
+    .patients-table-head {
+        display: none;
+    }
+
+    .patient-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 18px;
+    }
+
+    .patient-actions {
+        justify-content: flex-start;
+    }
+}

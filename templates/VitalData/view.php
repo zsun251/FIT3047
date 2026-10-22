@@ -3,92 +3,197 @@
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\VitalData $vitalDataEntity
  */
+
+use App\Policy\UserAccess;
+
+$identity = $this->request->getAttribute('identity');
+$isStaff = UserAccess::isStaff($identity);
+
+// Build breadcrumbs based on user type
+$breadcrumbs = [];
+
+if ($isStaff) {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'staff']],
+        ['title' => 'Health Records', 'url' => ['controller' => 'VitalData', 'action' => 'index']],
+        ['title' => 'View Record', 'url' => null]
+    ];
+} else {
+    $breadcrumbs = [
+        ['title' => 'Dashboard', 'url' => ['controller' => 'Dashboard', 'action' => 'patient']],
+        ['title' => 'View Record', 'url' => null]
+    ];
+}
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Html->link(__('Edit Vital Data'), ['action' => 'edit', $vitalDataEntity->id], ['class' => 'side-nav-item']) ?>
-            <?= $this->Form->postLink(__('Delete Vital Data'), ['action' => 'delete', $vitalDataEntity->id], ['confirm' => __('Are you sure you want to delete # {0}?', $vitalDataEntity->id), 'class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('List Vital Data'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-            <?= $this->Html->link(__('New Vital Data'), ['action' => 'add'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
-    <div class="column column-80">
-        <div class="vitalData view content">
-            <h3><?= h($vitalDataEntity->id) ?></h3>
-            <table>
-                <tr>
-                    <th><?= __('Patient') ?></th>
-                    <td><?= $vitalDataEntity->hasValue('patient') ? $this->Html->link($vitalDataEntity->patient->id, ['controller' => 'Patients', 'action' => 'view', $vitalDataEntity->patient->id]) : '' ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Blood Pressure') ?></th>
-                    <td><?= h($vitalDataEntity->blood_pressure) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Id') ?></th>
-                    <td><?= $this->Number->format($vitalDataEntity->id) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Oxygen Saturation') ?></th>
-                    <td><?= $vitalDataEntity->oxygen_saturation === null ? '' : $this->Number->format($vitalDataEntity->oxygen_saturation) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Respiratory Rate') ?></th>
-                    <td><?= $vitalDataEntity->respiratory_rate === null ? '' : $this->Number->format($vitalDataEntity->respiratory_rate) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Lung Function') ?></th>
-                    <td><?= $vitalDataEntity->lung_function === null ? '' : $this->Number->format($vitalDataEntity->lung_function) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Pulse Oximetry') ?></th>
-                    <td><?= $vitalDataEntity->pulse_oximetry === null ? '' : $this->Number->format($vitalDataEntity->pulse_oximetry) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Weight') ?></th>
-                    <td><?= $vitalDataEntity->weight === null ? '' : $this->Number->format($vitalDataEntity->weight) ?></td>
-                </tr>
-                <tr>
-                    <th><?= __('Recorded At') ?></th>
-                    <td><?= h($vitalDataEntity->recorded_at) ?></td>
-                </tr>
-            </table>
-            <div class="related">
-                <h4><?= __('Related Symptoms') ?></h4>
-                <?php if (!empty($vitalDataEntity->symptoms)) : ?>
-                <div class="table-responsive">
-                    <table>
-                        <tr>
-                            <th><?= __('Id') ?></th>
-                            <th><?= __('Symptom Name') ?></th>
-                            <th><?= __('Description') ?></th>
-                            <th class="actions"><?= __('Actions') ?></th>
-                        </tr>
-                        <?php foreach ($vitalDataEntity->symptoms as $symptom) : ?>
-                        <tr>
-                            <td><?= h($symptom->id) ?></td>
-                            <td><?= h($symptom->symptom_name) ?></td>
-                            <td><?= h($symptom->description) ?></td>
-                            <td class="actions">
-                                <?= $this->Html->link(__('View'), ['controller' => 'Symptoms', 'action' => 'view', $symptom->id]) ?>
-                                <?= $this->Html->link(__('Edit'), ['controller' => 'Symptoms', 'action' => 'edit', $symptom->id]) ?>
-                                <?= $this->Form->postLink(
-                                    __('Delete'),
-                                    ['controller' => 'Symptoms', 'action' => 'delete', $symptom->id],
-                                    [
-                                        'method' => 'delete',
-                                        'confirm' => __('Are you sure you want to delete # {0}?', $symptom->id),
-                                    ]
-                                ) ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
+
+<!-- Header Section -->
+<?= $this->element('page_header', [
+    'breadcrumbs' => $breadcrumbs
+]) ?>
+<div class="container-fluid px-0">
+    <div class="vitalData view content">
+        <?php
+        $patientName = 'Patient ' . ($vitalDataEntity->patient->id ?? '');
+        $words = explode(' ', $patientName);
+        $initials = strtoupper($words[0][0] . ($words[1][0] ?? ''));
+        ?>
+
+        <div class="view-header d-flex align-items-center ps-2 pe-4 py-4">
+
+            <div class="d-flex align-items-center gap-3">
+                <?php
+                $patientName = 'Patient ' . ($vitalDataEntity->patient->id ?? '');
+                $initials = strtoupper(substr($patientName, 0, 1) . ($vitalDataEntity->patient->id ?? ''));
+                ?>
+
+                <div class="profile-avatar">
+                    <?= $initials ?>
                 </div>
-                <?php endif; ?>
+
+                <div>
+                    <h1 class="fw-bold mb-1">
+                        <?= $patientName ?>
+                    </h1>
+
+                    <div class="text-muted">
+                        Patient ID: <?= $vitalDataEntity->patient->id ?? 'N/A' ?>
+                        &nbsp;&nbsp;•&nbsp;&nbsp;
+                        Recorded: <?= h($vitalDataEntity->recorded_at) ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 ms-auto">
+
+                <?= $this->Html->link(
+                    '<i class="bi bi-pencil"></i> Edit',
+                    ['action' => 'edit', $vitalDataEntity->id],
+                    ['class' => 'btn btn-edit px-3 py-2', 'escape' => false]
+                ) ?>
+
+                <?= $this->Form->postLink(
+                    '<i class="bi bi-trash"></i> Delete',
+                    ['action' => 'delete', $vitalDataEntity->id],
+                    [
+                        'confirm' => 'Are you sure you want to delete this record?',
+                        'class' => 'btn btn-delete px-3 py-2',
+                        'escape' => false
+                    ]
+                ) ?>
+
+            </div>
+
+        </div>
+
+
+        <h2 class="section-title mb-1">
+            <i class="bi bi-clipboard2-pulse"></i> Respiratory Health
+        </h2>
+        <div class="section-underline"></div>
+        <div class="detail-grid">
+
+            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                <div class="icon-box">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Oxygen Saturation</small>
+                    <div class="fw-semibold">
+                        <?= $vitalDataEntity->oxygen_saturation ?>%
+                    </div>
+                </div>
+            </div>
+
+            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                <div class="icon-box">
+                    <i class="bi bi-activity"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Respiratory Rate</small>
+                    <div class="fw-semibold">
+                        <?= $vitalDataEntity->respiratory_rate ?> bpm
+                    </div>
+                </div>
+            </div>
+
+            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                <div class="icon-box">
+                    <i class="bi bi-droplet"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Pulse Oximetry</small>
+                    <div class="fw-semibold">
+                        <?= $vitalDataEntity->pulse_oximetry ?>%
+                    </div>
+                </div>
+            </div>
+
+            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                <div class="icon-box">
+                    <i class="bi bi-speedometer2"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Weight</small>
+                    <div class="fw-semibold">
+                        <?= $vitalDataEntity->weight ?> kg
+                    </div>
+                </div>
+            </div>
+
+            <div class="vital-card accent-green d-flex align-items-center gap-3">
+                <div class="icon-box">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+                <div>
+                    <small class="text-muted d-block">Blood Pressure</small>
+                    <div class="fw-semibold">
+                        <?= h($vitalDataEntity->blood_pressure) ?>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <hr class="my-4">
+
+        <h2 class="section-title d-flex align-items-center gap-2">
+            <i class="bi bi-activity"></i> Symptoms
+        </h2>
+        <div class="section-underline"></div>
+
+
+        <?php if (!empty($vitalDataEntity->symptoms)): ?>
+
+            <div class="detail-grid">
+
+                <?php foreach ($vitalDataEntity->symptoms as $symptom): ?>
+                    <?php
+                    $severity = strtolower($symptom->_joinData->severity ?? 'unknown');
+
+                    $badgeClass = match($severity) {
+                        'mild' => 'severity-mild',
+                        'moderate' => 'severity-moderate',
+                        'severe' => 'severity-severe',
+                        default => 'severity-unknown'
+                    };
+                    ?>
+
+
+                    <div class="symptom-card accent-green d-flex justify-content-between align-items-center">
+                                        <span class="symptom-name">
+                                            <?= h($symptom->symptom_name) ?>
+                                        </span>
+
+                        <span class="severity-badge <?= $badgeClass ?>">
+                                            <?= ucfirst($severity) ?>
+                                        </span>
+                    </div>
+
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="text-muted mt-2">No symptoms recorded</div>
+        <?php endif; ?>
+
     </div>
+</div>
 </div>

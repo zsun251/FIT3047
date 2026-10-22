@@ -10,6 +10,13 @@ namespace App\Controller;
  */
 class AdminsController extends AppController
 {
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->viewBuilder()->setLayout('app');
+        $this->loadComponent('Flash');
+    }
     /**
      * Index method
      *
@@ -17,8 +24,15 @@ class AdminsController extends AppController
      */
     public function index()
     {
-        $query = $this->Admins->find()
-            ->contain(['Users']);
+        $admin = $this->Admins->newEmptyEntity();
+
+        // Check authorization first
+        if (!$this->Authorization->can($admin, 'index')) {
+            $this->Flash->error(__('You do not have permission to access that page.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        $query = $this->Admins->find()->contain(['Users']);
         $admins = $this->paginate($query);
 
         $this->set(compact('admins'));
@@ -34,6 +48,13 @@ class AdminsController extends AppController
     public function view($id = null)
     {
         $admin = $this->Admins->get($id, contain: ['Users']);
+
+        // Check authorization
+        if (!$this->Authorization->can($admin, 'view')) {
+            $this->Flash->error(__('You do not have permission to view this admin.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         $this->set(compact('admin'));
     }
 
@@ -45,8 +66,16 @@ class AdminsController extends AppController
     public function add()
     {
         $admin = $this->Admins->newEmptyEntity();
+
+        // Check authorization
+        if (!$this->Authorization->can($admin, 'add')) {
+            $this->Flash->error(__('You do not have permission to add admins.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is('post')) {
             $admin = $this->Admins->patchEntity($admin, $this->request->getData());
+
             if ($this->Admins->save($admin)) {
                 $this->Flash->success(__('The admin has been saved.'));
 
@@ -68,11 +97,18 @@ class AdminsController extends AppController
     public function edit($id = null)
     {
         $admin = $this->Admins->get($id, contain: []);
+
+        // Check authorization
+        if (!$this->Authorization->can($admin, 'edit')) {
+            $this->Flash->error(__('You do not have permission to edit this admin.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $admin = $this->Admins->patchEntity($admin, $this->request->getData());
+
             if ($this->Admins->save($admin)) {
                 $this->Flash->success(__('The admin has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The admin could not be saved. Please, try again.'));
@@ -92,6 +128,13 @@ class AdminsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $admin = $this->Admins->get($id);
+
+        // Check authorization
+        if (!$this->Authorization->can($admin, 'delete')) {
+            $this->Flash->error(__('You do not have permission to delete this admin.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
         if ($this->Admins->delete($admin)) {
             $this->Flash->success(__('The admin has been deleted.'));
         } else {
@@ -100,4 +143,6 @@ class AdminsController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+
 }

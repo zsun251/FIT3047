@@ -1,3 +1,3 @@
-<?= $this->element('navbar'); ?>
+<?= $this->element('topbar'); ?>
 
 

@@ -1,132 +1,311 @@
-<!-- templates/Pages/home.php -->
-<main class="flex-shrink-0">
+<?php
+/**
+ * @var \App\View\AppView $this
+ */
 
-    <!-- Hero Section -->
-    <header class="py-5 bg-light text-center">
-        <div class="container">
-            <!-- Logo -->
-            <img src="img/logo.png" alt="RespiraCare Logo" class="mb-4" style="max-height: 150px; width: auto;">
+$this->assign('title', 'Home');
+$this->Html->css('home', ['block' => true]);
+?>
 
-            <!-- Headline -->
-            <h1 class="fw-bold mb-3 small-hero-text">
-                Take Control of Your Health with RespiraCare Online
-            </h1>
+<main class="home-page">
 
-            <!-- Description -->
-            <p class="lead mb-4">
-                Easily monitor your lung health, oxygen levels, and symptoms from home. Stay in touch with your care team and get helpful reminders — no extra clinic visits required.
-            </p>
+    <!-- Intro Section -->
+    <section class="home-intro" style="background-image: url('<?= h($this->Url->image($this->ContentBlock->imagePath('home-intro-image'))) ?>')">
+        <div class="intro-overlay">
+            <div class="container">
+                <div class="intro-copy">
+                    <h1 class="intro-title">
+                        <?= $this->ContentBlock->text('home-intro-title') ?>
+                    </h1>
 
-            <!-- Call to Action -->
-            <div>
-                <?= $this->Html->link(
-                    'Contact Us',
-                    ['controller' => 'ContactMessages', 'action' => 'add'],
-                    ['class' => 'btn btn-primary btn-lg px-5 py-3 fw-bold', 'role' => 'button', 'aria-label' => 'Contact Us']
-                ) ?>
-            </div>
-        </div>
-    </header>
+                    <p class="intro-description">
+                        <?= $this->ContentBlock->text('home-intro-description') ?>
+                    </p>
 
-    <!-- Key Benefits Section -->
-    <section class="py-5">
-        <div class="container">
-            <div class="row g-4 text-center">
-                <div class="col-md-4">
-                    <i class="bi bi-heart-pulse display-4 text-primary mb-3" aria-hidden="true"></i>
-                    <h3>Simple Remote Monitoring</h3>
-                    <p>Track oxygen levels, lung function, and symptoms quickly from the comfort of your home.</p>
-                </div>
-                <div class="col-md-4">
-                    <i class="bi bi-bell display-4 text-primary mb-3" aria-hidden="true"></i>
-                    <h3>Helpful Reminders</h3>
-                    <p>Never miss a check-in — get helpful reminders to log your symptoms vitals.</p>
-                </div>
-                <div class="col-md-4">
-                    <i class="bi bi-person-lines-fill display-4 text-primary mb-3" aria-hidden="true"></i>
-                    <h3>Trusted Clinician Support</h3>
-                    <p>Your healthcare team can review your data and provide guidance without in-person visits.</p>
+                    <?= $this->Html->link(
+                        '<i class="bi bi-person-plus"></i> ' . $this->ContentBlock->text('home-intro-button-text'),
+                        ['controller' => 'Users', 'action' => 'register'],
+                        [
+                            'class' => 'intro-btn',
+                            'escape' => false,
+                            'role' => 'button',
+                            'aria-label' => $this->ContentBlock->text('home-intro-button-aria-label')
+                        ]
+                    ) ?>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Image Hero Section -->
-    <section class="py-5 text-center">
+    <!-- Benefits Section -->
+    <section class="benefits-section">
         <div class="container">
-            <!--https://www.flickr.com/photos/68716695@N06/29609189022 -->
-            <img src="img/home.png" alt="Happy and Healthy Patient with their Clinician" class="img-fluid rounded" style="max-height: 400px;">
+            <div class="benefits-header">
+                <span class="section-label"><?= $this->ContentBlock->text('home-benefits-label') ?></span>
+                <h2><?= $this->ContentBlock->text('home-benefits-heading') ?></h2>
+                <div class="section-line"></div>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi <?= h($this->ContentBlock->text('home-benefit-one-icon')) ?>"></i>
+                    </div>
+
+                    <div class="benefit-content">
+                        <h3><?= $this->ContentBlock->text('home-benefit-one-title') ?></h3>
+                        <p>
+                            <?= $this->ContentBlock->text('home-benefit-one-text') ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi <?= h($this->ContentBlock->text('home-benefit-two-icon')) ?>"></i>
+                    </div>
+
+                    <div class="benefit-content">
+                        <h3><?= $this->ContentBlock->text('home-benefit-two-title') ?></h3>
+                        <p>
+                            <?= $this->ContentBlock->text('home-benefit-two-text') ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="bi <?= h($this->ContentBlock->text('home-benefit-three-icon')) ?>"></i>
+                    </div>
+
+                    <div class="benefit-content">
+                        <h3><?= $this->ContentBlock->text('home-benefit-three-title') ?></h3>
+                        <p>
+                            <?= $this->ContentBlock->text('home-benefit-three-text') ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Motivational Banner Section -->
+    <section class="team-intro-section" style="background-image: url('<?= h($this->Url->image($this->ContentBlock->imagePath('home-motivational-banner-image'))) ?>')">
+        <div class="team-intro-content">
+            <h2><?= $this->ContentBlock->text('home-motivational-banner-heading') ?></h2>
+            <p>
+                <?= $this->ContentBlock->text('home-motivational-banner-text') ?>
+            </p>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section class="py-5 bg-light">
+    <section class="how-section">
         <div class="container text-center">
-            <h2 class="fw-bold mb-4">How RespiraCare Works</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <h5 class="fw-bold">1. Enter Your Data</h5>
-                    <p>Input your vital signs and symptoms through our easy online interface.</p>
+            <h2 class="how-title"><?= $this->ContentBlock->text('home-how-heading') ?></h2>
+            <div class="section-line"></div>
+
+            <div class="how-grid">
+                <div class="how-step">
+                    <div class="how-icon">
+                        <i class="bi <?= h($this->ContentBlock->text('home-how-step-one-icon')) ?>"></i>
+                    </div>
+
+                    <div class="how-connector"></div>
+
+                    <h3>
+                        <span>1</span>
+                        <?= $this->ContentBlock->text('home-how-step-one-title') ?>
+                    </h3>
+
+                    <p>
+                        <?= $this->ContentBlock->text('home-how-step-one-text') ?>
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <h5 class="fw-bold">2. Receive Guidance</h5>
-                    <p>Your clinicians review your data and can provide advice or adjustments remotely.</p>
+
+                <div class="how-step">
+                    <div class="how-icon">
+                        <i class="bi <?= h($this->ContentBlock->text('home-how-step-two-icon')) ?>"></i>
+                    </div>
+
+                    <div class="how-connector"></div>
+
+                    <h3>
+                        <span>2</span>
+                        <?= $this->ContentBlock->text('home-how-step-two-title') ?>
+                    </h3>
+
+                    <p>
+                        <?= $this->ContentBlock->text('home-how-step-two-text') ?>
+                    </p>
                 </div>
-                <div class="col-md-4">
-                    <h5 class="fw-bold">3. Stay on Track</h5>
-                    <p>Get reminders, alerts, and tips to help you manage COPD safely at home.</p>
+
+                <div class="how-step">
+                    <div class="how-icon">
+                        <i class="bi <?= h($this->ContentBlock->text('home-how-step-three-icon')) ?>"></i>
+                    </div>
+
+                    <h3>
+                        <span>3</span>
+                        <?= $this->ContentBlock->text('home-how-step-three-title') ?>
+                    </h3>
+
+                    <p>
+                        <?= $this->ContentBlock->text('home-how-step-three-text') ?>
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-
-    <!-- Contact Section -->
-    <section class="py-5 text-center">
+    <!-- Getting Started Section -->
+    <section class="getting-started-section">
         <div class="container">
-            <h2 class="fw-bold mb-3">Getting Started with RespiraCare</h2>
-            <p class="mb-4">
-                To get started with RespiraCare, please contact our team to arrange your access and onboarding.
-            </p>            <?= $this->Html->link(
-                'Contact Us',
-                ['controller' => 'ContactMessages', 'action' => 'add'],
-                ['class' => 'btn btn-primary btn-lg px-5 py-3 fw-bold', 'role' => 'button', 'aria-label' => 'Contact Us']
-            ) ?>
+            <div class="getting-started-card">
+                <div class="getting-left">
+                    <span class="section-label"><?= $this->ContentBlock->text('home-getting-started-label') ?></span>
+
+                    <h2><?= $this->ContentBlock->text('home-getting-started-heading') ?></h2>
+
+                    <p class="getting-started-text">
+                        <?= $this->ContentBlock->text('home-getting-started-text') ?>
+                    </p>
+
+                    <?= $this->Html->link(
+                        '<i class="bi bi-person-plus"></i> ' . $this->ContentBlock->text('home-getting-started-button-text'),
+                        ['controller' => 'Users', 'action' => 'register'],
+                        [
+                            'class' => 'getting-started-btn',
+                            'escape' => false,
+                            'role' => 'button',
+                            'aria-label' => $this->ContentBlock->text('home-intro-button-aria-label')
+                        ]
+                    ) ?>
+                </div>
+
+                <div class="getting-right">
+                    <div class="timeline-line"></div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-number">1</div>
+
+                        <div class="timeline-content large-card">
+                            <h3><?= $this->ContentBlock->text('home-getting-started-step-one-title') ?></h3>
+
+                            <div class="feature-pill">
+                                <i class="bi bi-check-circle"></i>
+                                <?= $this->ContentBlock->text('home-getting-started-step-one-item-one') ?>
+                            </div>
+
+                            <div class="feature-pill">
+                                <i class="bi bi-check-circle"></i>
+                                <?= $this->ContentBlock->text('home-getting-started-step-one-item-two') ?>
+                            </div>
+
+                            <div class="feature-pill">
+                                <i class="bi bi-check-circle"></i>
+                                <?= $this->ContentBlock->text('home-getting-started-step-one-item-three') ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-number">2</div>
+
+                        <div class="timeline-content">
+                            <i class="bi bi-shield-check"></i>
+                            <h3><?= $this->ContentBlock->text('home-getting-started-step-two-title') ?></h3>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-number">3</div>
+
+                        <div class="timeline-content">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <h3><?= $this->ContentBlock->text('home-getting-started-step-three-title') ?></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-5 bg-light">
+    <section class="faq-section">
         <div class="container">
-            <h2 class="text-center mb-5">Frequently Asked Questions</h2>
-            <div class="accordion" id="faqAccordion">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="faq1">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-                            Is my health information safe?
-                        </button>
-                    </h2>
-                    <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="faq1" data-bs-parent="#faqAccordion">
-                        <div class="accordion-body">
-                            Yes! RespiraCare uses secure encryption and only authorized clinicians can access your data.
+            <div class="faq-header">
+                <div class="faq-icon">
+                    <i class="bi bi-question-circle"></i>
+                </div>
+
+                <h2><?= $this->ContentBlock->text('home-faq-heading') ?></h2>
+
+                <p>
+                    <?= $this->ContentBlock->text('home-faq-intro-text') ?>
+                </p>
+
+                <div class="section-line"></div>
+            </div>
+
+            <div class="faq-wrapper">
+                <div class="accordion custom-faq" id="faqAccordion">
+                    <div class="accordion-item faq-card">
+                        <h2 class="accordion-header" id="faqOneHeading">
+                            <button
+                                class="accordion-button"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#faqOne"
+                                aria-expanded="true"
+                                aria-controls="faqOne"
+                            >
+                                <span class="faq-toggle" aria-hidden="true"></span>
+                                <span class="faq-question"><?= $this->ContentBlock->text('home-faq-one-question') ?></span>
+                            </button>
+                        </h2>
+
+                        <div
+                            id="faqOne"
+                            class="accordion-collapse collapse show"
+                            aria-labelledby="faqOneHeading"
+                            data-bs-parent="#faqAccordion"
+                        >
+                            <div class="accordion-body">
+                                <?= $this->ContentBlock->text('home-faq-one-answer') ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="faq2">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
-                            How often should I input my vitals?
-                        </button>
-                    </h2>
-                    <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="faq2">
-                        <div class="accordion-body">
-                            Ideally, daily or as recommended by your clinician to help them monitor your condition effectively.
+
+                    <div class="accordion-item faq-card">
+                        <h2 class="accordion-header" id="faqTwoHeading">
+                            <button
+                                class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#faqTwo"
+                                aria-expanded="false"
+                                aria-controls="faqTwo"
+                            >
+                                <span class="faq-toggle" aria-hidden="true"></span>
+                                <span class="faq-question"><?= $this->ContentBlock->text('home-faq-two-question') ?></span>
+                            </button>
+                        </h2>
+
+                        <div
+                            id="faqTwo"
+                            class="accordion-collapse collapse"
+                            aria-labelledby="faqTwoHeading"
+                            data-bs-parent="#faqAccordion"
+                        >
+                            <div class="accordion-body">
+                                <?= $this->ContentBlock->text('home-faq-two-answer') ?>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
 
 </main>

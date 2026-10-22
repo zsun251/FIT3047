@@ -1,0 +1,430 @@
+/*
+ * webroot/css/app.css
+ *
+ * Shared styles for all logged in system pages.
+ * Covers: design tokens, page header, stat cards, table card shell,
+ * status badges, action buttons, and mobile card layout.
+ */
+
+/* ========================================================================
+   DESIGN TOKENS
+   ======================================================================== */
+:root {
+    --c-bg:         #f5f4f0;
+    --c-surface:    #ffffff;
+    --c-border:     #e4e2da;
+    --c-ink:        #1a1916;
+    --c-muted:      #7a7870;
+    --c-accent:     #2d5be3;
+    --c-accent-l:   #eef1fd;
+    --c-unread:     #1a3a8f;
+    --c-unread-bg:  #dce6fb;
+    --c-read:       #2d7a4f;
+    --c-read-bg:    #d6f0e2;
+    --c-arch:       #7a7870;
+    --c-arch-bg:    #ebebeb;
+    --c-danger:     #c0392b;
+    --c-danger-bg:  #fdf0ee;
+    --radius:       10px;
+    --shadow:       0 1px 3px rgba(0, 0, 0, .07), 0 4px 16px rgba(0, 0, 0, .05);
+}
+
+body {
+    background: var(--rc-page-bg, var(--c-bg)) fixed;
+    color: var(--c-ink);
+}
+
+/* ========================================================================
+   PAGE HEADER
+   ======================================================================== */
+.dash-header {
+    padding: 2rem 0 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.dash-title {
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -.02em;
+}
+
+.dash-title em {
+    font-style: italic;
+    color: var(--c-accent);
+    font-weight: 400;
+}
+
+.dash-sub {
+    color: var(--c-muted);
+    font-size: .82rem;
+    margin-top: .25rem;
+}
+
+/* ========================================================================
+   STAT CARDS
+   ======================================================================== */
+.stat-card {
+    background:    var(--c-surface);
+    border:        1px solid var(--c-border);
+    border-radius: var(--radius);
+    padding:       1.25rem 1.5rem;
+    box-shadow:    var(--shadow);
+    transition:    box-shadow .2s;
+}
+
+.stat-card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
+}
+
+.stat-card .stat-label {
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--c-muted);
+    margin-bottom: .35rem;
+}
+
+.stat-card .stat-value {
+    font-size: 2.1rem;
+    line-height: 1;
+    font-weight: 600;
+}
+
+/* ========================================================================
+   TABLE CARD SHELL
+   ======================================================================== */
+.table-card {
+    background:    var(--c-surface);
+    border:        1px solid var(--c-border);
+    border-radius: var(--radius);
+    box-shadow:    var(--shadow);
+    overflow:      hidden;
+}
+
+.table-card-header {
+    padding:        1.1rem 1.4rem;
+    border-bottom:  1px solid var(--c-border);
+    display:        flex;
+    align-items:    center;
+    justify-content: space-between;
+    flex-wrap:      wrap;
+    gap:            .6rem;
+}
+
+.table-card-title {
+    font-weight: 600;
+    font-size: .95rem;
+}
+
+/* ========================================================================
+   STATUS BADGES
+   ======================================================================== */
+.badge-status {
+    display:     inline-flex;
+    align-items: center;
+    gap:         .35rem;
+    font-size:   .67rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding:     .28rem .7rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.badge-status::before {
+    content:       '';
+    width:         6px;
+    height:        6px;
+    border-radius: 50%;
+    background:    currentColor;
+    opacity:       .7;
+}
+
+.badge-unread   { background: var(--c-unread-bg); color: var(--c-unread); }
+.badge-read     { background: var(--c-read-bg);   color: var(--c-read); }
+.badge-archived { background: var(--c-arch-bg);   color: var(--c-arch); }
+
+/* ========================================================================
+   ACTION BUTTONS
+   ======================================================================== */
+.btn-action {
+    font-size:       .72rem;
+    font-weight:     500;
+    padding:         .3rem .75rem;
+    border-radius:   5px;
+    border:          1px solid var(--c-border);
+    background:      var(--c-surface);
+    color:           var(--c-ink);
+    text-decoration: none;
+    transition:      all .15s;
+    white-space:     nowrap;
+    display:         inline-block;
+    cursor:          pointer;
+}
+
+.btn-action:hover {
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+    background: var(--c-accent-l);
+}
+
+.btn-action.danger:hover {
+    border-color: var(--c-danger);
+    color: var(--c-danger);
+    background: var(--c-danger-bg);
+}
+
+/* ========================================================================
+   VIEW-ALL LINK
+   ======================================================================== */
+.view-all-link {
+    font-size: .78rem;
+    color: var(--c-accent);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+/* ========================================================================
+   MOBILE CARD LAYOUT (< 768px)
+   Used by any page that renders a .mobile-cards-wrap block.
+   The matching desktop table is hidden via .desktop-table-wrap.
+   ======================================================================== */
+.desktop-table-wrap { display: block; }
+.mobile-cards-wrap  { display: none; }
+
+@media (max-width: 768px) {
+    .desktop-table-wrap { display: none; }
+    .mobile-cards-wrap  { display: block; padding: .75rem; }
+
+    /* Page header adjustments */
+    .dash-title {
+        font-size: 1.6rem;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.8rem;
+    }
+
+    .table-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    /* Search bar */
+    .cards-search-wrap {
+        position: relative;
+        margin-bottom: .75rem;
+    }
+
+    .cards-search-wrap svg {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--c-muted);
+        pointer-events: none;
+    }
+
+    .cards-search {
+        width: 100%;
+        border: 1px solid var(--c-border);
+        border-radius: 7px;
+        padding: .65rem .75rem .65rem 2rem;
+        font-size: .95rem;
+        background: var(--c-bg);
+        color: var(--c-ink);
+        outline: none;
+    }
+
+    .cards-search:focus {
+        border-color: var(--c-accent);
+        box-shadow: 0 0 0 3px rgba(45, 91, 227, .1);
+    }
+
+    /* Individual card */
+    .sub-card {
+        background:    var(--c-surface);
+        border:        1px solid var(--c-border);
+        border-radius: 8px;
+        padding:       1.15rem;
+        margin-bottom: .75rem;
+        box-shadow:    0 1px 4px rgba(0, 0, 0, .05);
+        transition:    box-shadow .15s;
+    }
+
+    .sub-card:last-child { margin-bottom: 0; }
+    .sub-card:active     { box-shadow: 0 2px 10px rgba(0, 0, 0, .1); }
+
+    .card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: .5rem;
+        margin-bottom: .75rem;
+    }
+
+    .card-name {
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .card-phone {
+        font-size: .85rem;
+        color: var(--c-muted);
+        margin-top: .2rem;
+    }
+
+    .card-field {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: .65rem;
+    }
+
+    .card-field-label {
+        font-size: .7rem;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: var(--c-muted);
+        margin-bottom: .2rem;
+    }
+
+    .card-field-value {
+        font-size: .95rem;
+        color: var(--c-ink);
+    }
+
+    .card-field-value a {
+        color: var(--c-accent);
+        text-decoration: none;
+    }
+
+    .card-message {
+        font-size: .92rem;
+        color: var(--c-muted);
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .card-date {
+        font-size: .85rem;
+        color: var(--c-muted);
+        margin-bottom: .85rem;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: .5rem;
+        flex-wrap: wrap;
+        padding-top: .75rem;
+        border-top: 1px solid var(--c-border);
+    }
+
+    .card-actions .btn-action {
+        flex: 1;
+        text-align: center;
+        padding: .55rem .6rem;
+        font-size: .85rem;
+    }
+
+    /* Badge size for mobile */
+    .badge-status {
+        font-size: .72rem;
+        padding: .32rem .75rem;
+    }
+
+    /* Empty + pagination */
+    .cards-empty {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--c-muted);
+        font-size: .95rem;
+    }
+
+    .cards-pagination {
+        display: flex;
+        justify-content: center;
+        gap: .4rem;
+        margin-top: .75rem;
+        flex-wrap: wrap;
+    }
+
+    .cards-page-btn {
+        border: 1px solid var(--c-border);
+        border-radius: 5px;
+        background: var(--c-surface);
+        color: var(--c-muted);
+        font-size: .85rem;
+        padding: .45rem .85rem;
+        cursor: pointer;
+        transition: all .15s;
+    }
+
+    .cards-page-btn:hover {
+        border-color: var(--c-accent);
+        color: var(--c-accent);
+    }
+
+    .cards-page-btn.active {
+        border-color: var(--c-accent);
+        background: var(--c-accent-l);
+        color: var(--c-accent);
+        font-weight: 600;
+    }
+
+    .cards-info {
+        text-align: center;
+        font-size: .85rem;
+        color: var(--c-muted);
+        margin-top: .5rem;
+    }
+}
+
+/* ========================================================================
+   FLOATING FLASH MESSAGES
+   ======================================================================== */
+.flash-overlay {
+    position: fixed;
+    top: 6.5rem;
+    left: 50%;
+    z-index: 1080;
+    width: min(720px, calc(100vw - 2rem));
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.flash-overlay .alert,
+.flash-overlay .message {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 0.75rem !important;
+    pointer-events: auto;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+}
+
+.flash-overlay .alert.flash-hiding,
+.flash-overlay .message.flash-hiding {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+@media (max-width: 767.98px) {
+    .flash-overlay {
+        top: 7.5rem;
+        width: calc(100vw - 2rem);
+    }
+}
+
+#main-content {
+    margin-left: 180px; /* MUST match sidebar width */
+    padding: 1.75rem;
+}
