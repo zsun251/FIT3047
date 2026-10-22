@@ -3,36 +3,49 @@ declare(strict_types=1);
 
 use Authentication\AuthenticationService;
 use Authentication\AuthenticationServiceInterface;
-use Authentication\Authenticator\FormAuthenticator;
-use Authentication\Authenticator\SessionAuthenticator;
-use Authentication\Identifier\PasswordIdentifier;
 use Psr\Http\Message\ServerRequestInterface;
-use Cake\Routing\Router;
-
 
 return function (ServerRequestInterface $request): AuthenticationServiceInterface {
-    $fields = [
-        'username' => 'username',
-        'password' => 'password',
-    ];
+    $service = new AuthenticationService();
 
-    $service = new AuthenticationService([
+    $service->setConfig([
         'unauthenticatedRedirect' => '/users/login',
         'queryParam' => 'redirect',
-        'identifiers' => [
-            'password' => [
-                'className' => PasswordIdentifier::class,
-                'fields' => $fields,
-            ],
+    ]);
+
+    // Determine if login is by email or username
+    $loginField = 'username';
+    if ($request->is('post')) {
+        $data = $request->getParsedBody();
+        if (isset($data['username']) && str_contains($data['username'], '@')) {
+            $loginField = 'email';
+        }
+    }
+
+    // Load Session Authenticator (checks session first)
+    $service->loadAuthenticator('Authentication.Session');
+
+    // Load Cookie Authenticator (checks for remember me cookie)
+    $service->loadAuthenticator('Authentication.Cookie', [
+        'fields' => [
+            'username' => 'username',
+            'password' => 'password',
         ],
-        'authenticators' => [
-            'session' => [
-                'className' => SessionAuthenticator::class,
-            ],
-            'form' => [
-                'className' => FormAuthenticator::class,
-                'fields' => $fields,
-                'loginUrl' => '/users/login',
+        'loginUrl' => '/users/login',
+    ]);
+
+    // Load Form Authenticator
+    $service->loadAuthenticator('Authentication.Form', [
+        'loginUrl' => '/users/login',
+        'fields' => [
+            'username' => 'username',
+            'password' => 'password',
+        ],
+        'identifier' => [
+            'className' => 'Authentication.Password',
+            'fields' => [
+                'username' => $loginField,
+                'password' => 'password',
             ],
         ],
     ]);

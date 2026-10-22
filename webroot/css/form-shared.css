@@ -1,0 +1,320 @@
+/* ============================================================================
+   SHARED FORM STYLES
+   Used across: User Edit, Add forms, and other entity forms
+   ========================================================================== */
+
+/* Form Container */
+.form-container {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 20px;
+    box-shadow: 0 8px 28px rgba(148, 163, 184, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 2rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Form Header */
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.form-header h1 {
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: #111827;
+    margin: 0;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+}
+
+.form-header small {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #64748b;
+}
+
+.form-header .badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.875rem;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+/* Form Section */
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: #374151;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.form-section-title i {
+    color: #2563eb;
+    font-size: 1rem;
+}
+
+/* Form Grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+
+.form-grid-full {
+    grid-column: 1 / -1;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 0;
+}
+
+/* Labels */
+label {
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.375rem;
+    font-size: 0.8125rem;
+    display: block;
+}
+
+label.required::after {
+    content: " *";
+    color: #ef4444;
+}
+
+/* Inputs */
+.form-control,
+.form-select {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    background: #fff;
+    color: #111827;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    outline: none;
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+    transition: opacity 0.15s ease;
+}
+
+.form-control:focus::placeholder {
+    opacity: 0;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 2rem;
+    margin-top: 2rem;
+    border-top: 2px solid #f1f5f9;
+}
+
+.form-actions .btn {
+    height: 44px;
+    padding: 0 1.5rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+    min-width: 130px;
+    text-decoration: none;
+}
+
+/* Primary — submit */
+.form-actions .btn-primary {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+}
+
+.form-actions .btn-primary:hover,
+.form-actions .btn-primary:focus {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.32);
+}
+
+/* Outline secondary — cancel */
+.form-actions .btn-outline-secondary {
+    background: #fff;
+    color: #64748b;
+    border: 1.5px solid #e2e8f0;
+    box-shadow: none;
+}
+
+.form-actions .btn-outline-secondary:hover,
+.form-actions .btn-outline-secondary:focus {
+    background: #f8fafc;
+    color: #334155;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+/* Outline info — preview / secondary action */
+.form-actions .btn-outline-info {
+    background: #fff;
+    color: #0891b2;
+    border: 1.5px solid #bae6fd;
+}
+
+.form-actions .btn-outline-info:hover,
+.form-actions .btn-outline-info:focus {
+    background: #f0f9ff;
+    color: #0369a1;
+    border-color: #7dd3fc;
+    transform: translateY(-1px);
+}
+
+/* Help Text */
+.form-text {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 0.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Error States */
+.error input,
+.error select,
+.error textarea {
+    border-color: #ef4444;
+}
+
+.error-message {
+    color: #ef4444;
+    font-size: 0.8125rem;
+    margin-top: 0.25rem;
+}
+
+/* Password Toggle */
+.password-wrapper {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.15s;
+}
+
+.password-toggle:hover {
+    color: #2563eb;
+}
+
+/* Back Link */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: color 0.15s;
+}
+
+.back-link:hover {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.back-link i {
+    font-size: 1rem;
+}
+
+/* Info Alert */
+.form-info-alert {
+    background: #eff6ff;
+    border-left: 3px solid #2563eb;
+    padding: 0.875rem 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+}
+
+.form-info-alert i {
+    color: #2563eb;
+    font-size: 1.125rem;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+}
+
+.form-info-alert p {
+    margin: 0;
+    color: #374151;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .form-container {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        min-width: unset;
+    }
+}

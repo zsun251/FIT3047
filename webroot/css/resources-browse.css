@@ -1,0 +1,258 @@
+/* Resources Browse */
+.resources-browse {
+    padding: 2rem 1.5rem;
+}
+
+/* Header */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 0.5rem 0;
+}
+
+.page-header p {
+    color: #666;
+    margin: 0;
+}
+
+/* Filters */
+.resource-filters {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    border-color: #0066cc;
+    color: #0066cc;
+}
+
+.filter-btn.active {
+    background: #0066cc;
+    border-color: #0066cc;
+    color: #fff;
+}
+
+/* Grid */
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Card */
+.resource-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+.resource-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Thumbnail */
+.resource-thumbnail {
+    position: relative;
+    height: 180px;
+    background: #f5f5f5;
+    overflow: hidden;
+}
+
+.resource-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.resource-thumbnail.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.type-badge {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    padding: 0.25rem 0.625rem;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 3px;
+}
+
+.type-article { background: rgba(25, 118, 210, 0.9); }
+.type-video { background: rgba(211, 47, 47, 0.9); }
+.type-blog { background: rgba(46, 125, 50, 0.9); }
+.type-news { background: rgba(245, 124, 0, 0.9); }
+.type-link { background: rgba(123, 31, 162, 0.9); }
+
+/* Body */
+.resource-body {
+    padding: 1.25rem;
+}
+
+.resource-body h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.4;
+}
+
+.excerpt {
+    color: #666;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+/* Meta */
+.resource-meta {
+    display: flex;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e0e0e0;
+    margin-bottom: 1rem;
+    font-size: 0.813rem;
+    color: #888;
+}
+
+.resource-meta span {
+    display: block;
+}
+
+/* Read Link */
+.read-link {
+    display: inline-block;
+    color: #0066cc;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.read-link:hover {
+    text-decoration: underline;
+}
+
+/* Pagination */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0;
+}
+
+.pagination-container ul {
+    display: flex;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination-container li {
+    list-style: none;
+}
+
+.pagination-container a,
+.pagination-container span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.875rem;
+}
+
+.pagination-container a:hover {
+    border-color: #0066cc;
+    color: #0066cc;
+}
+
+.pagination-container .active {
+    background: #0066cc;
+    border-color: #0066cc;
+    color: #fff;
+}
+
+.pagination-container .disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-container .disabled:hover {
+    border-color: #ddd;
+    color: #333;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+}
+
+.empty-state p {
+    color: #666;
+    margin: 0;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .resources-browse {
+        padding: 1rem;
+    }
+
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .resources-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .resource-filters {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+    }
+
+    .filter-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+}

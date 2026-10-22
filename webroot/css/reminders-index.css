@@ -1,0 +1,367 @@
+/* Reminders Index Styles */
+
+.section-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.section-header i {
+    margin-right: 8px;
+    color: #0d6efd;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    margin: 8px 0 4px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.reminders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.reminder-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    background: #fafafa;
+    transition: all 0.2s ease;
+}
+
+.reminder-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+.reminder-card.active {
+    border-left: 4px solid #0d6efd;
+    background: #f8f9ff;
+}
+
+.reminder-card.completed {
+    border-left: 4px solid #198754;
+    background: #f8fff8;
+    opacity: 0.9;
+}
+
+.reminder-card.dismissed {
+    border-left: 4px solid #6c757d;
+    background: #f8f9fa;
+    opacity: 0.8;
+}
+
+.reminder-icon {
+    font-size: 24px;
+    color: #0d6efd;
+    min-width: 32px;
+    text-align: center;
+    margin-top: 4px;
+}
+
+.reminder-card.completed .reminder-icon {
+    color: #198754;
+}
+
+.reminder-card.dismissed .reminder-icon {
+    color: #6c757d;
+}
+
+.reminder-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.reminder-message {
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 6px;
+    word-wrap: break-word;
+}
+
+.reminder-time {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.reminder-time i {
+    margin-right: 4px;
+}
+
+.reminder-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.reminder-actions .btn {
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.schedule-info {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.schedule-info > p {
+    margin-bottom: 16px;
+    font-weight: 500;
+    color: #495057;
+}
+
+.time-slot-badge {
+    background: #fff;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+    transition: all 0.2s ease;
+}
+
+.time-slot-badge:hover {
+    border-color: #0d6efd;
+    background: #f8f9ff;
+}
+
+.time-slot-badge i {
+    color: #0d6efd;
+    margin-right: 6px;
+    font-size: 16px;
+}
+
+.schedule-info .mt-3 {
+    padding-top: 16px;
+    border-top: 1px solid #dee2e6;
+}
+
+.schedule-info .text-success {
+    color: #198754 !important;
+    font-weight: 600;
+}
+
+/* Stats Cards */
+.stat-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1;
+}
+
+.stat-value.text-primary {
+    color: #0d6efd !important;
+}
+
+.stat-value.text-success {
+    color: #198754 !important;
+}
+
+.stat-value.text-muted {
+    color: #6c757d !important;
+}
+
+/* Header Section */
+.dash-header {
+    margin-bottom: 24px;
+}
+
+.dash-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+/* Button Styles */
+.btn-xs {
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .section-card {
+        padding: 16px;
+    }
+
+    .dash-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px;
+    }
+
+    .dash-title {
+        font-size: 24px;
+    }
+
+    .reminder-card {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .reminder-icon {
+        font-size: 20px;
+    }
+
+    .reminder-actions {
+        width: 100%;
+        flex-direction: row;
+    }
+
+    .reminder-actions .btn {
+        flex: 1;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+    }
+
+    .time-slot-badge {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .schedule-info {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .stat-label {
+        font-size: 11px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .reminder-message {
+        font-size: 14px;
+    }
+
+    .reminder-time {
+        font-size: 12px;
+    }
+
+    .section-header h3 {
+        font-size: 16px;
+    }
+}
+
+/* Loading State */
+.reminder-card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Animation for new reminders */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.reminder-card.new {
+    animation: slideInRight 0.3s ease-out;
+}
+
+/* Print Styles */
+@media print {
+    .dash-header .btn,
+    .reminder-actions,
+    .section-card:last-child {
+        display: none;
+    }
+
+    .section-card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+        page-break-inside: avoid;
+    }
+
+    .reminder-card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+}
+
+.rc-dashboard-page-header {
+    margin-bottom: -2.5rem !important;
+    padding-bottom: 0 !important;
+}
+
+.stats-grid {
+    margin-top: 0 !important;
+}

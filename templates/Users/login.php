@@ -2,76 +2,105 @@
 /**
  * @var \App\View\AppView $this
  */
+
+$this->assign('title', 'Login');
+$this->Html->css('auth', ['block' => true]);
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Login</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-brand-panel">
+<!--            --><?php //= $this->Html->image('login image.png', [
+//                'alt' => 'RespiraCare logo',
+//                'class' => 'auth-logo-img'
+//            ]) ?>
+            <?= $this->ContentBlock->image('global-logo', [
+                'alt' => $this->ContentBlock->text('global-logo-alt'),
+                'class' => 'auth-logo-img'
+            ]) ?>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
+            <h1 class="auth-brand-name">RespiraCare</h1>
+        </div>
 
-<body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-lg">
-                <div class="card-header bg-white text-dark text-center border-bottom">
-                    <h1 class="h3 mb-0">Login</h1>
-                </div>
-                <div class="card-body p-4">
+        <div class="auth-form-panel">
+            <div class="auth-heading">
+                <h2><?= $this->ContentBlock->text('auth-login-heading') ?></h2>
+                <p><?= $this->ContentBlock->text('auth-login-intro-text') ?></p>
+            </div>
 
-                    <?= $this->Flash->render() ?>
+            <?= $this->Flash->render() ?>
 
-                    <?= $this->Form->create() ?>
+            <?= $this->Form->create(null, [
+                'class' => 'auth-form'
+            ]) ?>
 
-                    <div class="mb-3">
-                        <?= $this->Form->label('username', 'Username', ['class' => 'form-label']) ?>
-                        <?= $this->Form->control('username', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) ?>
-                    </div>
+            <div class="auth-field">
+                <label for="username" class="auth-label">
+                    <i class="bi bi-person"></i>
+                    Username or Email
+                </label>
 
-                    <div class="mb-3">
-                        <?= $this->Form->label('password', 'Password', ['class' => 'form-label']) ?>
-                        <?= $this->Form->control('password', [
-                            'label' => false,
-                            'class' => 'form-control',
-                            'required' => true
-                        ]) ?>
-                    </div>
+                <?= $this->Form->control('username', [
+                    'type' => 'text',
+                    'label' => false,
+                    'placeholder' => 'Enter your username or email',
+                    'class' => 'form-control auth-input',
+                    'id' => 'username',
+                    'required' => true,
+                    'autocomplete' => 'username'
+                ]) ?>
+            </div>
 
-                    <div class="d-grid">
-                        <?= $this->Form->button('Login', [
-                            'class' => 'btn btn-dark'
-                        ]) ?>
-                    </div>
+            <div class="auth-field">
+                <label for="password" class="auth-label">
+                    <i class="bi bi-lock"></i>
+                    Password
+                </label>
 
-                    <div class="text-center mt-3">
-                        <a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'forgotPassword']) ?>">
-                            Forgot Password?
-                        </a>
-                    </div>
+                <?= $this->Form->control('password', [
+                    'type' => 'password',
+                    'label' => false,
+                    'placeholder' => 'Enter your password',
+                    'class' => 'form-control auth-input',
+                    'id' => 'password',
+                    'required' => true,
+                    'autocomplete' => 'current-password'
+                ]) ?>
+            </div>
 
-                    <div class="text-center mt-2">
-                        <a href="<?= $this->Url->build(['controller' => 'Users', 'action' => 'resetPassword']) ?>">
-                            Reset Password
-                        </a>
-                    </div>
+            <?= $this->Form->button(
+                '<i class="bi bi-box-arrow-in-right"></i> Sign In',
+                [
+                    'class' => 'btn btn-primary auth-submit',
+                    'escapeTitle' => false
+                ]
+            ) ?>
 
-                    <?= $this->Form->end() ?>
+            <?= $this->Form->end() ?>
 
-                </div>
+            <div class="auth-divider"></div>
+
+            <div class="auth-link-row">
+                <?= $this->Html->link(
+                    '<i class="bi bi-key"></i> Forgot Password?',
+                    ['controller' => 'Users', 'action' => 'forgotPassword'],
+                    [
+                        'escape' => false,
+                        'class' => 'auth-link'
+                    ]
+                ) ?>
+            </div>
+
+            <div class="auth-divider"></div>
+
+            <div class="auth-register-row">
+                <span>Don't have an account?</span>
+                <?= $this->Html->link(
+                    'Register here',
+                    ['controller' => 'Users', 'action' => 'register'],
+                    ['class' => 'auth-link']
+                ) ?>
             </div>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

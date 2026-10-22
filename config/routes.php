@@ -53,6 +53,8 @@ return function (RouteBuilder $routes): void {
     });
 
     $routes->scope('/', function (RouteBuilder $builder): void {
+        // Enable extension parsing for JSON
+        $builder->setExtensions(['json']);
         /*
          * Here, we are connecting '/' (base path) to a controller called 'Pages',
          * its action called 'display', and we pass a param to select the view file
@@ -73,7 +75,55 @@ return function (RouteBuilder $routes): void {
 
         $builder->connect('/users/forgot-password', ['controller' => 'Users', 'action' => 'forgotPassword']);
         $builder->connect('/users/reset-password', ['controller' => 'Users', 'action' => 'resetPassword']);
+        $builder->connect('/users/register', ['controller' => 'Users', 'action' => 'register']);
 
+
+        /* Setup dashboard routes */
+        $builder->connect('/dashboard', [
+            'controller' => 'Dashboard',
+            'action' => 'index'
+        ]);
+
+        $builder->connect('/dashboard/staff', [
+            'controller' => 'Dashboard',
+            'action' => 'staff'
+        ]);
+
+        $builder->connect('/dashboard/patient', [
+            'controller' => 'Dashboard',
+            'action' => 'patient'
+        ]);
+
+        /* Setup Resource routes */
+        $builder->connect('/resources/library', [
+            'controller' => 'Resources',
+            'action' => 'browse'
+        ]);
+
+        $builder->connect('/vita-data/patient-history', [
+            'controller' => 'VitalData',
+            'action' => 'patientHistory'
+        ]);
+
+        $builder->connect('/assign/:clinician_id', ['action' => 'assign'])
+            ->setPass(['clinician_id']);
+        $builder->connect('/assign', ['action' => 'assign']);
+
+            // Reminders routes
+            $builder->connect('/reminders', ['controller' => 'Reminders', 'action' => 'index']);
+            $builder->connect('/reminders/settings', ['controller' => 'Reminders', 'action' => 'settings']);
+            $builder->connect('/reminders/count', ['controller' => 'Reminders', 'action' => 'count']);
+            $builder->connect('/reminders/dropdown', ['controller' => 'Reminders', 'action' => 'dropdown']);
+            $builder->connect('/reminders/dismiss/:id', ['controller' => 'Reminders', 'action' => 'dismiss'])
+                ->setPass(['id'])
+                ->setMethods(['POST']);
+
+        /* Setup content block routes */
+        $builder->connect('/content-blocks', ['controller' => 'ContentBlocks', 'action' => 'index']);
+        $builder->connect('/content-blocks/index', ['controller' => 'ContentBlocks', 'action' => 'index']);
+        $builder->connect('/content-blocks/edit/{id}', ['controller' => 'ContentBlocks', 'action' => 'edit'])->setPatterns(['id' => '\d+'])->setPass(['id']);
+        $builder->connect('/content-blocks/restore/{id}', ['controller' => 'ContentBlocks', 'action' => 'restore'])->setPatterns(['id' => '\d+'])->setPass(['id']);
+        $builder->connect('/content-blocks/upload', ['controller' => 'ContentBlocks', 'action' => 'upload']);
 
         /*
          * Connect catchall routes for all controllers.
