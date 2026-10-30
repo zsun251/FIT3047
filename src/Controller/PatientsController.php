@@ -178,34 +178,6 @@ class PatientsController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
-    // 4.2, 4.3
-    // TODO I do not believe this is being used, and was moved into VitalDataController
-    public function patientHistory($patientId = null)
-    {
-        // get logged-in clinician
-        $clinicianId = $this->request->getAttribute('identity')->get('id');
-
-        // check patient belongs to this clinician (security gate)
-        $patient = $this->Clinicians->Patients->find()
-            ->matching('Clinicians', function ($q) use ($clinicianId) {
-                return $q->where(['Clinicians.id' => $clinicianId]);
-            })
-            ->where(['Patients.id' => $patientId])
-            ->first();
-
-        if (!$patient) {
-            throw new \Cake\Http\Exception\ForbiddenException('Not allowed');
-        }
-
-        // fetch vital history
-        $vitalHistory = $this->Clinicians->Patients->VitalData->find()
-            ->where(['patient_id' => $patientId])
-            ->contain(['Symptoms'])
-            ->orderBy(['recorded_at' => 'ASC']);
-
-        $this->set(compact('patient', 'vitalHistory'));
-    }
-
     public function assign($clinicianId = null)
     {
 

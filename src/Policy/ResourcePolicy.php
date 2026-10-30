@@ -55,10 +55,11 @@ class ResourcePolicy
     }
 
     /**
-     * Patient-facing read — staff and patients
+     * Patient-facing read — staff, and patients for published resources only
      */
     public function canRead(IdentityInterface $user, Resource $resource): bool
     {
-        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
+        return UserAccess::isStaff($user)
+            || (UserAccess::isPatient($user) && $resource->status === 'published');
     }
 }

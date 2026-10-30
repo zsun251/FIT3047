@@ -39,7 +39,13 @@ class VitalDataPolicy
      */
     public function canAdd(IdentityInterface $user, VitalData $resource): bool
     {
-        return UserAccess::isStaff($user) || UserAccess::isPatient($user);
+        if (UserAccess::isAdmin($user) || UserAccess::isPatient($user)) {
+            return true;
+        }
+
+        // Clinicians can only add records for their assigned patients
+        return UserAccess::isClinician($user)
+            && (empty($resource->patient_id) || $this->isAssignedPatientData($user, $resource));
     }
 
     /**
@@ -47,7 +53,7 @@ class VitalDataPolicy
      */
     public function canEdit(IdentityInterface $user, VitalData $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user) || $this->isAssignedPatientData($user, $resource);
     }
 
     /**
@@ -55,7 +61,7 @@ class VitalDataPolicy
      */
     public function canDelete(IdentityInterface $user, VitalData $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user) || $this->isAssignedPatientData($user, $resource);
     }
 
     /**
@@ -83,8 +89,13 @@ class VitalDataPolicy
      */
     private function hasVitalDataAccess(IdentityInterface $user, VitalData $resource): bool
     {
-        // Staff can access all vital data
-        if (UserAccess::isStaff($user)) {
+        // Admins can access all vital data
+        if (UserAccess::isAdmin($user)) {
+            return true;
+        }
+
+        // Clinicians can access their assigned patients' vital data
+        if ($this->isAssignedPatientData($user, $resource)) {
             return true;
         }
 
@@ -103,5 +114,11 @@ class VitalDataPolicy
     {
         $patientId = UserAccess::getPatientId($user);
         return $patientId !== null && $patientId === $resource->patient_id;
+    }
+
+    private function isAssignedPatientData(IdentityInterface $user, VitalData $resource): bool
+    {
+        return UserAccess::isClinician($user)
+            && in_array((int)$resource->patient_id, UserAccess::getAssignedPatientIds($user), true);
     }
 }

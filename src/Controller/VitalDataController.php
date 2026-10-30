@@ -234,11 +234,11 @@ class VitalDataController extends AppController
                 // Staff user - validate they selected a patient
                 if (empty($data['patient_id'])) {
                     $this->Flash->error(__('Please select a patient.'));
-                    $patients = $this->VitalData->Patients->find('list', [
+                    $patients = $this->Authorization->applyScope($this->VitalData->Patients->find('list', [
                         'keyField' => 'id',
                         'valueField' => 'id',
                         'limit' => 200
-                    ])->all();
+                    ]), 'index')->all();
 
                     $symptoms = $this->VitalData->Symptoms->find('list', [
                         'keyField' => 'id',
@@ -289,6 +289,12 @@ class VitalDataController extends AppController
                 ['associated' => ['Symptoms._joinData']]
             );
 
+            // Re-check now that the patient is known (clinicians: assigned patients only)
+            if (!$this->Authorization->can($vitalDataEntity, 'add')) {
+                $this->Flash->error(__('You do not have permission to add a health record for this patient.'));
+                return $this->redirect(['action' => 'index']);
+            }
+
             if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
 
@@ -317,10 +323,10 @@ class VitalDataController extends AppController
 
         $patients = [];
         if ($isStaff) {
-            $patients = $this->VitalData->Patients
-                ->find('list', ['limit' => 200])
-                ->contain(['Users'])
-                ->all();
+            $patients = $this->Authorization->applyScope(
+                $this->VitalData->Patients->find('list', ['limit' => 200])->contain(['Users']),
+                'index'
+            )->all();
         }
 
         $symptoms = $this->VitalData->Symptoms->find('list', [
@@ -390,6 +396,12 @@ class VitalDataController extends AppController
                 ['associated' => ['Symptoms._joinData']]
             );
 
+            // Re-check in case the record was moved to another patient
+            if (!$this->Authorization->can($vitalDataEntity, 'edit')) {
+                $this->Flash->error(__('You do not have permission to edit this vital data.'));
+                return $this->redirect(['action' => 'index']);
+            }
+
             if (!$vitalDataEntity->hasErrors() && $this->VitalData->save($vitalDataEntity)) {
                 $this->Flash->success(__('The vital data has been saved.'));
                 return $this->redirect(['action' => 'index']);
@@ -398,7 +410,7 @@ class VitalDataController extends AppController
             $this->Flash->error(__('The vital data could not be saved. Please, try again.'));
         }
 
-        $patients = $this->VitalData->Patients->find('list', limit: 200)->all();
+        $patients = $this->Authorization->applyScope($this->VitalData->Patients->find('list', limit: 200), 'index')->all();
         $symptoms = $this->VitalData->Symptoms->find('list', limit: 200)->all();
         $this->set(compact('vitalDataEntity', 'patients', 'symptoms'));
     }
@@ -456,10 +468,17 @@ class VitalDataController extends AppController
             return $this->redirect($this->getRedirectUrl());
         }
 
-        $patient = $this->VitalData->Patients->get($patientId);
+        $patient = $this->VitalData->Patients->get($patientId, contain: ['Users']);
+
+        // Staff: only patients they can view (clinicians: assigned patients)
+        if (!$this->Authorization->can($patient, 'view')) {
+            $this->Flash->error(__('You do not have permission to view this patient.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
 
         $query = $this->VitalData->find()
             ->contain(['Patients'])
+            ->where(['VitalData.patient_id' => $patient->id])
             ->orderBy(['VitalData.recorded_at' => 'DESC']);
 
         // Apply scope

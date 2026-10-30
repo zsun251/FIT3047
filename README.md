@@ -4,23 +4,57 @@ A web app for managing respiratory care. Patients record vital data and symptoms
 
 ## Requirements
 
-- PHP 8.2 or later
+- PHP 8.2 or later, with the `pdo_sqlite` extension (included in most PHP installs)
 - [Composer](https://getcomposer.org/)
-- MySQL or MariaDB
+
+MySQL or MariaDB is optional. By default the app uses a local SQLite database file, so no database server is needed. See [Using MySQL](#using-mysql) to run it on MySQL instead.
 
 ## Getting started
 
 Run all commands from the project root.
 
-### 1. Install dependencies
+### 1. Install dependencies and create the database
 
 ```sh
 composer install
 ```
 
-This also creates `config/app_local.php` from `config/app_local.example.php`. That file holds your local settings and is gitignored, so each developer has their own copy.
+This also:
 
-### 2. Create a database and user
+- creates `config/app_local.php` from `config/app_local.example.php`. That file holds your local settings and is gitignored, so each developer has their own copy.
+- builds the SQLite database at `tmp/respiracare.sqlite` with the tables and sample data (`bin/cake setup_sqlite`). Sample appointments and vital data are dated relative to the day it is built.
+
+### 2. Run the app
+
+```sh
+bin/cake server
+```
+
+Open http://localhost:8765.
+
+To reset the sample data, rebuild the database. **This deletes all data in it.**
+
+```sh
+bin/cake setup_sqlite --force
+```
+
+### Test accounts
+
+`seed.sql` creates these accounts. All of them use the password `password`.
+
+| Username     | Role      |
+|--------------|-----------|
+| `admin1`     | Admin     |
+| `clinician1` | Clinician |
+| `patient1`   | Patient   |
+
+`seed.sql` contains more sample accounts (for example `admin2`, `clinician2`).
+
+## Using MySQL
+
+To run the app on MySQL or MariaDB instead of SQLite:
+
+### 1. Create a database and user
 
 Use your MySQL root account (or any account that can create databases and users). The names and password below are examples; pick your own.
 
@@ -31,19 +65,18 @@ mysql -u root -p -e "
   GRANT ALL PRIVILEGES ON respiracare.* TO 'respiracare'@'localhost';"
 ```
 
-### 3. Point the app at your database
+### 2. Point the app at your database
 
-Open `config/app_local.php`. Under `Datasources` → `default`, set the values from step 2:
+Open `config/app_local.php`. Under `Datasources` → `default`, delete the three SQLite lines (`driver`, `database`, `init`), then uncomment the MySQL lines and set the values from step 1:
 
 ```php
+'host' => 'localhost',
 'username' => 'respiracare',
 'password' => 'password',
 'database' => 'respiracare',
 ```
 
-The template ships with `my_app` / `secret` / `my_app`. If you leave those values, the app cannot connect to the database.
-
-### 4. Create the tables and load sample data
+### 3. Create the tables and load sample data
 
 ```sh
 # App tables
@@ -63,25 +96,7 @@ bin/cake migrations seed --seed ContentBlocksSeed
 
 Don't run `bin/cake migrations migrate` on a fresh import. It fails with `Duplicate column name 'reset_token'` because `schema.sql` already has those columns.
 
-### 5. Run the app
-
-```sh
-bin/cake server
-```
-
-Open http://localhost:8765.
-
-### Test accounts
-
-`seed.sql` creates these accounts. All of them use the password `password`.
-
-| Username     | Role      |
-|--------------|-----------|
-| `admin1`     | Admin     |
-| `clinician1` | Clinician |
-| `patient1`   | Patient   |
-
-`seed.sql` contains more sample accounts (for example `admin2`, `clinician2`).
+Then start the app with `bin/cake server` as above.
 
 ## Working with the database
 
@@ -93,7 +108,7 @@ Each developer uses their own local database. Databases are not shared through G
 bin/cake bake migration AddSomethingToTable
 ```
 
-Also update `config/schema/schema.sql`, so new setups get the change from step 4.
+Also update `config/schema/schema.sql` and `config/schema/schema.sqlite.sql`, so new setups get the change.
 
 **After pulling someone else's migration**, apply it to your database:
 
@@ -104,9 +119,9 @@ bin/cake migrations status   # check which migrations have run
 
 If `migrations status` shows `** MISSING **`, a migration was run on your database (usually from another branch) but its file is not on your current branch. Your database is then ahead of the code.
 
-**Resetting to a clean state.** Re-import the schema and seed files, then repeat the remaining step 4 commands. **This deletes all data in that database.**
+**Resetting to a clean state.** On SQLite, run `bin/cake setup_sqlite --force`. On MySQL, re-import the schema and seed files, then repeat the remaining commands from step 3 of [Using MySQL](#using-mysql). **This deletes all data in that database.**
 
-**Sharing exact data with a teammate** (for example, to reproduce a bug):
+**Sharing exact data with a teammate** (for example, to reproduce a bug): on SQLite, send them a copy of `tmp/respiracare.sqlite`. On MySQL:
 
 ```sh
 mysqldump -u respiracare -p respiracare > dump.sql   # export
@@ -125,7 +140,7 @@ Don't commit dump files.
 | `templates/` | Views, layouts and email templates |
 | `webroot/` | CSS, JavaScript and images |
 | `config/app_local.php` | Your local settings (database, email). Not committed. |
-| `config/schema/` | `schema.sql` (tables), `seed.sql` (sample data), `production.sql` (initial production data) |
+| `config/schema/` | `schema.sql` (MySQL tables), `schema.sqlite.sql` (SQLite tables), `seed.sql` (sample data), `production.sql` (initial production data) |
 | `config/Migrations/` | Database migrations |
 
 ## Production
@@ -134,5 +149,7 @@ For a production deployment, import `config/schema/schema.sql` and then `config/
 
 ## Troubleshooting
 
-- **Can't connect to the database:** check the `Datasources.default` values in `config/app_local.php`, and make sure MySQL/MariaDB is running.
+- **`could not find driver` on startup:** your PHP is missing the `pdo_sqlite` extension. Enable it in `php.ini`, or [use MySQL](#using-mysql).
+- **`no such table` errors:** the SQLite database was not built. Run `bin/cake setup_sqlite --force`.
+- **Can't connect to MySQL:** check the `Datasources.default` values in `config/app_local.php`, and make sure MySQL/MariaDB is running.
 - **Password reset emails don't arrive:** set up `EmailTransport` in `config/app_local.php` with a real SMTP server.

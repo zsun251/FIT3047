@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Policy;
 
 use Authorization\IdentityInterface;
+use Cake\Datasource\FactoryLocator;
 
 class UserAccess
 {
@@ -79,5 +80,30 @@ class UserAccess
     public static function getUserId(IdentityInterface $user): int
     {
         return (int)$user->getIdentifier();
+    }
+
+    /**
+     * Get the IDs of the patients currently assigned to a clinician
+     *
+     * @return array<int>
+     */
+    public static function getAssignedPatientIds(IdentityInterface $user): array
+    {
+        $clinicianId = self::getClinicianId($user);
+        if ($clinicianId === null) {
+            return [];
+        }
+
+        return FactoryLocator::get('Table')
+            ->get('CliniciansPatients')
+            ->find()
+            ->select(['patient_id'])
+            ->where([
+                'CliniciansPatients.clinician_id' => $clinicianId,
+                'CliniciansPatients.unassigned_at IS' => null,
+            ])
+            ->all()
+            ->extract(fn($row) => (int)$row->patient_id)
+            ->toList();
     }
 }

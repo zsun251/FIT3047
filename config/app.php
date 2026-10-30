@@ -460,4 +460,14 @@ return [
         'errorLevel' => null,
         'fixtureStrategy' => null,
     ],
+
+    /*
+     * Migrations configuration.
+     *
+     * The app's migrations and seeds extend BaseMigration/BaseSeed,
+     * which only the builtin backend can run.
+     */
+    'Migrations' => [
+        'backend' => 'builtin',
+    ],
 ];

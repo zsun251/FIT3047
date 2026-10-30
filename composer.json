@@ -48,7 +48,10 @@
         "sort-packages": true
     },
     "scripts": {
-        "post-install-cmd": "App\\Console\\Installer::postInstall",
+        "post-install-cmd": [
+            "App\\Console\\Installer::postInstall",
+            "@php bin/cake.php setup_sqlite"
+        ],
         "post-create-project-cmd": "App\\Console\\Installer::postInstall",
         "check": [
             "@test",

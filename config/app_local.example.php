@@ -39,18 +39,23 @@ return [
      */
     'Datasources' => [
         'default' => [
-            'host' => 'localhost',
             /*
-             * CakePHP will use the default DB port based on the driver selected
-             * MySQL on MAMP uses port 8889, MAMP users will want to uncomment
-             * the following line and set the port accordingly
+             * SQLite demo database, created by `composer install`
+             * (or `bin/cake setup_sqlite`). No database server needed.
              */
-            //'port' => 'non_standard_port_number',
+            'driver' => \Cake\Database\Driver\Sqlite::class,
+            'database' => TMP . 'respiracare.sqlite',
+            'init' => ['PRAGMA foreign_keys = ON'],
 
-            'username' => 'my_app',
-            'password' => 'secret',
+            /*
+             * To use MySQL instead, delete the three lines above and use
+             * your own database settings (see "Using MySQL" in README.md):
+             */
+            //'host' => 'localhost',
+            //'username' => 'respiracare',
+            //'password' => 'password',
+            //'database' => 'respiracare',
 
-            'database' => 'my_app',
             /*
              * If not using the default 'public' schema with the PostgreSQL driver
              * set it here.

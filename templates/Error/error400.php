@@ -3,11 +3,15 @@
  * @var \App\View\AppView $this
  * @var string $message
  * @var string $url
+ * @var int $code
  */
 use Cake\Core\Configure;
 
+$isForbidden = isset($code) && (int)$code === 403;
+$errorTitle = $isForbidden ? 'Access Denied' : 'Page Not Found';
+
 $this->setLayout('error');
-$this->assign('title', 'Page Not Found');
+$this->assign('title', $errorTitle);
 
 if (Configure::read('debug')) :
     $this->setLayout('dev_error');
@@ -20,15 +24,19 @@ endif;
 
 <div class="error-container">
     <div class="error-icon">
-        <i class="bi bi-compass text-muted"></i>
+        <i class="bi <?= $isForbidden ? 'bi-shield-lock' : 'bi-compass' ?> text-muted"></i>
     </div>
 
-    <div class="error-code">404</div>
+    <div class="error-code"><?= $isForbidden ? 403 : 404 ?></div>
 
-    <h1 class="error-title">Page Not Found</h1>
+    <h1 class="error-title"><?= $errorTitle ?></h1>
 
     <p class="error-message">
-        Sorry, we couldn't find the page you're looking for. The page might have been moved or deleted.
+        <?php if ($isForbidden): ?>
+            Sorry, you don't have permission to view this page.
+        <?php else: ?>
+            Sorry, we couldn't find the page you're looking for. The page might have been moved or deleted.
+        <?php endif; ?>
     </p>
 
     <div class="error-buttons">

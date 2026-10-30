@@ -19,7 +19,7 @@ use Authorization\IdentityInterface;
  * - Who can delete clinicians
  *
  * Note: No CliniciansTablePolicy is needed because there's no query scoping.
- * Only staff can access clinician records, and they see all of them.
+ * Staff can view clinician records; only admins can manage them.
  */
 class ClinicianPolicy
 {
@@ -32,27 +32,27 @@ class ClinicianPolicy
     }
 
     /**
-     * Add clinician (only staff can create)
+     * Add clinician (only admins can create)
      */
     public function canAdd(IdentityInterface $user, Clinician $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
-     * Edit clinician (only staff can edit)
+     * Edit clinician (only admins can edit)
      */
     public function canEdit(IdentityInterface $user, Clinician $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
-     * Delete clinician (only staff can delete)
+     * Delete clinician (only admins can delete)
      */
     public function canDelete(IdentityInterface $user, Clinician $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
@@ -60,7 +60,7 @@ class ClinicianPolicy
      */
     public function canIndex(IdentityInterface $user): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**

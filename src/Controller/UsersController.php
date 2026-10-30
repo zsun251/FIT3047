@@ -53,6 +53,10 @@ class UsersController extends AppController
                 if (!$this->Users->save($user)) {
                     return false;
                 }
+                // The tr_users_after_insert trigger already creates the patients row
+                if ($patientsTable->exists(['user_id' => $user->id])) {
+                    return true;
+                }
                 $patient = $patientsTable->newEntity(['user_id' => $user->id]);
                 return (bool)$patientsTable->save($patient);
             });
@@ -156,7 +160,7 @@ class UsersController extends AppController
                         $mailer = new \Cake\Mailer\Mailer('default');
                         $mailer
                             ->setEmailFormat('both')
-                            ->setTo('noreply@u26s1187.iedev.org') // Development: send to noreply
+                            ->setTo($user->email)
                             ->setSubject('Reset your RespiraCare password');
 
                         // Use password_reset template
@@ -171,27 +175,22 @@ class UsersController extends AppController
                         ]);
 
                         $mailer->deliver();
-
-                        $this->Flash->success('Password reset instructions have been sent to noreply@u26s1187.iedev.org');
-
-                        // For development: show the link directly in flash message
-//                        $this->Flash->info(
-//                            'Development: <a href="' . $resetUrl . '" target="_blank">Click here to reset password</a>',
-//                            ['escape' => false]
-//                        );
                     } catch (\Exception $e) {
-                        // Show detailed error in development
-                        $this->Flash->error('Email error: ' . $e->getMessage());
                         \Cake\Log\Log::error('Password reset email failed: ' . $e->getMessage());
-                        \Cake\Log\Log::error('Stack trace: ' . $e->getTraceAsString());
                     }
-                } else {
-                    $this->Flash->error('Unable to process your request. Please try again.');
+
+                    // Development: show the link directly, since local setups usually have no mail server
+                    if (\Cake\Core\Configure::read('debug')) {
+                        $this->Flash->info(
+                            'Development: <a href="' . h($resetUrl) . '">Click here to reset password</a>',
+                            ['escape' => false]
+                        );
+                    }
                 }
-            } else {
-                // Don't reveal if email exists or not (security best practice)
-                $this->Flash->success('If that email exists, password reset instructions have been sent.');
             }
+
+            // Same message either way, so the form doesn't reveal which emails have accounts
+            $this->Flash->success('If that email exists, password reset instructions have been sent.');
 
             return $this->redirect(['action' => 'login']);
         }
@@ -376,14 +375,22 @@ class UsersController extends AppController
                 ];
                 $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => $allowedFields]);
 
-            } else {
+            } elseif (UserAccess::isAdmin($identity)) {
                 $user = $this->Users->patchEntity($user, $this->request->getData());
 
+            } else {
+                // Clinicians can't change roles, or log-in details of other accounts
+                $allowedFields = ['first_name', 'last_name', 'email', 'phone', 'address', 'date_of_birth'];
+                if ((int)$identity->getIdentifier() === (int)$id) {
+                    $allowedFields = array_merge($allowedFields, ['username', 'password']);
+                }
+                $user = $this->Users->patchEntity($user, $this->request->getData(), ['fields' => $allowedFields]);
             }
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Your information has been saved.'));
 
-                if ($isPatientSelfEdit) {
+                // Only admins can open the user list
+                if (!UserAccess::isAdmin($identity)) {
                     return $this->redirect([
                         'controller' => 'Users',
                         'action' => 'view',

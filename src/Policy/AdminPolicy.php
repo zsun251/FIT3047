@@ -15,15 +15,15 @@ class AdminPolicy
      */
     public function canView(IdentityInterface $user, Admin $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
-     * Add admin (only staff)
+     * Add admin (only admins)
      */
     public function canAdd(IdentityInterface $user, Admin $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
@@ -31,7 +31,7 @@ class AdminPolicy
      */
     public function canEdit(IdentityInterface $user, Admin $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
@@ -39,7 +39,7 @@ class AdminPolicy
      */
     public function canDelete(IdentityInterface $user, Admin $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 
     /**
@@ -47,6 +47,6 @@ class AdminPolicy
      */
     public function canIndex(IdentityInterface $user, Admin $resource): bool
     {
-        return UserAccess::isStaff($user);
+        return UserAccess::isAdmin($user);
     }
 }

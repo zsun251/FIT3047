@@ -92,8 +92,12 @@ if ($isStaff) {
             </div>
 
             <div>
-                <h1><?= $this->ContentBlock->text('health-records-patient-heading') ?></h1>
-                <p><?= $this->ContentBlock->text('health-records-patient-intro-text') ?></p>
+                <?php if ($isStaff): ?>
+                    <h1><?= h($patient->user->first_name . ' ' . $patient->user->last_name) ?>'s Health Records</h1>
+                <?php else: ?>
+                    <h1><?= $this->ContentBlock->text('health-records-patient-heading') ?></h1>
+                    <p><?= $this->ContentBlock->text('health-records-patient-intro-text') ?></p>
+                <?php endif; ?>
             </div>
         </div>
 

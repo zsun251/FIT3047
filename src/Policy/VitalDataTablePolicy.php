@@ -33,9 +33,16 @@ class VitalDataTablePolicy
      */
     public function scopeIndex(IdentityInterface $user, Query $query)
     {
-        // Staff see all
-        if (UserAccess::isStaff($user)) {
+        // Admins see all
+        if (UserAccess::isAdmin($user)) {
             return $query;
+        }
+
+        // Clinicians see their assigned patients
+        if (UserAccess::isClinician($user)) {
+            $patientIds = UserAccess::getAssignedPatientIds($user);
+
+            return $patientIds ? $query->where(['VitalData.patient_id IN' => $patientIds]) : $query->where(['1 = 0']);
         }
 
         // Patients see their own vital data
@@ -64,9 +71,16 @@ class VitalDataTablePolicy
      */
     public function scopePatientHistory(IdentityInterface $user, Query $query)
     {
-        // Staff see all patient history records
-        if (UserAccess::isStaff($user)) {
+        // Admins see all
+        if (UserAccess::isAdmin($user)) {
             return $query;
+        }
+
+        // Clinicians see their assigned patients
+        if (UserAccess::isClinician($user)) {
+            $patientIds = UserAccess::getAssignedPatientIds($user);
+
+            return $patientIds ? $query->where(['VitalData.patient_id IN' => $patientIds]) : $query->where(['1 = 0']);
         }
 
         // Patients see only their own history records
