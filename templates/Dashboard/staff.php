@@ -231,8 +231,8 @@ $breadcrumbs = [
 </div>
 
 
-<div class="table-responsive d-none d-md-block">
-    <table id="recentTable" class="table table-striped dt-hidden">
+<div class="rc-card table-responsive d-none d-md-block">
+    <table id="recentTable" class="rc-table rc-table-wrap dt-hidden">
         <thead>
         <tr>
             <th>Name</th>

@@ -238,7 +238,7 @@
 /* Users have more columns than Patients */
 .users-table-head,
 .user-row {
-    grid-template-columns: 0.55fr 1.4fr 1.8fr 1fr 1fr 1fr 0.9fr;
+    grid-template-columns: 0.45fr 1.4fr 2.5fr 0.8fr 0.9fr 0.9fr 0.9fr;
     align-items: start;
 }
 

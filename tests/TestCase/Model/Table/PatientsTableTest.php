@@ -24,12 +24,13 @@ class PatientsTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.Patients',
         'app.Users',
+        'app.Admins',
+        'app.Clinicians',
+        'app.Patients',
+        'app.ReminderSettings',
         'app.Appointments',
         'app.VitalData',
-        'app.VitalsReminders',
-        'app.Clinicians',
     ];
 
     /**
@@ -64,7 +65,9 @@ class PatientsTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertEmpty($this->Patients->newEntity(['user_id' => 1])->getErrors());
+        $this->assertArrayHasKey('user_id', $this->Patients->newEntity(['user_id' => ''])->getErrors());
+        $this->assertArrayHasKey('user_id', $this->Patients->newEntity(['user_id' => -1])->getErrors());
     }
 
     /**
@@ -75,6 +78,8 @@ class PatientsTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->Patients->newEntity(['user_id' => 999]);
+        $this->assertFalse($this->Patients->save($entity));
+        $this->assertArrayHasKey('user_id', $entity->getErrors());
     }
 }

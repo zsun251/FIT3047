@@ -3,12 +3,23 @@
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Clinician> $clinicians
  */
+
+$this->assign('title', __('Clinicians'));
 ?>
-<div class="clinicians index content">
-    <?= $this->Html->link(__('New Clinician'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Clinicians') ?></h3>
+<?= $this->element('page_header', [
+    'title' => __('Clinicians'),
+    'subtitle' => __('Manage clinician accounts'),
+    'backUrl' => ['controller' => 'Dashboard', 'action' => 'staff'],
+    'action' => $this->Html->link(
+        '<i class="bi bi-plus-circle"></i><span>' . __('New Clinician') . '</span>',
+        ['action' => 'add'],
+        ['class' => 'rc-action-pill', 'escape' => false]
+    ),
+]) ?>
+
+<div class="rc-card">
     <div class="table-responsive">
-        <table>
+        <table class="rc-table">
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
@@ -17,35 +28,15 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($clinicians as $clinician): ?>
+                <?php foreach ($clinicians as $row): ?>
                 <tr>
-                    <td><?= $this->Number->format($clinician->id) ?></td>
-                    <td><?= $clinician->hasValue('user') ? $this->Html->link($clinician->user->username, ['controller' => 'Users', 'action' => 'view', $clinician->user->id]) : '' ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $clinician->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $clinician->id]) ?>
-                        <?= $this->Form->postLink(
-                            __('Delete'),
-                            ['action' => 'delete', $clinician->id],
-                            [
-                                'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $clinician->id),
-                            ]
-                        ) ?>
-                    </td>
+                    <td><?= $this->Number->format($row->id) ?></td>
+                    <td><?= $row->hasValue('user') ? $this->Html->link($row->user->username, ['controller' => 'Users', 'action' => 'view', $row->user->id]) : '' ?></td>
+                    <td class="actions"><?= $this->element('row_actions', ['id' => $row->id]) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
-    </div>
+    <?= $this->element('table_pagination') ?>
 </div>

@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Policy\UserAccess;
+
 /**
  * Patients Controller
  *
@@ -187,6 +189,17 @@ class PatientsController extends AppController
         // Check authorization
         if (!$this->Authorization->can($patient, 'assign')) {
             $this->Flash->error(__('You do not have permission to assign patients.'));
+            return $this->redirect($this->getRedirectUrl());
+        }
+
+        // Clinicians manage their own patient list, not a colleague's
+        $identity = $this->request->getAttribute('identity');
+        if (
+            UserAccess::isClinician($identity)
+            && $clinicianId
+            && (int)$clinicianId !== UserAccess::getClinicianId($identity)
+        ) {
+            $this->Flash->error(__('You can only manage your own patients.'));
             return $this->redirect($this->getRedirectUrl());
         }
 

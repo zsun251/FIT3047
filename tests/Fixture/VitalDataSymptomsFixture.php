@@ -22,7 +22,7 @@ class VitalDataSymptomsFixture extends TestFixture
                 'id' => 1,
                 'vital_data_id' => 1,
                 'symptom_id' => 1,
-                'severity' => 'Lorem ip',
+                'severity' => 'mild',
                 'notes' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
             ],
         ];

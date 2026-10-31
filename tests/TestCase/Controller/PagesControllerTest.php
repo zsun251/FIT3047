@@ -38,8 +38,8 @@ class PagesControllerTest extends TestCase
         Configure::write('debug', true);
         $this->get('/pages/home');
         $this->assertResponseOk();
-        $this->assertResponseContains('CakePHP');
-        $this->assertResponseContains('<html>');
+        $this->assertResponseContains('RespiraCare');
+        $this->assertResponseContains('<html lang="en">');
     }
 
     /**
@@ -53,7 +53,7 @@ class PagesControllerTest extends TestCase
         $this->get('/pages/not_existing');
 
         $this->assertResponseError();
-        $this->assertResponseContains('Error');
+        $this->assertResponseContains('Page Not Found');
     }
 
     /**

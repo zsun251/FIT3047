@@ -4,32 +4,52 @@
  * @var \App\Model\Entity\Symptom $symptom
  * @var string[]|\Cake\Collection\CollectionInterface $vitalData
  */
+
+$this->assign('title', __('Edit Symptom'));
+echo $this->Html->css('form-shared', ['block' => true]);
 ?>
-<div class="row">
-    <aside class="column">
-        <div class="side-nav">
-            <h4 class="heading"><?= __('Actions') ?></h4>
-            <?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $symptom->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $symptom->id), 'class' => 'side-nav-item']
-            ) ?>
-            <?= $this->Html->link(__('List Symptoms'), ['action' => 'index'], ['class' => 'side-nav-item']) ?>
-        </div>
-    </aside>
-    <div class="column column-80">
-        <div class="symptoms form content">
-            <?= $this->Form->create($symptom) ?>
-            <fieldset>
-                <legend><?= __('Edit Symptom') ?></legend>
-                <?php
-                    echo $this->Form->control('symptom_name');
-                    echo $this->Form->control('description');
-                    echo $this->Form->control('vital_data._ids', ['options' => $vitalData]);
-                ?>
-            </fieldset>
-            <?= $this->Form->button(__('Submit')) ?>
-            <?= $this->Form->end() ?>
+<?= $this->element('page_header', ['backUrl' => ['action' => 'index']]) ?>
+
+<div class="form-container">
+    <div class="form-header">
+        <h1><?= __('Edit Symptom') ?></h1>
+        <?= $this->Form->postLink(
+            '<i class="bi bi-trash"></i> ' . __('Delete'),
+            ['action' => 'delete', $symptom->id],
+            [
+                'confirm' => __('Are you sure you want to delete # {0}?', $symptom->id),
+                'class' => 'btn btn-outline-danger',
+                'escape' => false,
+            ]
+        ) ?>
+    </div>
+
+    <?= $this->Form->create($symptom) ?>
+
+    <div class="form-section">
+        <div class="form-grid">
+            <div class="form-group form-grid-full">
+                <?= $this->Form->control('symptom_name') ?>
+            </div>
+            <div class="form-group form-grid-full">
+                <?= $this->Form->control('description', ['class' => 'form-control']) ?>
+            </div>
+            <div class="form-group form-grid-full">
+                <?= $this->Form->control('vital_data._ids', ['options' => $vitalData, 'class' => 'form-select']) ?>
+            </div>
         </div>
     </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> <?= __('Save Changes') ?>
+        </button>
+        <?= $this->Html->link(
+            '<i class="bi bi-x-circle"></i> ' . __('Cancel'),
+            ['action' => 'index'],
+            ['class' => 'btn btn-outline-secondary', 'escape' => false]
+        ) ?>
+    </div>
+
+    <?= $this->Form->end() ?>
 </div>

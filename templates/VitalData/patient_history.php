@@ -260,8 +260,8 @@ if ($isStaff) {
         <div class="table-section">
             <h2 class="section-title"><i class="bi bi-table"></i> Detailed Records</h2>
 
-            <div class="table-responsive">
-                <table class="vitals-table">
+            <div class="rc-card table-responsive">
+                <table class="rc-table vitals-table">
                     <thead>
                     <tr>
                         <th>Date & Time</th>

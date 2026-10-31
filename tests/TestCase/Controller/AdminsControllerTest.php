@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\AdminsController;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -15,6 +14,7 @@ use Cake\TestSuite\TestCase;
 class AdminsControllerTest extends TestCase
 {
     use IntegrationTestTrait;
+    use LoginAsTrait;
 
     /**
      * Fixtures
@@ -22,8 +22,12 @@ class AdminsControllerTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.Admins',
         'app.Users',
+        'app.Admins',
+        'app.Clinicians',
+        'app.Patients',
+        'app.ReminderSettings',
+        'app.CliniciansPatients',
     ];
 
     /**
@@ -34,7 +38,18 @@ class AdminsControllerTest extends TestCase
      */
     public function testIndex(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->get('/admins');
+        $this->assertRedirectsToLogin();
+
+        $this->loginAs('testclinician');
+        $this->get('/admins');
+        $this->assertRedirectContains('/dashboard/staff');
+        $this->assertFlashMessage('You do not have permission to access that page.');
+
+        $this->loginAs('testadmin');
+        $this->get('/admins');
+        $this->assertResponseOk();
+        $this->assertResponseContains('testadmin');
     }
 
     /**
@@ -45,7 +60,14 @@ class AdminsControllerTest extends TestCase
      */
     public function testView(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->loginAs('testpatient');
+        $this->get('/admins/view/1');
+        $this->assertRedirectContains('/dashboard/patient');
+
+        $this->loginAs('testadmin');
+        $this->get('/admins/view/1');
+        $this->assertResponseOk();
+        $this->assertResponseContains('Admin #1');
     }
 
     /**
@@ -56,7 +78,31 @@ class AdminsControllerTest extends TestCase
      */
     public function testAdd(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->loginAs('testclinician');
+        $this->get('/admins/add');
+        $this->assertRedirectContains('/dashboard/staff');
+
+        $this->loginAs('testadmin');
+        $this->get('/admins/add');
+        $this->assertResponseOk();
+
+        // The database only allows admin rows for users of type admin
+        $users = $this->getTableLocator()->get('Users');
+        $user = $users->newEntity([
+            'username' => 'newadmin',
+            'password' => 'Passw0rd!',
+            'first_name' => 'New',
+            'last_name' => 'Admin',
+            'email' => 'newadmin@example.com',
+            'type' => 'admin',
+        ]);
+        $users->saveOrFail($user);
+        $admins = $this->getTableLocator()->get('Admins');
+        $admins->deleteAll(['user_id' => $user->id]);
+
+        $this->post('/admins/add', ['user_id' => $user->id]);
+        $this->assertRedirectContains('/admins');
+        $this->assertTrue($admins->exists(['user_id' => $user->id]));
     }
 
     /**
@@ -67,7 +113,18 @@ class AdminsControllerTest extends TestCase
      */
     public function testEdit(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->loginAs('testclinician');
+        $this->post('/admins/edit/1', ['user_id' => 1]);
+        $this->assertRedirectContains('/dashboard/staff');
+
+        $this->loginAs('testadmin');
+        $this->get('/admins/edit/1');
+        $this->assertResponseOk();
+        $this->assertResponseContains('Edit Admin');
+
+        $this->post('/admins/edit/1', ['user_id' => 1]);
+        $this->assertRedirectContains('/admins');
+        $this->assertFlashMessage('The admin has been saved.');
     }
 
     /**
@@ -78,6 +135,16 @@ class AdminsControllerTest extends TestCase
      */
     public function testDelete(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $admins = $this->getTableLocator()->get('Admins');
+
+        $this->loginAs('testclinician');
+        $this->post('/admins/delete/1');
+        $this->assertRedirectContains('/dashboard/staff');
+        $this->assertTrue($admins->exists(['id' => 1]));
+
+        $this->loginAs('testadmin');
+        $this->post('/admins/delete/1');
+        $this->assertRedirectContains('/admins');
+        $this->assertFalse($admins->exists(['id' => 1]));
     }
 }

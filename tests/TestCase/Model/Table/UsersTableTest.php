@@ -28,6 +28,7 @@ class UsersTableTest extends TestCase
         'app.Admins',
         'app.Clinicians',
         'app.Patients',
+        'app.ReminderSettings',
     ];
 
     /**
@@ -62,7 +63,31 @@ class UsersTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $valid = [
+            'username' => 'newuser',
+            'password' => 'Passw0rd!',
+            'first_name' => 'New',
+            'last_name' => 'User',
+            'email' => 'newuser@example.com',
+            'phone' => '0412345678',
+            'address' => '1 Main Street',
+            'date_of_birth' => '2000-01-01',
+            'type' => 'patient',
+        ];
+        $errors = fn(array $change): array => $this->Users->newEntity($change + $valid)->getErrors();
+
+        $this->assertEmpty($errors([]));
+        $this->assertArrayHasKey('username', $errors(['username' => 'ab']));
+        $this->assertArrayHasKey('username', $errors(['username' => 'a..b']));
+        $this->assertArrayHasKey('password', $errors(['password' => 'short1A']));
+        $this->assertArrayHasKey('password', $errors(['password' => 'alllowercase1']));
+        $this->assertArrayHasKey('first_name', $errors(['first_name' => 'N3w']));
+        $this->assertArrayHasKey('email', $errors(['email' => 'not-an-email']));
+        $this->assertArrayHasKey('phone', $errors(['phone' => '0112345678']));
+        $this->assertArrayHasKey('address', $errors(['address' => 'No number here']));
+        $this->assertArrayHasKey('date_of_birth', $errors(['date_of_birth' => '2999-01-01']));
+        $this->assertArrayHasKey('date_of_birth', $errors(['date_of_birth' => '1800-01-01']));
+        $this->assertArrayHasKey('type', $errors(['type' => 'superuser']));
     }
 
     /**
@@ -73,6 +98,16 @@ class UsersTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->Users->newEntity([
+            'username' => 'testadmin',
+            'password' => 'Passw0rd!',
+            'first_name' => 'New',
+            'last_name' => 'User',
+            'email' => 'testadmin@example.com',
+            'type' => 'patient',
+        ]);
+        $this->assertFalse($this->Users->save($entity));
+        $this->assertArrayHasKey('username', $entity->getErrors());
+        $this->assertArrayHasKey('email', $entity->getErrors());
     }
 }

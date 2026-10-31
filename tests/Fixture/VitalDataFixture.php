@@ -21,11 +21,11 @@ class VitalDataFixture extends TestFixture
             [
                 'id' => 1,
                 'patient_id' => 1,
-                'oxygen_saturation' => 1.5,
-                'respiratory_rate' => 1,
-                'blood_pressure' => 'Lorem ip',
-                'pulse_oximetry' => 1.5,
-                'weight' => 1.5,
+                'oxygen_saturation' => 96.5,
+                'respiratory_rate' => 16,
+                'blood_pressure' => '120/80',
+                'pulse_oximetry' => 96.5,
+                'weight' => 70.5,
                 'recorded_at' => '2026-03-21 03:31:02',
             ],
         ];

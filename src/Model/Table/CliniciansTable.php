@@ -88,6 +88,11 @@ class CliniciansTable extends Table
     public function buildRules(RulesChecker $rules): RulesChecker
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
+        // The database refuses this too, but with an exception instead of a form error
+        $rules->addUpdate(fn($entity) => !$entity->isDirty('user_id'), 'userIdFixed', [
+            'errorField' => 'user_id',
+            'message' => __('A clinician record cannot be moved to another user.'),
+        ]);
 
         return $rules;
     }

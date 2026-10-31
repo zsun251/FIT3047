@@ -241,6 +241,15 @@ if (!$backUrl || str_contains($backUrl, '/appointments')) {
 
             <div class="admin-appointment-list" id="appointmentList">
 
+                <div class="admin-appointment-head">
+                    <span><?= __('Patient') ?></span>
+                    <span><?= __('Date') ?></span>
+                    <span><?= __('Clinician') ?></span>
+                    <span><?= __('Duration') ?></span>
+                    <span><?= __('Status') ?></span>
+                    <span><?= __('Actions') ?></span>
+                </div>
+
                 <?php foreach ($appointmentList as $appointment): ?>
 
                     <?php

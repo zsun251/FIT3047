@@ -3,12 +3,23 @@
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Admin> $admins
  */
+
+$this->assign('title', __('Admins'));
 ?>
-<div class="admins index content">
-    <?= $this->Html->link(__('New Admin'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Admins') ?></h3>
+<?= $this->element('page_header', [
+    'title' => __('Admins'),
+    'subtitle' => __('Manage administrator accounts'),
+    'backUrl' => ['controller' => 'Dashboard', 'action' => 'staff'],
+    'action' => $this->Html->link(
+        '<i class="bi bi-plus-circle"></i><span>' . __('New Admin') . '</span>',
+        ['action' => 'add'],
+        ['class' => 'rc-action-pill', 'escape' => false]
+    ),
+]) ?>
+
+<div class="rc-card">
     <div class="table-responsive">
-        <table>
+        <table class="rc-table">
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
@@ -17,35 +28,15 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($admins as $admin): ?>
+                <?php foreach ($admins as $row): ?>
                 <tr>
-                    <td><?= $this->Number->format($admin->id) ?></td>
-                    <td><?= $admin->hasValue('user') ? $this->Html->link($admin->user->username, ['controller' => 'Users', 'action' => 'view', $admin->user->id]) : '' ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $admin->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $admin->id]) ?>
-                        <?= $this->Form->postLink(
-                            __('Delete'),
-                            ['action' => 'delete', $admin->id],
-                            [
-                                'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $admin->id),
-                            ]
-                        ) ?>
-                    </td>
+                    <td><?= $this->Number->format($row->id) ?></td>
+                    <td><?= $row->hasValue('user') ? $this->Html->link($row->user->username, ['controller' => 'Users', 'action' => 'view', $row->user->id]) : '' ?></td>
+                    <td class="actions"><?= $this->element('row_actions', ['id' => $row->id]) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
-    </div>
+    <?= $this->element('table_pagination') ?>
 </div>

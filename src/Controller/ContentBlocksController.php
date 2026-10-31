@@ -75,11 +75,13 @@ class ContentBlocksController extends AppController
             $data = $this->prepareContentBlockData($contentBlock, $this->request->getData());
 
             if ($data !== null) {
-                if (array_key_exists('value', $data) && $data['value'] !== $contentBlock->value) {
-                    $data['previous_value'] = $contentBlock->value;
-                }
-
+                $previousValue = $contentBlock->value;
                 $contentBlock = $this->ContentBlocks->patchEntity($contentBlock, $data);
+
+                // Set directly: the plugin's entity only allows mass assignment of `value`
+                if ($contentBlock->value !== $previousValue) {
+                    $contentBlock->previous_value = $previousValue;
+                }
 
                 if ($this->ContentBlocks->save($contentBlock)) {
                     $this->Flash->success(__('The content block has been saved.'));

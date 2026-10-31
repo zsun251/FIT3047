@@ -26,6 +26,7 @@
 
     <?= $this->fetch('datatables_css') ?>
     <?= $this->fetch('css') ?>
+    <?= $this->Html->css('theme') ?>
 </head>
 <body class="d-flex flex-column min-vh-100">
 <?= $this->element('header') ?>

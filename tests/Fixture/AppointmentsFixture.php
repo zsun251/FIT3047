@@ -24,7 +24,7 @@ class AppointmentsFixture extends TestFixture
                 'clinician_id' => 1,
                 'scheduled_at' => '2026-03-21 03:30:54',
                 'duration' => 1,
-                'status' => 'Lorem ipsum dolor ',
+                'status' => 'upcoming',
             ],
         ];
         parent::init();

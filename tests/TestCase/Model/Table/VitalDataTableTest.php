@@ -24,8 +24,12 @@ class VitalDataTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.VitalData',
+        'app.Users',
+        'app.Admins',
+        'app.Clinicians',
         'app.Patients',
+        'app.ReminderSettings',
+        'app.VitalData',
         'app.Symptoms',
     ];
 
@@ -61,7 +65,12 @@ class VitalDataTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $valid = ['patient_id' => 1] + ['oxygen_saturation' => 95, 'respiratory_rate' => 16, 'blood_pressure' => '120/80', 'pulse_oximetry' => 95, 'weight' => 70];
+        $this->assertEmpty($this->VitalData->newEntity($valid)->getErrors());
+        $this->assertArrayHasKey('patient_id', $this->VitalData->newEntity(['patient_id' => ''] + $valid)->getErrors());
+        $this->assertArrayHasKey('oxygen_saturation', $this->VitalData->newEntity(['oxygen_saturation' => 150] + $valid)->getErrors());
+        $this->assertArrayHasKey('oxygen_saturation', $this->VitalData->newEntity(['oxygen_saturation' => 'abc'] + $valid)->getErrors());
+        $this->assertArrayHasKey('blood_pressure', $this->VitalData->newEntity(['blood_pressure' => 'high'] + $valid)->getErrors());
     }
 
     /**
@@ -72,6 +81,8 @@ class VitalDataTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->VitalData->newEntity(['patient_id' => 999] + ['oxygen_saturation' => 95, 'respiratory_rate' => 16, 'blood_pressure' => '120/80', 'pulse_oximetry' => 95, 'weight' => 70]);
+        $this->assertFalse($this->VitalData->save($entity));
+        $this->assertArrayHasKey('patient_id', $entity->getErrors());
     }
 }

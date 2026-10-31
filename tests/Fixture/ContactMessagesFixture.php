@@ -20,15 +20,15 @@ class ContactMessagesFixture extends TestFixture
         $this->records = [
             [
                 'id' => 1,
-                'first_name' => 'Lorem ipsum dolor sit amet',
-                'last_name' => 'Lorem ipsum dolor sit amet',
-                'contact_number' => 'Lorem ipsum dolor sit amet',
-                'email' => 'Lorem ipsum dolor sit amet',
-                'message' => 'Lorem ipsum dolor sit amet, aliquet feugiat. Convallis morbi fringilla gravida, phasellus feugiat dapibus velit nunc, pulvinar eget sollicitudin venenatis cum nullam, vivamus ut a sed, mollitia lectus. Nulla vestibulum massa neque ut et, id hendrerit sit, feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.',
-                'status' => 'Lorem ip',
+                'first_name' => 'Casey',
+                'last_name' => 'Jones',
+                'contact_number' => '0400000000',
+                'email' => 'casey@example.com',
+                'message' => 'I need help with my account.',
+                'status' => 'unread',
                 'submitted_at' => '2026-03-21 15:46:22',
-                'reviewed_by' => 1,
-                'reviewed_at' => '2026-03-21 15:46:22',
+                'reviewed_by' => null,
+                'reviewed_at' => null,
             ],
         ];
         parent::init();

@@ -24,9 +24,14 @@ class VitalDataSymptomsTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.VitalDataSymptoms',
+        'app.Users',
+        'app.Admins',
+        'app.Clinicians',
+        'app.Patients',
+        'app.ReminderSettings',
         'app.VitalData',
         'app.Symptoms',
+        'app.VitalDataSymptoms',
     ];
 
     /**
@@ -61,7 +66,10 @@ class VitalDataSymptomsTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $valid = ['vital_data_id' => 1, 'symptom_id' => 1, 'severity' => 'mild'];
+        $this->assertEmpty($this->VitalDataSymptoms->newEntity($valid)->getErrors());
+        $this->assertArrayHasKey('severity', $this->VitalDataSymptoms->newEntity(['vital_data_id' => 1, 'symptom_id' => 1])->getErrors());
+        $this->assertArrayHasKey('severity', $this->VitalDataSymptoms->newEntity(['severity' => str_repeat('x', 11)] + $valid)->getErrors());
     }
 
     /**
@@ -72,6 +80,9 @@ class VitalDataSymptomsTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->VitalDataSymptoms->newEntity(['vital_data_id' => 999, 'symptom_id' => 999, 'severity' => 'mild']);
+        $this->assertFalse($this->VitalDataSymptoms->save($entity));
+        $this->assertArrayHasKey('vital_data_id', $entity->getErrors());
+        $this->assertArrayHasKey('symptom_id', $entity->getErrors());
     }
 }

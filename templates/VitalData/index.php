@@ -251,7 +251,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
         </div>
 
         <div class="table-responsive d-none d-xxl-block">
-            <table id="vitalDataTable" class="table table-striped table-hover dt-hidden mb-0">
+            <table id="vitalDataTable" class="rc-table rc-table-wrap dt-hidden">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -259,7 +259,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                     <th>Vitals</th>
                     <th>Symptoms</th>
                     <th>Recorded</th>
-                    <th class="text-center">Actions</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -357,7 +357,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                             <small class="text-muted"><?= h($vitalDataEntity->recorded_at->format('g:i A')) ?></small>
                         </td>
 
-                        <td class="align-middle text-center nowrap">
+                        <td class="align-middle nowrap">
                             <div class="btn-group" role="group">
                                 <?= $this->Html->link(
                                     '<i class="bi bi-clock-history"></i>',

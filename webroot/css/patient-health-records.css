@@ -435,48 +435,9 @@
     box-shadow: 0 8px 30px rgba(37, 99, 235, 0.06);
 }
 
-.vitals-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.vitals-table thead {
-    background: #f8fbff;
-    border-bottom: 1px solid #edf2ff;
-}
-
-.vitals-table thead th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: #495057;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
 .vitals-table thead th i {
     margin-right: 0.35rem;
     color: #0d6efd;
-}
-
-.vitals-table tbody tr {
-    border-bottom: 1px solid #e2e8f0;
-    transition: background-color 0.2s ease;
-}
-
-.vitals-table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.vitals-table tbody tr:last-child {
-    border-bottom: none;
-}
-
-.vitals-table tbody td {
-    padding: 1rem;
-    color: #212529;
-    font-size: 0.938rem;
 }
 
 .date-cell {
@@ -614,15 +575,6 @@
 
     .chart-container {
         padding: 1rem;
-    }
-
-    .vitals-table {
-        font-size: 0.813rem;
-    }
-
-    .vitals-table thead th,
-    .vitals-table tbody td {
-        padding: 0.75rem 0.5rem;
     }
 
     .footer-actions {

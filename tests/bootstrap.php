@@ -17,7 +17,10 @@ declare(strict_types=1);
 
 use Cake\Chronos\Chronos;
 use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\ConnectionHelper;
+use Cake\TestSuite\Fixture\SchemaLoader;
+use Migrations\Migrations;
 use Migrations\TestSuite\Migrator;
 
 /**
@@ -57,4 +60,9 @@ ConnectionHelper::addTestAliases();
 // use Cake\TestSuite\Fixture\SchemaLoader;
 // (new SchemaLoader())->loadSqlFiles('./tests/schema.sql', 'test');
 
-(new Migrator())->run();
+// The app's base tables are not in migrations, so build them from the schema file.
+(new SchemaLoader())->loadSqlFiles(CONFIG . 'schema' . DS . 'schema.sqlite.sql', 'test');
+(new Migrator())->run(['plugin' => 'ContentBlocks', 'skip' => ['*']]);
+(new Migrations(['connection' => 'test']))->seed(['seed' => 'ContentBlocksSeed']);
+// The builtin migrate stores the `modified` default as a literal string on SQLite.
+ConnectionManager::get('test')->execute('UPDATE content_blocks SET modified = CURRENT_TIMESTAMP');

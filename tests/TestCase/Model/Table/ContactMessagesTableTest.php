@@ -59,6 +59,18 @@ class ContactMessagesTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $valid = ['first_name' => 'Robin', 'last_name' => 'Lee', 'contact_number' => '0411111111', 'email' => 'robin@example.com', 'message' => 'Hello'];
+        $errors = fn(array $change): array => $this->ContactMessages->newEntity($change + $valid)->getErrors();
+
+        $this->assertEmpty($errors([]));
+        $this->assertArrayHasKey('first_name', $errors(['first_name' => 'R0bin']));
+        $this->assertArrayHasKey('first_name', $errors(['first_name' => ' Robin']));
+        $this->assertArrayHasKey('last_name', $errors(['last_name' => 'L33']));
+        $this->assertArrayHasKey('contact_number', $errors(['contact_number' => '12345']));
+        $this->assertArrayHasKey('contact_number', $errors(['contact_number' => 'abcdefghij']));
+        $this->assertArrayHasKey('email', $errors(['email' => 'not-an-email']));
+        $this->assertArrayHasKey('message', $errors(['message' => '']));
+        $this->assertArrayHasKey('message', $errors(['message' => str_repeat('x', 501)]));
+        $this->assertArrayHasKey('status', $errors(['status' => 'spam']));
     }
 }

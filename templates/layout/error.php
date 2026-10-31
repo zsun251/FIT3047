@@ -16,7 +16,8 @@
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
         'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css',
         'styles',
-        'error'
+        'error',
+        'theme'
     ]) ?>
 </head>
 <body class="error-page">

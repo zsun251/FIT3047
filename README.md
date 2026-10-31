@@ -153,3 +153,5 @@ For a production deployment, import `config/schema/schema.sql` and then `config/
 - **`no such table` errors:** the SQLite database was not built. Run `bin/cake setup_sqlite --force`.
 - **Can't connect to MySQL:** check the `Datasources.default` values in `config/app_local.php`, and make sure MySQL/MariaDB is running.
 - **Password reset emails don't arrive:** set up `EmailTransport` in `config/app_local.php` with a real SMTP server.
+- **`Missing or invalid CSRF cookie` or `CSRF token ... did not match` when logging in:** your browser still has a cookie or form from an earlier install. Reload the login page and try again. If that doesn't help, delete the cookies for `localhost`. You don't need to rebuild the database.
+- **`Security verification failed` on the contact form:** your `config/app_local.php` has no `Turnstile` keys. Copy that section from `config/app_local.example.php`.

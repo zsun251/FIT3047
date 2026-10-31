@@ -7,11 +7,13 @@
  * @var string|null $subtitle Optional subtitle/description
  * @var string|null $backUrl URL to go back to
  * @var bool $showBack Whether to show back button
+ * @var string|null $action Optional HTML for the page's main action button
  */
 $showBack = $showBack ?? true;
 $backUrl = $backUrl ?? null;
 $title = $title ?? null;
 $subtitle = $subtitle ?? null;
+$action = $action ?? null;
 
 $renderBackButton = function () use ($showBack, $backUrl) {
     if (!$showBack) {
@@ -53,6 +55,8 @@ $hasHeading = $title || $subtitle;
                     <p class="rc-dashboard-subtitle rc-page-subtitle page-subtitle"><?= h($subtitle) ?></p>
                 <?php endif; ?>
             </div>
+
+            <?= $action ?>
         </div>
     <?php elseif ($showBack): ?>
         <div class="rc-page-back-row">

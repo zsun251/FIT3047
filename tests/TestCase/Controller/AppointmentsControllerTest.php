@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\AppointmentsController;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
@@ -15,6 +14,7 @@ use Cake\TestSuite\TestCase;
 class AppointmentsControllerTest extends TestCase
 {
     use IntegrationTestTrait;
+    use LoginAsTrait;
 
     /**
      * Fixtures
@@ -22,10 +22,13 @@ class AppointmentsControllerTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.Appointments',
-        'app.Patients',
+        'app.Users',
+        'app.Admins',
         'app.Clinicians',
-        'app.AppointmentReminders',
+        'app.Patients',
+        'app.ReminderSettings',
+        'app.CliniciansPatients',
+        'app.Appointments',
     ];
 
     /**
@@ -36,7 +39,23 @@ class AppointmentsControllerTest extends TestCase
      */
     public function testIndex(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->get('/appointments');
+        $this->assertRedirectsToLogin();
+
+        $this->loginAs('testpatient');
+        $this->get('/appointments');
+        $this->assertRedirectContains('/appointments/upcoming-appointments');
+
+        $this->loginAs('testclinician');
+        $this->get('/appointments');
+        $this->assertResponseOk();
+        $this->assertResponseContains('Test');
+
+        // Another clinician's appointments are hidden
+        $this->loginAs('otherclinician');
+        $this->get('/appointments');
+        $this->assertResponseOk();
+        $this->assertSame(0, $this->viewVariable('appointments')->count());
     }
 
     /**
@@ -47,7 +66,21 @@ class AppointmentsControllerTest extends TestCase
      */
     public function testView(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->loginAs('testpatient');
+        $this->get('/appointments/view/1');
+        $this->assertResponseOk();
+
+        $this->loginAs('otherpatient');
+        $this->get('/appointments/view/1');
+        $this->assertResponseCode(403);
+
+        $this->loginAs('otherclinician');
+        $this->get('/appointments/view/1');
+        $this->assertResponseCode(403);
+
+        $this->loginAs('testadmin');
+        $this->get('/appointments/view/1');
+        $this->assertResponseOk();
     }
 
     /**
@@ -58,7 +91,23 @@ class AppointmentsControllerTest extends TestCase
      */
     public function testAdd(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $appointments = $this->getTableLocator()->get('Appointments');
+        $data = ['patient_id' => 1, 'clinician_id' => 1, 'scheduled_at' => '2030-01-15 10:00:00', 'duration' => 30];
+
+        $this->loginAs('testpatient');
+        $this->get('/appointments/add');
+        $this->assertResponseCode(403);
+
+        // A clinician can't book for a patient who isn't assigned to them
+        $this->loginAs('otherclinician');
+        $this->post('/appointments/add', ['clinician_id' => 2] + $data);
+        $this->assertResponseCode(403);
+        $this->assertFalse($appointments->exists(['clinician_id' => 2]));
+
+        $this->loginAs('testclinician');
+        $this->post('/appointments/add', $data);
+        $this->assertRedirectContains('/appointments');
+        $this->assertSame(2, $appointments->find()->where(['clinician_id' => 1])->count());
     }
 
     /**
@@ -69,7 +118,17 @@ class AppointmentsControllerTest extends TestCase
      */
     public function testEdit(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->loginAs('testpatient');
+        $this->get('/appointments/edit/1');
+        $this->assertResponseCode(403);
+
+        $this->loginAs('otherclinician');
+        $this->get('/appointments/edit/1');
+        $this->assertResponseCode(403);
+
+        $this->loginAs('testclinician');
+        $this->get('/appointments/edit/1');
+        $this->assertResponseOk();
     }
 
     /**
@@ -80,6 +139,16 @@ class AppointmentsControllerTest extends TestCase
      */
     public function testDelete(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $appointments = $this->getTableLocator()->get('Appointments');
+
+        $this->loginAs('testpatient');
+        $this->post('/appointments/delete/1');
+        $this->assertResponseCode(403);
+        $this->assertTrue($appointments->exists(['id' => 1]));
+
+        $this->loginAs('testclinician');
+        $this->post('/appointments/delete/1');
+        $this->assertRedirectContains('/appointments');
+        $this->assertFalse($appointments->exists(['id' => 1]));
     }
 }

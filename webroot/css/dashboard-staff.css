@@ -59,18 +59,6 @@
     color: #374151;
 }
 
-#recentTable tbody td {
-    padding: 14px 14px;
-    vertical-align: middle;
-}
-
-#recentTable thead th {
-    font-size: 0.88rem;
-    font-weight: 600;
-    padding: 14px;
-    color: #374151;
-}
-
 /* ========================================================================
    CONTACT MESSAGE STATUS BADGES
    ======================================================================== */
@@ -475,18 +463,6 @@
 
 
 /* Clickable table rows */
-#recentTable tbody tr {
-    transition: all 0.2s ease;
-}
-
-#recentTable tbody tr:hover {
-    background: #f8fbff !important;
-}
-
-#recentTable tbody td {
-    border-color: #eef2f7;
-}
-
 /* Prevent action buttons from triggering row click */
 #recentTable tbody tr td:last-child {
     pointer-events: none;
@@ -514,11 +490,6 @@
 
 #recentTable {
     width: 100% !important;
-
-    border-collapse: separate;
-    border-spacing: 0 14px;
-
-    background: transparent;
 }
 
 #recentTable_wrapper {
@@ -532,35 +503,6 @@
 .dataTables_wrapper {
     background: transparent !important;
 }
-
-#recentTable thead th {
-    background: transparent;
-}
-
-#recentTable tbody tr {
-    background: transparent;
-    box-shadow: none;
-}
-
-#recentTable tbody td {
-    background: rgba(255,255,255,0.82);
-
-    box-shadow:
-        0 10px 24px rgba(148, 163, 184, 0.08),
-        0 2px 8px rgba(0,0,0,0.02);
-}
-
-#recentTable tbody td:first-child {
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-}
-
-#recentTable tbody td:last-child {
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-}
-
-
 
 #recentTable {
     margin-bottom: 0 !important;

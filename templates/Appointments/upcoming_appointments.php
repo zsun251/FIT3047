@@ -122,32 +122,19 @@ if ($isStaff) {
 
 <!-- Header Section -->
 <?= $this->element('page_header', [
-    'breadcrumbs' => $breadcrumbs
+    'title' => $this->ContentBlock->text('appointments-patient-heading'),
+    'subtitle' => __('Review your upcoming appointments and your recent appointment history in one place.'),
+    'action' => $this->Html->link(
+        '<i class="bi bi-envelope"></i> Contact Clinic',
+        ['controller' => 'ContactMessages', 'action' => 'add'],
+        [
+            'class' => 'btn btn-outline-primary appointments-contact-btn',
+            'escape' => false
+        ]
+    ),
 ]) ?>
 
 <div class="form-container appointments-page">
-    <div class="form-header appointments-page-header">
-
-        <div class="appointments-page-heading">
-            <h1><?= $this->ContentBlock->text('appointments-patient-heading') ?></h1>
-            <p class="appointments-page-subtitle">
-                <?= __('Review your upcoming appointments and your recent appointment history in one place.') ?>
-            </p>
-        </div>
-
-        <div class="appointments-header-actions">
-            <?= $this->Html->link(
-                '<i class="bi bi-envelope"></i> Contact Clinic',
-                ['controller' => 'ContactMessages', 'action' => 'add'],
-                [
-                    'class' => 'btn btn-outline-primary appointments-contact-btn',
-                    'escape' => false
-                ]
-            ) ?>
-        </div>
-
-    </div>
-
     <div class="form-info-alert">
         <i class="bi bi-info-circle"></i>
         <p>

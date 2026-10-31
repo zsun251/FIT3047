@@ -237,8 +237,11 @@ class UsersController extends AppController
 
             if ($password !== $confirmPassword) {
                 $this->Flash->error('Passwords do not match.');
+            } elseif (trim((string)$password) === '') {
+                $this->Flash->error('Please enter a new password.');
             } else {
-                $user->password = $password;
+                // Patch rather than assign, so the password rules apply
+                $user = $this->Users->patchEntity($user, ['password' => $password], ['fields' => ['password']]);
                 $user->reset_token = null;
                 $user->reset_token_expires = null;
 
@@ -246,7 +249,8 @@ class UsersController extends AppController
                     $this->Flash->success('Your password has been reset. You can now log in.');
                     return $this->redirect(['action' => 'login']);
                 } else {
-                    $this->Flash->error('Unable to reset password. Please try again.');
+                    $errors = $user->getError('password');
+                    $this->Flash->error($errors ? reset($errors) : 'Unable to reset password. Please try again.');
                 }
             }
         }

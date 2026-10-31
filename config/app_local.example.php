@@ -99,4 +99,15 @@ return [
             'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
         ],
     ],
+
+    /*
+     * Cloudflare Turnstile keys for the contact form.
+     *
+     * These are Cloudflare's public test keys, which always pass verification.
+     * Use real keys from the Cloudflare dashboard in production.
+     */
+    'Turnstile' => [
+        'siteKey' => '1x00000000000000000000AA',
+        'secretKey' => '1x0000000000000000000000000000000AA',
+    ],
 ];

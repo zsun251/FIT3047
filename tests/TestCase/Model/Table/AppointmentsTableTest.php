@@ -24,10 +24,12 @@ class AppointmentsTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.Appointments',
-        'app.Patients',
+        'app.Users',
+        'app.Admins',
         'app.Clinicians',
-        'app.AppointmentReminders',
+        'app.Patients',
+        'app.ReminderSettings',
+        'app.Appointments',
     ];
 
     /**
@@ -62,7 +64,11 @@ class AppointmentsTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $valid = ['patient_id' => 1, 'clinician_id' => 1, 'scheduled_at' => '2030-01-15 10:00:00', 'duration' => 30, 'status' => 'upcoming'];
+        $this->assertEmpty($this->Appointments->newEntity($valid)->getErrors());
+        $this->assertArrayHasKey('scheduled_at', $this->Appointments->newEntity(['patient_id' => 1, 'clinician_id' => 1, 'duration' => 30])->getErrors());
+        $this->assertArrayHasKey('duration', $this->Appointments->newEntity(['duration' => ''] + $valid)->getErrors());
+        $this->assertArrayHasKey('status', $this->Appointments->newEntity(['status' => str_repeat('x', 21)] + $valid)->getErrors());
     }
 
     /**
@@ -73,6 +79,9 @@ class AppointmentsTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->Appointments->newEntity(['patient_id' => 999, 'clinician_id' => 999, 'scheduled_at' => '2030-01-15 10:00:00', 'duration' => 30]);
+        $this->assertFalse($this->Appointments->save($entity));
+        $this->assertArrayHasKey('patient_id', $entity->getErrors());
+        $this->assertArrayHasKey('clinician_id', $entity->getErrors());
     }
 }

@@ -24,8 +24,11 @@ class AdminsTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.Admins',
         'app.Users',
+        'app.Admins',
+        'app.Clinicians',
+        'app.Patients',
+        'app.ReminderSettings',
     ];
 
     /**
@@ -60,7 +63,9 @@ class AdminsTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertEmpty($this->Admins->newEntity(['user_id' => 1])->getErrors());
+        $this->assertArrayHasKey('user_id', $this->Admins->newEntity(['user_id' => ''])->getErrors());
+        $this->assertArrayHasKey('user_id', $this->Admins->newEntity(['user_id' => -1])->getErrors());
     }
 
     /**
@@ -71,6 +76,8 @@ class AdminsTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->Admins->newEntity(['user_id' => 999]);
+        $this->assertFalse($this->Admins->save($entity));
+        $this->assertArrayHasKey('user_id', $entity->getErrors());
     }
 }

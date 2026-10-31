@@ -3,12 +3,23 @@
  * @var \App\View\AppView $this
  * @var iterable<\App\Model\Entity\Symptom> $symptoms
  */
+
+$this->assign('title', __('Symptoms'));
 ?>
-<div class="symptoms index content">
-    <?= $this->Html->link(__('New Symptom'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Symptoms') ?></h3>
+<?= $this->element('page_header', [
+    'title' => __('Symptoms'),
+    'subtitle' => __('Manage the symptoms patients can report'),
+    'backUrl' => ['controller' => 'Dashboard', 'action' => 'staff'],
+    'action' => $this->Html->link(
+        '<i class="bi bi-plus-circle"></i><span>' . __('New Symptom') . '</span>',
+        ['action' => 'add'],
+        ['class' => 'rc-action-pill', 'escape' => false]
+    ),
+]) ?>
+
+<div class="rc-card">
     <div class="table-responsive">
-        <table>
+        <table class="rc-table">
             <thead>
                 <tr>
                     <th><?= $this->Paginator->sort('id') ?></th>
@@ -17,35 +28,15 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($symptoms as $symptom): ?>
+                <?php foreach ($symptoms as $row): ?>
                 <tr>
-                    <td><?= $this->Number->format($symptom->id) ?></td>
-                    <td><?= h($symptom->symptom_name) ?></td>
-                    <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $symptom->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $symptom->id]) ?>
-                        <?= $this->Form->postLink(
-                            __('Delete'),
-                            ['action' => 'delete', $symptom->id],
-                            [
-                                'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $symptom->id),
-                            ]
-                        ) ?>
-                    </td>
+                    <td><?= $this->Number->format($row->id) ?></td>
+                    <td><?= h($row->symptom_name) ?></td>
+                    <td class="actions"><?= $this->element('row_actions', ['id' => $row->id]) ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
-    <div class="paginator">
-        <ul class="pagination">
-            <?= $this->Paginator->first('<< ' . __('first')) ?>
-            <?= $this->Paginator->prev('< ' . __('previous')) ?>
-            <?= $this->Paginator->numbers() ?>
-            <?= $this->Paginator->next(__('next') . ' >') ?>
-            <?= $this->Paginator->last(__('last') . ' >>') ?>
-        </ul>
-        <p><?= $this->Paginator->counter(__('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')) ?></p>
-    </div>
+    <?= $this->element('table_pagination') ?>
 </div>

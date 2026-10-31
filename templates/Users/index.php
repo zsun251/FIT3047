@@ -8,10 +8,6 @@ declare(strict_types=1);
 
 $this->assign('title', __('User Management'));
 
-$this->Html->css([
-    'users-index',
-], ['block' => 'css']);
-
 $users = $users ?? [];
 $userList = is_array($users) ? $users : iterator_to_array($users);
 

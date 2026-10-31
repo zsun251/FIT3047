@@ -12,12 +12,6 @@ use App\Policy\UserAccess;
 
 $this->assign('title', 'Patients Management');
 
-$this->start('datatables_css');
-echo $this->Html->css([
-    'users-index',
-]);
-$this->end();
-
 $identity = $this->request->getAttribute('identity');
 
 $patients = $patients ?? [];

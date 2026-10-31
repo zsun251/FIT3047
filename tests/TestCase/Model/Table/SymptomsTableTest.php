@@ -24,8 +24,13 @@ class SymptomsTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.Symptoms',
+        'app.Users',
+        'app.Admins',
+        'app.Clinicians',
+        'app.Patients',
+        'app.ReminderSettings',
         'app.VitalData',
+        'app.Symptoms',
     ];
 
     /**
@@ -60,7 +65,10 @@ class SymptomsTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $this->assertEmpty($this->Symptoms->newEntity(['symptom_name' => 'Cough'])->getErrors());
+        $this->assertArrayHasKey('symptom_name', $this->Symptoms->newEntity([])->getErrors());
+        $this->assertArrayHasKey('symptom_name', $this->Symptoms->newEntity(['symptom_name' => str_repeat('x', 151)])->getErrors());
+        $this->assertArrayHasKey('symptom_name', $this->Symptoms->newEntity(['symptom_name' => 'Wheezing'])->getErrors());
     }
 
     /**
@@ -71,6 +79,8 @@ class SymptomsTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->Symptoms->newEntity(['symptom_name' => 'Wheezing'], ['validate' => false]);
+        $this->assertFalse($this->Symptoms->save($entity));
+        $this->assertArrayHasKey('symptom_name', $entity->getErrors());
     }
 }

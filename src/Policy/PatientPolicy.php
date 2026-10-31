@@ -73,7 +73,7 @@ class PatientPolicy
     }
 
     /**
-     * Assign patients to clinicians (only admins).
+     * Assign patients to clinicians. PatientsController limits clinicians to their own list.
      */
     public function canAssign(IdentityInterface $user, Patient $resource): bool
     {

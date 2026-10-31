@@ -24,8 +24,12 @@ class ResourcesTableTest extends TestCase
      * @var array<string>
      */
     protected array $fixtures = [
-        'app.Resources',
+        'app.Users',
+        'app.Admins',
         'app.Clinicians',
+        'app.Patients',
+        'app.ReminderSettings',
+        'app.Resources',
     ];
 
     /**
@@ -60,7 +64,11 @@ class ResourcesTableTest extends TestCase
      */
     public function testValidationDefault(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $valid = ['clinician_id' => 1, 'title' => 'Guide', 'type' => 'article', 'status' => 'draft'];
+        $this->assertEmpty($this->Resources->newEntity($valid)->getErrors());
+        $this->assertArrayHasKey('title', $this->Resources->newEntity(['title' => ''] + $valid)->getErrors());
+        $this->assertArrayHasKey('title', $this->Resources->newEntity(['title' => str_repeat('x', 256)] + $valid)->getErrors());
+        $this->assertArrayHasKey('type', $this->Resources->newEntity(['clinician_id' => 1, 'title' => 'Guide'])->getErrors());
     }
 
     /**
@@ -71,6 +79,8 @@ class ResourcesTableTest extends TestCase
      */
     public function testBuildRules(): void
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $entity = $this->Resources->newEntity(['clinician_id' => 999, 'title' => 'Guide', 'type' => 'article', 'status' => 'draft']);
+        $this->assertFalse($this->Resources->save($entity));
+        $this->assertArrayHasKey('clinician_id', $entity->getErrors());
     }
 }

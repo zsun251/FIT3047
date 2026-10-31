@@ -94,7 +94,7 @@ class ContactMessagesController extends AppController
 
         if ($this->request->is('post')) {
             $turnstile = new TurnstileService();
-            $token = $this->request->getData('cf_turnstile_response');
+            $token = (string)$this->request->getData('cf_turnstile_response');
             $remoteIp = $this->request->clientIp();
 
             if (!$turnstile->verify($token, $remoteIp)) {
@@ -169,9 +169,10 @@ class ContactMessagesController extends AppController
         } else {
             $this->Flash->error(__('The contact message could not be deleted. Please, try again.'));
         }
-        // Redirect to a custom URL if provided
-        $redirectUrl = $this->request->getData('redirect');
-        if ($redirectUrl) {
+        // Redirect to a custom URL if provided, as long as it stays on this site.
+        // Browsers treat backslashes as slashes and drop control characters.
+        $redirectUrl = (string)$this->request->getData('redirect');
+        if (preg_match('#^/(?!/)[^\\\\\x00-\x1f]*$#D', $redirectUrl)) {
             return $this->redirect($redirectUrl);
         }
         return $this->redirect(['action' => 'index']);
