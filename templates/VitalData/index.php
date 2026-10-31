@@ -279,7 +279,7 @@ $backUrl = $this->request->referer(true) ?: $fallbackBackUrl;
                     ?>
 
                     <tr>
-                        <td class="align-middle">
+                        <td class="align-middle" data-order="<?= (int)$vitalDataEntity->id ?>">
                             <span class="rc-mini-pill record-id-pill">#<?= $this->Number->format($vitalDataEntity->id) ?></span>
                         </td>
 
