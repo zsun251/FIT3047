@@ -1,9 +1,8 @@
 {
-    "name": "cakephp/app",
-    "description": "CakePHP skeleton app",
+    "name": "zsun251/respiracare-online",
+    "description": "Web app for managing respiratory care, built with CakePHP 5",
     "license": "MIT",
     "type": "project",
-    "homepage": "https://cakephp.org",
     "require": {
         "php": ">=8.2",
         "cakephp/authentication": "^4.0",

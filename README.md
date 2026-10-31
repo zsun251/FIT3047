@@ -147,6 +147,8 @@ Don't commit dump files.
 
 For a production deployment, import `config/schema/schema.sql` and then `config/schema/production.sql` instead of `seed.sql`. `production.sql` creates a single `admin` account with the temporary password `password`. Change that password right after the first login.
 
+Also set `DEBUG=false` in the server's environment. Debug mode is on by default, and it shows stack traces and configuration details to visitors.
+
 ## Troubleshooting
 
 - **`could not find driver` on startup:** your PHP is missing the `pdo_sqlite` extension. Enable it in `php.ini`, or [use MySQL](#using-mysql).

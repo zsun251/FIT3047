@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fbc0b326817ada03af45400c681bf1af",
+    "content-hash": "9cc24201d48a8790ec9322f51faaaf2d",
     "packages": [
         {
             "name": "cakephp/authentication",
